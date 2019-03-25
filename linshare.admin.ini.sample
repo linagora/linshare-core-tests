@@ -1,0 +1,8 @@
+[DEFAULT]
+email=root@localhost.localdomain
+password=adminlinshare
+host=https://admin.linshare.local
+# 0: verify ssl certificate, 1: do not verify ssl certificate
+no_verify=0
+# 0: no debug traces, 1: display debug traces.
+debug=0
