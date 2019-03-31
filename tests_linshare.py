@@ -12,6 +12,8 @@ import unittest
 
 from requests.auth import HTTPBasicAuth
 from requests_toolbelt.utils import dump
+from requests_toolbelt import (MultipartEncoder, MultipartEncoderMonitor)
+from clint.textui.progress import Bar as ProgressBar
 
 
 CONFIG = configparser.ConfigParser()
@@ -29,6 +31,15 @@ if DEBUG:
 else:
     logging.basicConfig()
 LOGGER = logging.getLogger()
+
+
+def create_callback(encoder):
+    """TODO"""
+    encoder_len = encoder.len
+    bar = ProgressBar(expected_size=encoder_len, filled_char='=')
+    def callback(monitor):
+        bar.show(monitor.bytes_read)
+    return callback
 
 
 class TestCase(unittest.TestCase):
@@ -203,6 +214,41 @@ class TestUserApiDocuments(TestCase):
             req = requests.post(
                 query_url,
                 files=payload,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email, self.password),
+                verify=self.verify)
+        if DEBUG:
+            # https://toolbelt.readthedocs.io/en/latest/dumputils.html
+            data = dump.dump_all(req)
+            LOGGER.debug("dump_all : %s", data.decode('utf-8'))
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
+    def test_document_upload_multipart(self):
+        """testing upload document using multipart"""
+        base_url = self.host + '/linshare/webservice/rest/user/v2'
+        query_url = base_url + '/documents'
+        file_path = 'file10M'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'filesize': str(filesize),
+                    'file': ('coucou.mkv', file_stream)
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            req = requests.post(
+                query_url,
+                data=monitor,
                 headers=headers,
                 auth=HTTPBasicAuth(self.email, self.password),
                 verify=self.verify)
