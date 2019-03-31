@@ -5,11 +5,13 @@
 import configparser
 import json
 import logging
+import os
 import requests
+import sys
 import unittest
 
 from requests.auth import HTTPBasicAuth
-
+from requests_toolbelt.utils import dump
 
 
 CONFIG = configparser.ConfigParser()
@@ -157,8 +159,7 @@ class TestAdminApiJwt(TestCase):
         self.assertTrue('token' in data['jwtToken'])
 
     def test_jwt_delete(self):
-        """Trying to delete a jwt token as an admin"""
-
+        """Trying to create and delete a jwt token as an admin"""
         user1 = self.get_user1()
         query_url = self.base_url + '/jwt'
         payload = {
@@ -179,6 +180,42 @@ class TestAdminApiJwt(TestCase):
         self.assertEqual(data['actor']['uuid'], user1['uuid'])
         self.assertEqual(data['label'], 'test_label_for_delete')
         self.assertEqual(data['subject'], user1['mail'])
+
+
+class TestUserApiDocuments(TestCase):
+    """Test user api"""
+
+    host = CONFIG['DEFAULT']['host']
+    base_url = host + '/linshare/webservice/rest/user/v2'
+
+    def test_documents_upload(self):
+        """testing upload document"""
+        query_url = self.base_url + '/documents'
+        file_path = 'README.md'
+        with open(file_path, 'rb') as file_stream:
+            payload = {
+                'file': ('README.md2', file_stream),
+                'filesize': os.path.getsize(file_path)
+            }
+            headers = {
+                'Accept': 'application/json',
+            }
+            req = requests.post(
+                query_url,
+                files=payload,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email, self.password),
+                verify=self.verify)
+        if DEBUG:
+            # https://toolbelt.readthedocs.io/en/latest/dumputils.html
+            data = dump.dump_all(req)
+            LOGGER.debug("dump_all : %s", data.decode('utf-8'))
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
 
 
 if __name__ == '__main__':
