@@ -238,7 +238,7 @@ class TestUserApiDocuments(TestCase):
             encoder = MultipartEncoder(
                 fields={
                     'filesize': str(filesize),
-                    'file': ('coucou.mkv', file_stream)
+                    'file': ('file10M.new', file_stream)
                 }
             )
             monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
