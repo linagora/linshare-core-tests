@@ -321,7 +321,7 @@ class TestMailAttachment(TestCase):
                     'filesize': str(filesize),
                     'file': ('LinShare.jpg', file_stream),
                     'description': 'Test mail attachment',
-                    'override': 'False',
+                    'enableForAll': 'False',
                     'enable':'True',
                     'mail_config':'946b190d-4c95-485f-bfe6-d288a2de1edd',
                     'alt': 'logo',
@@ -351,6 +351,47 @@ class TestMailAttachment(TestCase):
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
 
+    def test_mail_attachments_fail_create(self):
+        """Trying to create a mail attachment as an admin"""
+        query_url = self.base_url + '/mail_attachments'
+        file_path = 'file10M'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'filesize': str(filesize),
+                    'file': ('file10M', file_stream),
+                    'description': 'Test mail attachment',
+                    'enableForAll': 'False',
+                    'enable':'True',
+                    'mail_config':'946b190d-4c95-485f-bfe6-d288a2de1edd',
+                    'alt': 'logo',
+                    'cid':'cid:mailAttachment',
+                    'language' : '1'
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            req = requests.post(
+                query_url,
+                data=monitor,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email, self.password),
+                verify=self.verify)
+            if DEBUG:
+            # https://toolbelt.readthedocs.io/en/latest/dumputils.html
+                data = dump.dump_all(req)
+                LOGGER.debug("dump_all : %s", data.decode('utf-8'))
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 400)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
     def test_mail_attachment_find(self):
         """Trying to create and find a mail attachment as an admin"""
         query_url = self.base_url + '/mail_attachments'
@@ -365,7 +406,7 @@ class TestMailAttachment(TestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         self.assertEqual(data['description'], 'Test mail attachment')
-        self.assertEqual(data['override'], False)
+        self.assertEqual(data['enableForAll'], False)
         self.assertEqual(data['enable'], True)
 
     def test_mail_attachment_delete(self):
@@ -375,7 +416,7 @@ class TestMailAttachment(TestCase):
         uuid = data['uuid']
         payload = {
             'description': 'Test mail attachment',
-            'override': 'False',
+            'enableForAll': 'False',
             'enable':'True',
             'alt': 'logo',
             'cid':'cid:mailAttachment'
@@ -389,7 +430,7 @@ class TestMailAttachment(TestCase):
         self.assertEqual(req.status_code, 200)
         data = req.json()
         self.assertEqual(data['description'], 'Test mail attachment')
-        self.assertEqual(data['override'], False)
+        self.assertEqual(data['enableForAll'], False)
         self.assertEqual(data['enable'], True)
         return data
 
@@ -401,11 +442,11 @@ class TestMailAttachment(TestCase):
         payload = {
             'name': 'Hello LinShare',
             'description': 'Test mail attachment update',
-            'override': 'True',
+            'enableForAll': 'True',
             'enable':'False',
             'alt': 'logo',
             'cid':'cid:mailAttachment',
-            'language' : int(2)
+            'language' : 2
         }
         req = requests.put(
             query_url + '/' + uuid,
@@ -416,7 +457,7 @@ class TestMailAttachment(TestCase):
         self.assertEqual(req.status_code, 200)
         data = req.json()
         self.assertEqual(data['description'], 'Test mail attachment update')
-        self.assertEqual(data['override'], True)
+        self.assertEqual(data['enableForAll'], True)
         self.assertEqual(data['enable'], False)
         self.assertEqual(data['language'], 2)
         return data
