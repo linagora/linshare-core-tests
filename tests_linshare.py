@@ -391,5 +391,122 @@ class TestMailAttachment(TestCase):
         LOGGER.debug("data : %s", req.json())
 
 
+class TestUserApiDocumentRevision(TestCase):
+    """Test User api"""
+
+    host = CONFIG['DEFAULT']['host']
+    base_url = host + '/linshare/webservice/rest/user/v2'
+
+    def test_create_ss_node(self):
+        """Test user create a shared space node."""
+        query_url = self.base_url + '/shared_space_nodes'
+        payload = {
+            "name": "workgroup_test",
+            "nodeType": "WORK_GROUP"
+        }
+        data = self.request_post(query_url, payload)
+        self.assertEqual(data['name'], 'workgroup_test')
+        return data
+
+    def create_workgroup_document(self, workgroup_uuid):
+        """create a workgroup document."""
+        query_url = self.base_url + '/work_groups/' + workgroup_uuid + '/nodes'
+        file_path = 'file10M'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'filesize': str(filesize),
+                    'file': ('file10M.new', file_stream)
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            req = requests.post(
+                query_url,
+                data=monitor,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email, self.password),
+                verify=self.verify)
+        if DEBUG:
+            data = dump.dump_all(req)
+            LOGGER.debug("dump_all : %s", data.decode('utf-8'))
+        data = req.json()
+        LOGGER.debug("data : %s", data)
+        return data
+
+    def update_workgroup_document(self, workgroup_uuid, workgroup_node_uuid):
+        """create a workgroup document."""
+        query_url = self.base_url + '/work_groups/' + workgroup_uuid + '/nodes'
+        payload = {
+            'uuid': workgroup_node_uuid,
+            'name': 'test1',
+            'type': 'DOCUMENT'
+        }
+        req = requests.put(
+            query_url + '/' + workgroup_node_uuid,
+            data=json.dumps(payload),
+            headers = self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(200, req.status_code)
+        data = req.json()
+        LOGGER.debug("data : %s", data)
+        return data
+
+    def test_create_workgroup_document_revision(self):
+        """Test user create a workgroup document revision."""
+        workgroup_uuid = self.test_create_ss_node()['uuid']
+        """Upload the same file twice"""
+        first_upload = self.create_workgroup_document(workgroup_uuid)
+        second_upload = self.create_workgroup_document(workgroup_uuid)
+        query_url = self.base_url + '/work_groups/' + workgroup_uuid + '/nodes?parent=' + first_upload['uuid']
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        data = req.json()
+        total_size = data[1]['size'] + data[0]['size']
+        self.assertEqual(second_upload['revisionsSize'], total_size)
+        LOGGER.debug("data : %s", data)
+
+    def test_find_all_audit_document(self):
+        """Test user create a workgroup document revision."""
+        workgroup_uuid = self.test_create_ss_node()['uuid']
+        """Upload the same file twice"""
+        document = self.create_workgroup_document(workgroup_uuid)
+        self.create_workgroup_document(workgroup_uuid)
+        # update the name of document
+        document = self.update_workgroup_document(workgroup_uuid, document['uuid'])
+        query_url = self.base_url + '/work_groups/' + workgroup_uuid + '/nodes/' + document['uuid'] + '/audit'
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        self.assertEqual(3, len(req.json()))
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_find_all_ss_node(self):
+        """Test user find all shared space nodes."""
+        query_url = self.base_url + '/shared_space_nodes'
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", req.json())
+
+
 if __name__ == '__main__':
     unittest.main()
