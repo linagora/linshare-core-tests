@@ -195,8 +195,7 @@ class TestAdminApiJwt(TestCase):
         self.assertIsNotNone(data['description'])
         self.assertEqual(data['label'], 'fred4')
         self.assertEqual(data['subject'], user1['mail'])
-        self.assertTrue('jwtToken' in data)
-        self.assertTrue('token' in data['jwtToken'])
+        self.assertTrue('token' in data)
 
     def test_jwt_delete(self):
         """Trying to create and delete a jwt token as an admin"""
