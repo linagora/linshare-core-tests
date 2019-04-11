@@ -399,7 +399,7 @@ class TestUserApiDocumentRevision(TestCase):
 
     def test_create_ss_node(self):
         """Test user create a shared space node."""
-        query_url = self.base_url + '/shared_space_nodes'
+        query_url = self.base_url + '/shared_spaces'
         payload = {
             "name": "workgroup_test",
             "nodeType": "WORK_GROUP"
@@ -464,7 +464,7 @@ class TestUserApiDocumentRevision(TestCase):
         workgroup_uuid = self.test_create_ss_node()['uuid']
         """Upload the same file twice"""
         first_upload = self.create_workgroup_document(workgroup_uuid)
-        second_upload = self.create_workgroup_document(workgroup_uuid)
+        self.create_workgroup_document(workgroup_uuid)
         query_url = self.base_url + '/work_groups/' + workgroup_uuid + '/nodes?parent=' + first_upload['uuid']
         req = requests.get(
             query_url,
@@ -472,9 +472,8 @@ class TestUserApiDocumentRevision(TestCase):
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         data = req.json()
-        total_size = data[1]['size'] + data[0]['size']
-        self.assertEqual(second_upload['revisionsSize'], total_size)
-        LOGGER.debug("data : %s", data)
+        self.assertEqual(200, req.status_code)
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
 
     def test_find_all_audit_document(self):
         """Test user create a workgroup document revision."""
@@ -494,9 +493,9 @@ class TestUserApiDocumentRevision(TestCase):
         self.assertEqual(3, len(req.json()))
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
 
-    def test_find_all_ss_node(self):
-        """Test user find all shared space nodes."""
-        query_url = self.base_url + '/shared_space_nodes'
+    def test_find_all_shared_spaces(self):
+        """Test user find all shared spaces."""
+        query_url = self.base_url + '/shared_spaces'
         req = requests.get(
             query_url,
             headers={'Accept': 'application/json'},
@@ -506,6 +505,55 @@ class TestUserApiDocumentRevision(TestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
+
+
+class TestUserApiSharedSpace(TestCase):
+    """Test User api"""
+
+    host = CONFIG['DEFAULT']['host']
+    base_url = host + '/linshare/webservice/rest/user/v2'
+
+    def create_shared_space(self):
+        """Test user create a shared space."""
+        query_url = self.base_url + '/shared_spaces'
+        payload = {
+            "name": "workgroup_test",
+            "nodeType": "WORK_GROUP"
+        }
+        data = self.request_post(query_url, payload)
+        self.assertEqual(data['name'], 'workgroup_test')
+        return data
+
+    def test_find_sahred_space(self):
+        """"Test user find a shared space """
+        workgroup = self.create_shared_space();
+        query_url = self.base_url + '/shared_spaces/' + workgroup['uuid']
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.assertIsNotNone(data['quotaUuid'])
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_find_shared_space_quota(self):
+        """"Test user find shared space quota"""
+        workgroup = self.create_shared_space();
+        query_url = self.base_url + '/quota/' + workgroup['quotaUuid']
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
 
 
 if __name__ == '__main__':
