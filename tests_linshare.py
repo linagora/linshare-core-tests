@@ -132,6 +132,21 @@ class TestCase(unittest.TestCase):
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
 
+    def request_put(self, query_url, payload):
+        """Do PUT request"""
+        req = requests.put(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
 
 class TestAdminApiJwt(TestCase):
     """Test admin api"""
@@ -149,9 +164,22 @@ class TestAdminApiJwt(TestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
 
+    def create_simple_jwt(self):
+        """Trying to create a simple jwt token as an admin"""
+        user1 = self.get_user1()
+        query_url = self.base_url + '/jwt'
+        payload = {
+            "actor": {
+                "uuid": user1['uuid']
+            },
+            "description": None,
+            "label": "fred4",
+        }
+        data = self.request_post(query_url, payload)
+        return data
+
     def test_jwt_create(self):
         """Trying to create a jwt token as an admin"""
-
         user1 = self.get_user1()
         query_url = self.base_url + '/jwt'
         payload = {
@@ -164,6 +192,7 @@ class TestAdminApiJwt(TestCase):
         data = self.request_post(query_url, payload)
         self.assertEqual(data['domain']['uuid'], user1['domain'])
         self.assertEqual(data['actor']['uuid'], user1['uuid'])
+        self.assertIsNotNone(data['description'])
         self.assertEqual(data['label'], 'fred4')
         self.assertEqual(data['subject'], user1['mail'])
         self.assertTrue('jwtToken' in data)
@@ -191,6 +220,22 @@ class TestAdminApiJwt(TestCase):
         self.assertEqual(data['actor']['uuid'], user1['uuid'])
         self.assertEqual(data['label'], 'test_label_for_delete')
         self.assertEqual(data['subject'], user1['mail'])
+
+    def test_jwt_update(self):
+        """Trying create and update a jwt token as an admin"""
+        user1 = self.get_user1()
+        query_url = self.base_url + '/jwt'
+        payload = {
+            "actor": {
+                "uuid": user1['uuid']
+            },
+            "description": "jwt description",
+            "label": "fred4",
+        }
+        data = self.create_simple_jwt()
+        uuid = data['uuid']
+        data = self.request_put(query_url + '/' + uuid, payload)
+        self.assertEqual(data['description'], 'jwt description')
 
 
 class TestUserApiDocuments(TestCase):
