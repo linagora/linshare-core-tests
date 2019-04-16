@@ -600,5 +600,53 @@ class TestUserApiSharedSpace(TestCase):
         self.assertEqual(req.status_code, 200)
 
 
+class TestUserApiJwtPermanentToken(TestCase):
+    """Test User api"""
+
+    host = CONFIG['DEFAULT']['host']
+    base_url = host + '/linshare/webservice/rest/user/v2/jwt'
+
+    def create_jwt_permanent_token(self):
+        """Test user create a shared space."""
+        payload = {
+            "issuer" : "test1",
+            "label" : "label1",
+            "subject" : "amy.wolsh@int6.linshare.dev",
+            "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        }
+        data = self.request_post(self.base_url, payload)
+        return data
+
+    def test_head_jwt_permanent_token(self):
+        """"Test Head JWT permanent token by uuid """
+        token = self.create_jwt_permanent_token();
+        query_url = self.base_url + '/' + token['uuid']
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        LOGGER.debug("status_code : %s", req.status_code)
+        self.assertEqual(req.status_code, 204)
+
+    def test_find_jwt_permanent_token(self):
+        """"Test find JWT permanent token by uuid """
+        token = self.create_jwt_permanent_token();
+        query_url = self.base_url + '/' + token['uuid']
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.assertEqual(data['subject'], token['subject'])
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+
 if __name__ == '__main__':
     unittest.main()
