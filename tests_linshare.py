@@ -727,5 +727,88 @@ class TestUpdateCanCreateGuest(TestCase):
         self.assertEqual(data['canCreateGuest'], not initCanCreateGuest)
 
 
+class TestUserApiContactList(TestCase):
+    """Test User api"""
+    host = CONFIG['DEFAULT']['host']
+    base_url = host + '/linshare/webservice/rest/user/v2/contact_lists'
+
+    def test_create_contact_list(self):
+        """Test create a contactList."""
+        payload = {
+            "name": "contactList",
+        }
+        data = self.request_post(self.base_url, payload)
+        self.assertEqual(data['name'], 'contactList')
+        return data
+
+    def test_create_find_contact_list(self):
+        """"Test create and find contactList by uuid """
+        payload = {
+            "name": "contactList2",
+        }
+        data = self.request_post(self.base_url, payload)
+        self.assertEqual(data['name'], 'contactList2')
+        query_url = self.base_url + '/' + data['uuid']
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.assertEqual(data['name'], "contactList2")
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_create_delete_contact_list(self):
+        """"Test create and delete contactList by uuid """
+        payload = {
+            "name": "contactList3",
+        }
+        data = self.request_post(self.base_url, payload)
+        self.assertEqual(data['name'], 'contactList3')
+        query_url = self.base_url + '/' + data['uuid']
+        req = requests.delete(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_create_update_contact_list(self):
+        """Test create and update a contactList."""
+        payload = {
+            "name": "contactList4",
+        }
+        data = self.request_post(self.base_url, payload)
+        self.assertEqual(data['name'], 'contactList4')
+        query_url = self.base_url + '/' + data['uuid']
+        payload = {
+            "name": "contactList5",
+        }
+        data = self.request_put(query_url, payload)
+        self.assertEqual(data['name'], 'contactList5')
+        return data
+
+    def test_find_all_contact_list(self):
+        """Test user find all contactList."""
+        req = requests.get(
+            self.base_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", req.json())
+
+
 if __name__ == '__main__':
     unittest.main()
