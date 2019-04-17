@@ -648,5 +648,43 @@ class TestUserApiJwtPermanentToken(TestCase):
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
 
 
+class TestUpdateCanCreateGuest(TestCase):
+    def test_update_can_create_guest(self):
+        """Test update canCreateGuest for user"""
+        data = self.get_user1()
+        query_url = self.base_url + '/users'
+        uuid = data['uuid']
+        req = requests.get(
+            query_url + '/' + uuid,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        initCanCreateGuest = data['canCreateGuest']
+        payload = {
+            'mail': data['mail'],
+            'accountType' : data['accountType'],
+            'canUpload' : data['canUpload'],
+            'canCreateGuest' : not initCanCreateGuest,
+            'firstName' : data['firstName'],
+            'lastName' : data['lastName'],
+            'quotaUuid': data['quotaUuid'],
+            'role' : data['role'],
+            'externalMailLocale': data['externalMailLocale'],
+            'locale' : data['locale'],
+            'uuid' : data['uuid']
+        }
+        req = requests.put(
+        query_url,
+        data=json.dumps(payload),
+        headers = self.headers,
+        auth=HTTPBasicAuth(self.email, self.password),
+        verify=self.verify)
+        data = req.json()
+        self.assertEqual(req.status_code, 200)
+        self.assertEqual(data['canCreateGuest'], not initCanCreateGuest)
+
+
 if __name__ == '__main__':
     unittest.main()
