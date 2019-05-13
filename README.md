@@ -28,7 +28,7 @@ If u can't create your virtual env because of this :
 `The path /home/user/workspace/linshare-core-tests/python3 (from --python=/home/user/workspace/linshare-core-tests/python3) does not exist`
 
 #### do this :
-Check if python3 is already install :
+Check if python3 is already installed :
 
 $ python3
 
@@ -44,6 +44,9 @@ $ mkvirtualenv -p /usr/bin/python3 -a $(pwd) $(basename $(pwd))
 
 $ workon linshare-core-tests
 
+## Install required dependencies
+
+$ pip install requests requests_toolbelt clint
 
 # Configuration
 
