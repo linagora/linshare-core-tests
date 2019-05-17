@@ -324,9 +324,8 @@ class TestMailAttachment(TestCase):
                     'enableForAll': 'False',
                     'enable':'True',
                     'mail_config':'946b190d-4c95-485f-bfe6-d288a2de1edd',
-                    'alt': 'logo',
-                    'cid':'cid:mailAttachment',
-                    'language' : str(1).encode(encoding='utf_8')
+                    'cid':'logo.mail.attachment.test',
+                    'language' : 'ENGLISH'
                 }
             )
             monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
@@ -365,9 +364,8 @@ class TestMailAttachment(TestCase):
                     'enableForAll': 'False',
                     'enable':'True',
                     'mail_config':'946b190d-4c95-485f-bfe6-d288a2de1edd',
-                    'alt': 'logo',
-                    'cid':'cid:mailAttachment',
-                    'language' : '1'
+                    'cid':'logo.mail.attachment.test',
+                    'language' : 'FRENCH'
                 }
             )
             monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
@@ -389,6 +387,89 @@ class TestMailAttachment(TestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 400)
         data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
+    def test_mail_attachments_create_no_cid(self):
+        """Trying to create a mail attachment as an admin without cid"""
+        query_url = self.base_url + '/mail_attachments'
+        default_mail_attachment_cid = 'logo.linshare@linshare.org'
+        file_path = 'LinShare.jpg'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'filesize': str(filesize),
+                    'file': ('LinShare.jpg', file_stream),
+                    'description': 'Test mail attachment',
+                    'enableForAll': 'False',
+                    'enable':'True',
+                    'mail_config':'946b190d-4c95-485f-bfe6-d288a2de1edd',
+                    'language' : 'ENGLISH'
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            req = requests.post(
+                query_url,
+                data=monitor,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email, self.password),
+                verify=self.verify)
+            if DEBUG:
+            # https://toolbelt.readthedocs.io/en/latest/dumputils.html
+                data = dump.dump_all(req)
+                LOGGER.debug("dump_all : %s", data.decode('utf-8'))
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual(data['cid'], default_mail_attachment_cid)
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
+    def test_mail_attachments_create_no_optional_fields(self):
+        """Trying to create a mail attachment as an admin without cid"""
+        query_url = self.base_url + '/mail_attachments'
+        default_mail_attachment_cid = 'logo.linshare@linshare.org'
+        file_path = 'LinShare.jpg'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'filesize': str(filesize),
+                    'file': ('LinShare.jpg', file_stream),
+                    'enableForAll': 'False',
+                    'enable':'True',
+                    'mail_config':'946b190d-4c95-485f-bfe6-d288a2de1edd',
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            req = requests.post(
+                query_url,
+                data=monitor,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email, self.password),
+                verify=self.verify)
+            if DEBUG:
+            # https://toolbelt.readthedocs.io/en/latest/dumputils.html
+                data = dump.dump_all(req)
+                LOGGER.debug("dump_all : %s", data.decode('utf-8'))
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual(data['cid'], default_mail_attachment_cid)
+        self.assertEqual(data['description'], '')
+        self.assertEqual(data['language'], 'ENGLISH')
+
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
 
@@ -418,12 +499,28 @@ class TestMailAttachment(TestCase):
             'description': 'Test mail attachment',
             'enableForAll': 'False',
             'enable':'True',
-            'alt': 'logo',
-            'cid':'cid:mailAttachment'
+            'cid':'logo.mail.attachment.test'
         }
         req = requests.delete(
             query_url + '/' + uuid,
             data=json.dumps(payload),
+            headers = self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual(data['description'], 'Test mail attachment')
+        self.assertEqual(data['enableForAll'], False)
+        self.assertEqual(data['enable'], True)
+        return data
+
+    def test_mail_attachment_delete_no_payload(self):
+        """Trying to create and delete a mail attachment as an admin"""
+        query_url = self.base_url + '/mail_attachments'
+        data = self.test_mail_attachments_create()
+        uuid = data['uuid']
+        req = requests.delete(
+            query_url + '/' + uuid,
             headers = self.headers,
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
@@ -444,9 +541,8 @@ class TestMailAttachment(TestCase):
             'description': 'Test mail attachment update',
             'enableForAll': 'True',
             'enable':'False',
-            'alt': 'logo',
-            'cid':'cid:mailAttachment',
-            'language' : 2
+            'cid':'logo.mail.attachment.test',
+            'language' : 'ENGLISH'
         }
         req = requests.put(
             query_url + '/' + uuid,
@@ -459,12 +555,12 @@ class TestMailAttachment(TestCase):
         self.assertEqual(data['description'], 'Test mail attachment update')
         self.assertEqual(data['enableForAll'], True)
         self.assertEqual(data['enable'], False)
-        self.assertEqual(data['language'], 2)
+        self.assertEqual(data['language'], 'ENGLISH')
         return data
 
     def test_findAll(self):
         """Test user authentication."""
-        query_url = self.base_url + '/mail_attachments'
+        query_url = self.base_url + '/mail_attachments?configUuid=946b190d-4c95-485f-bfe6-d288a2de1edd'
         req = requests.get(
             query_url,
             headers=self.headers,
@@ -473,6 +569,19 @@ class TestMailAttachment(TestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", req.json())
+
+    def test_findAll_wrong_mail_config(self):
+        """Test user authentication."""
+        query_url = self.base_url + '/mail_attachments?configUuid=946b190d-4c95-485f-bfe6-d288a2de1ede'
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 404)
         LOGGER.debug("data : %s", req.json())
 
 
