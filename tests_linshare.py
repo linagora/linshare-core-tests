@@ -918,6 +918,126 @@ class TestUserApiContactList(TestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
 
+class TestUserApiSharedSpaceNode(TestCase):
+    """Test User api sharedSpaceNode"""
+    host = CONFIG['DEFAULT']['host']
+    base_url = host + '/linshare/webservice/rest/user/v2'
+
+    def create_shared_space(self):
+        """Test user API create a shared space."""
+        query_url = self.base_url + '/shared_spaces'
+        payload = {
+            "name": "workgroup_test",
+            "nodeType": "WORK_GROUP"
+        }
+        data = self.request_post(query_url, payload)
+        self.assertEqual(data['name'], 'workgroup_test')
+        return data
+
+    def create_shared_space_node(self):
+        """Test user API create a shared space node."""
+        workgroup = self.create_shared_space();
+        query_url = self.base_url + '/shared_spaces/' + workgroup['uuid'] + '/nodes'
+        payload = {
+            "name": "FOLDER_test",
+            "type": "FOLDER"
+        }
+        data = self.request_post(query_url, payload)
+        self.assertEqual(data['name'], 'FOLDER_test')
+        return data
+
+    def test_find_shared_space_node(self):
+        """"Test user API find a shared space node"""
+        folder = self.create_shared_space_node();
+        query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes/' + folder['uuid']
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.assertEqual(data['name'], "FOLDER_test")
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_update_shared_space_node_with_nodeuuid_path(self):
+        """Test create and update a shared space node."""
+        folder = self.create_shared_space_node();
+        query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes/' + folder['uuid']
+        payload = {
+            "name": "Update_Node_Name",
+            "type": "FOLDER",
+        }
+        data = self.request_put(query_url, payload)
+        self.assertEqual(data['name'], "Update_Node_Name")
+        return data
+
+    def test_update_shared_space_node_without_nodeuuid_path(self):
+        """Test create and update a shared space node."""
+        folder = self.create_shared_space_node();
+        query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes/'
+        payload = {
+            "name": "Update_Node_Name",
+            "type": "FOLDER",
+            "uuid": folder['uuid']
+        }
+        data = self.request_put(query_url, payload)
+        self.assertEqual(data['name'], "Update_Node_Name")
+        return data
+
+    def test_shared_space_node_delete(self):
+        """Trying to create and delete a shared_space_node"""
+        folder = self.create_shared_space_node();
+        query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes/'
+        payload = {
+            "name": "FOLDER_test",
+            "type": "FOLDER",
+            "uuid":folder['uuid']
+        }
+        req = requests.delete(
+            query_url,
+            data=json.dumps(payload),
+            headers = self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual(data['name'], 'FOLDER_test')
+        self.assertEqual(data['type'], 'FOLDER')
+        return data
+
+    def test_shared_space_node_delete_no_payload(self):
+        """Trying to create and delete a shared_space_node with no payload"""
+        folder = self.create_shared_space_node();
+        query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes/' + folder['uuid']
+        req = requests.delete(
+            query_url,
+            headers = self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual(data['name'], 'FOLDER_test')
+        self.assertEqual(data['type'], 'FOLDER')
+        return data
+
+    def test_find_all_shared_space_nodes(self):
+        """Test user find all shared space node."""
+        folder = self.create_shared_space_node();
+        query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes'
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", req.json())
+
 
 if __name__ == '__main__':
     unittest.main()
