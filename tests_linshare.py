@@ -1183,5 +1183,137 @@ class TestUserApiSharedSpace(TestCase):
         LOGGER.debug("data : %s", req.json())
 
 
+class TestUserApiSharedSpaceMembers(TestCase):
+    """Test User api sharedSpace"""
+    host = CONFIG['DEFAULT']['host']
+
+    def test_create_shared_space(self):
+        """Test user API create a shared space."""
+        base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
+        payload = {
+            "name": "workgroup_test",
+            "nodeType": "WORK_GROUP"
+        }
+        data = self.request_post(base_url, payload)
+        self.assertEqual(data['name'], 'workgroup_test')
+        return data
+
+    def test_create_shared_space_member(self):
+        """Test user API create a shared space member."""
+        user1 = self.get_user1()
+        shared_space = self.test_create_shared_space();
+        base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
+        query_url = base_url + shared_space['uuid'] + "/members"
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                "firstName" : user1['firstName'],
+                "lastName" : user1['lastName'],
+                "mail" : user1['mail'],
+                },
+            "role" : {
+                "uuid" : "234be74d-2966-41c1-9dee-e47c8c63c14e",
+                "name" : "ADMIN"
+                },
+            "node" : {
+                "uuid" : shared_space['uuid'],
+                "name" : shared_space['name'],
+                "nodeType" : shared_space['nodeType']
+                }
+        }
+        data = self.request_post(query_url, payload)
+        self.assertEqual (data['account']['firstName'],user1['firstName'])
+        return data
+
+    def test_update_shared_space_member(self):
+        """Test user API create a shared space member."""
+        shared_space_member = self.test_create_shared_space_member();
+        base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
+        query_url = base_url + shared_space_member['node']['uuid'] + "/members/" +shared_space_member['uuid']
+        payload = {
+            "account" : shared_space_member['account'],
+            "role" : {
+                "uuid" : "4ccbed61-71da-42a0-a513-92211953ac95",
+                "name" : "READER"
+                },
+            "node" : shared_space_member['node'],
+        }
+        data = self.request_put(query_url, payload)
+        self.assertEqual (data['role']['name'],'READER')
+        return data
+
+    def test_delete_shared_space_member(self):
+        """Test user API create a shared space member."""
+        shared_space_member = self.test_create_shared_space_member();
+        base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
+        query_url = base_url + shared_space_member['node']['uuid'] + "/members/"
+        payload = {
+            "account" : shared_space_member['account'],
+            "role" : {
+                "uuid" : "4ccbed61-71da-42a0-a513-92211953ac95",
+                "name" : "READER"
+                },
+            "node" : shared_space_member['node'],
+            "uuid":shared_space_member['uuid']
+        }
+        req = requests.delete(
+            query_url,
+            data=json.dumps(payload),
+            headers = self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual (data['account']['firstName'],shared_space_member['account']['firstName'])
+        return data
+
+    def test_delete_shared_space_member_no_payload(self):
+        """Test user API create a shared space member."""
+        shared_space_member = self.test_create_shared_space_member();
+        base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
+        query_url = base_url + shared_space_member['node']['uuid'] + "/members/" + shared_space_member['uuid']
+        req = requests.delete(
+            query_url,
+            headers = self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        return data
+
+    def test_find_shared_space_member(self):
+        """"Test user API find a shared space member"""
+        shared_space_member = self.test_create_shared_space_member();
+        base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
+        query_url = base_url + shared_space_member['node']['uuid'] + "/members/" +shared_space_member['uuid']
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.assertEqual (data['account']['firstName'],shared_space_member['account']['firstName'])
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_find_all_shared_spaces_members(self):
+        """Test user find all shared spaces members."""
+        shared_space = self.test_create_shared_space();
+        base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
+        query_url = base_url + shared_space['uuid'] + "/members"
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", req.json())
+
+
 if __name__ == '__main__':
     unittest.main()
