@@ -1340,6 +1340,30 @@ class TestUserApiSharedSpaceMembers(TestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
 
+class TestUserApiDrive (TestCase):
+    """"Test user API create a shared space (drive) """
+    host = CONFIG['DEFAULT']['host']
+    base_url = host + '/linshare/webservice/rest/user/v2/shared_spaces/'
+
+    def test_create_shared_space_drive(self):
+        """Test user API create a shared space fails."""
+        payload = {
+            "name": "Drive_test",
+            "nodeType": "DRIVE"
+        }
+        req = requests.post(
+            self.base_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
 
 if __name__ == '__main__':
     unittest.main()
