@@ -1171,7 +1171,33 @@ class TestUserApiSharedSpace(TestCase):
     def test_find_all_shared_spaces_audit(self):
         """Test user find all shared space."""
         shared_space = self.test_create_shared_space();
-        query_url = self.base_url + shared_space['uuid'] + "/audit"
+        query_url = self.base_url + shared_space['uuid'] + "/audits"
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", req.json())
+
+    def create_shared_space_node(self):
+        """Test user API create a shared space node."""
+        workgroup = self.test_create_shared_space()
+        query_url = self.base_url + workgroup['uuid'] + '/nodes'
+        payload = {
+            "name": "FOLDER_test",
+            "type": "FOLDER"
+        }
+        data = self.request_post(query_url, payload)
+        self.assertEqual(data['name'], 'FOLDER_test')
+        return data
+
+    def test_find_specific_shared_spaces_audit(self):
+        """Test user find all shared space."""
+        folder = self.create_shared_space_node();
+        query_url = self.base_url + folder['workGroup'] + "/audits" +"?nodeUuid=" + folder['uuid']
         req = requests.get(
             query_url,
             headers={'Accept': 'application/json'},
