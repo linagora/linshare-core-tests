@@ -47,7 +47,9 @@ class TestCase(unittest.TestCase):
 
     host = CONFIG['DEFAULT']['host']
     base_url = host + '/linshare/webservice/rest/admin'
+    user_base_url = host + '/linshare/webservice/rest/user/v2'
     user1_email = CONFIG['DEFAULT']['user1_email']
+    user1_password = CONFIG['DEFAULT']['user1_password']
     email = CONFIG['DEFAULT']['email']
     verify = not NO_VERIFY
     password = CONFIG['DEFAULT']['password']
@@ -1340,6 +1342,7 @@ class TestUserApiSharedSpaceMembers(TestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
 
+
 class TestUserApiDrive (TestCase):
     """"Test user API create a shared space (drive) """
     host = CONFIG['DEFAULT']['host']
@@ -1363,6 +1366,151 @@ class TestUserApiDrive (TestCase):
         data = req.json()
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
+
+
+class TestUserGuest (TestCase):
+    """"Test user API guests """
+    def test_create_guest(self):
+        """Test user API create a guest."""
+        user1 = self.get_user1()
+        payload = {
+            "domain": user1['domain'],
+            "firstName": "bart",
+            "lastName": "simpson",
+            "mail":"bart.simpson@int1.linshare.dev",
+            "restricted":False
+        }
+        query_url = self.user_base_url + '/guests'
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
+    def test_delete_guest(self):
+        """Test user API create and delete guest."""
+        user1 = self.get_user1()
+        payload = {
+            "domain": user1['domain'],
+            "firstName": "homer",
+            "lastName": "simpson",
+            "mail":"homer.simpson@int1.linshare.dev",
+            "restricted":False
+        }
+        query_url = self.user_base_url + '/guests'
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        query_url = self.user_base_url + '/guests/' + data['uuid']
+        req = requests.delete(
+            query_url,
+            headers = self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        return data
+
+    def test_update_guest(self):
+        """Test user API create and update a guest."""
+        user1 = self.get_user1()
+        payload = {
+            "domain": user1['domain'],
+            "firstName": "lisa",
+            "lastName": "simpson",
+            "mail":"lisa.simpson@int1.linshare.dev",
+            "restricted":False
+        }
+        query_url = self.user_base_url + '/guests'
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        payload = {
+            "domain": user1['domain'],
+            "firstName": "lisa",
+            "lastName": "Updated",
+            "mail":"lisa.simpson@int1.linshare.dev",
+            "restricted":False
+        }
+        query_url = self.user_base_url + '/guests/' + data['uuid']
+        req = requests.put(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            verify=self.verify)
+        data = req.json()
+        self.assertEqual (data['lastName'],'Updated')
+        return data
+
+    def test_find_shared_guest(self):
+        """"Test user API create find a guest"""
+        user1 = self.get_user1()
+        payload = {
+            "domain": user1['domain'],
+            "firstName": "maggie",
+            "lastName": "simpson",
+            "mail":"maggie.simpson@int1.linshare.dev",
+            "restricted":False
+        }
+        query_url = self.user_base_url + '/guests'
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        query_url = self.user_base_url + '/guests/' + data['uuid']
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.assertEqual (data['mail'],'maggie.simpson@int1.linshare.dev')
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_find_all_guests(self):
+        """Test user find all guests."""
+        query_url = self.user_base_url + '/guests'
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", req.json())
 
 
 if __name__ == '__main__':
