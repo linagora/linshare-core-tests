@@ -1513,5 +1513,44 @@ class TestUserGuest (TestCase):
         LOGGER.debug("data : %s", req.json())
 
 
+class TestFindQuota(TestCase):
+    def create_shared_space(self):
+        """Test user create a shared space."""
+        query_url = self.user_base_url + '/shared_spaces'
+        payload = {
+            "name": "workgroup_test",
+            "nodeType": "WORK_GROUP"
+        }
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            verify=self.verify)
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.assertEqual(data['name'], 'workgroup_test')
+        return data
+
+    def test_find_quota(self):
+        """"Test user API create find a quota"""
+        user1 = self.get_user1()
+        shared_space = self.create_shared_space()
+        query_url = self.user_base_url + '/quota/' + shared_space['quotaUuid']
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+
 if __name__ == '__main__':
     unittest.main()
