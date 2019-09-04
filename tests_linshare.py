@@ -1552,5 +1552,108 @@ class TestFindQuota(TestCase):
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
 
 
+class TestAdminWorkGroupPattern (TestCase):
+    """"Test admin API workGroup pattern """
+
+    def find_model(self):
+        """Test admin find all models"""
+        query_url = self.base_url + '/group_patterns/models'
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", req.json())
+        return data
+
+    def test_workGroup_pattern_create(self):
+        """Trying to create a workGroup pattern as an admin"""
+        pattern_model = self.find_model()
+        query_url = self.base_url + '/group_patterns'
+        payload = {
+            'label':'workGroupPatternTest',
+            'description': pattern_model[0]['description'],
+            'searchAllGroupsQuery': pattern_model[0]['searchAllGroupsQuery'],
+            'searchGroupQuery': pattern_model[0]['searchGroupQuery'],
+            'groupName': pattern_model[0]['groupName'],
+            'groupMember': pattern_model[0]['groupMember'],
+            'groupPrefix': pattern_model[0]['groupPrefix'],
+            'memberFirstName': pattern_model[0]['memberFirstName'],
+            'memberLastName': pattern_model[0]['memberLastName'],
+            'memberMail': pattern_model[0]['memberMail'],
+            'searchPageSize': pattern_model[0]['searchPageSize']
+        }
+        data = self.request_post(query_url, payload)
+        self.assertEqual(data['label'],"workGroupPatternTest")
+        return data
+
+    def test_delete_work_group_pattern(self):
+        """Test admin API create and delete work_group_pattern."""
+        work_group_pattern = self.test_workGroup_pattern_create()
+        query_url = self.base_url + '/group_patterns/' + work_group_pattern['uuid']
+        req = requests.delete(
+            query_url,
+            headers = self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        return data
+
+    def test_update_work_group_pattern(self):
+        """Test admin API create and update a work_group_pattern."""
+        work_group_pattern = self.test_workGroup_pattern_create()
+        query_url = self.base_url + '/group_patterns/' + work_group_pattern['uuid']
+        payload = {
+            'label':'updateTestDescription',
+            'description': work_group_pattern['description'],
+            'searchAllGroupsQuery': work_group_pattern['searchAllGroupsQuery'],
+            'searchGroupQuery': work_group_pattern['searchGroupQuery'],
+            'groupName': work_group_pattern['groupName'],
+            'groupMember': work_group_pattern['groupMember'],
+            'groupPrefix': work_group_pattern['groupPrefix'],
+            'memberFirstName': work_group_pattern['memberFirstName'],
+            'memberLastName': work_group_pattern['memberLastName'],
+            'memberMail': work_group_pattern['memberMail'],
+            'searchPageSize': work_group_pattern['searchPageSize']
+        }
+        data = self.request_put(query_url, payload)
+        self.assertEqual(data['label'],"updateTestDescription")
+        return data
+
+    def test_find_workGroup_pattern(self):
+        """Test admin create and find a workGroup_pattern."""
+        work_group_pattern = self.test_workGroup_pattern_create()
+        query_url = self.base_url + '/group_patterns/' + work_group_pattern['uuid']
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual(data['label'],"workGroupPatternTest")
+        LOGGER.debug("data : %s", req.json())
+
+    def test_find_all_workGroup_pattern(self):
+        """Test admin find all workGroup_pattern."""
+        query_url = self.base_url + '/group_patterns'
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", req.json())
+
+
 if __name__ == '__main__':
     unittest.main()
