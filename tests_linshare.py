@@ -148,6 +148,20 @@ class TestCase(unittest.TestCase):
         data = req.json()
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
+    
+    def request_patch(self, query_url, payload):
+        req = requests.patch(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
 
 
 class TestAdminApiJwt(TestCase):
@@ -1120,6 +1134,19 @@ class TestUserApiSharedSpace(TestCase):
         }
         data = self.request_put(self.base_url, payload)
         self.assertEqual(data['name'], 'Update_shared_space_Name')
+        return data
+    
+        
+    def test_patch_shared_space_node(self):
+        """Test create and update a shared space node."""
+        folder = self.create_shared_space_node();
+        query_url = self.user_base_url + '/shared_space_nodes/' + folder['uuid']
+        payload = {
+            "name": "name",
+            "value": "renamed_node"
+        }
+        data = self.request_patch(query_url, payload)
+        self.assertEqual(data['name'], "renamed_node")
         return data
 
     def test_shared_space_delete(self):
