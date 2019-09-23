@@ -1372,17 +1372,16 @@ class TestUserApiSharedSpaceMembers(TestCase):
 
 class TestUserApiDrive (TestCase):
     """"Test user API create a shared space (drive) """
-    host = CONFIG['DEFAULT']['host']
-    base_url = host + '/linshare/webservice/rest/user/v2/shared_spaces/'
 
     def test_create_shared_space_drive(self):
-        """Test user API create a shared space fails."""
+        """Test user API create a drive."""
+        query_url = self.user_base_url + '/shared_spaces'
         payload = {
             "name": "Drive_test",
             "nodeType": "DRIVE"
         }
         req = requests.post(
-            self.base_url,
+            query_url,
             data=json.dumps(payload),
             headers=self.headers,
             auth=HTTPBasicAuth(self.email, self.password),
@@ -1391,6 +1390,334 @@ class TestUserApiDrive (TestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
+    def shared_space_delete(self, uuid):
+        """Trying to create and delete a shared_space with no payload"""
+        query_url = self.user_base_url + '/shared_spaces/' + uuid
+        req = requests.delete(
+            query_url,
+            headers = self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        return data
+
+    def test_create_shared_space_member_drive(self):
+        """Test user API create a shared space member."""
+        user1 = self.get_user1()
+        drive = self.test_create_shared_space_drive()
+        query_url = self.user_base_url + '/shared_spaces/' + drive['uuid'] + '/members'
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                "firstName" : user1['firstName'],
+                "lastName" : user1['lastName'],
+                "mail" : user1['mail'],
+                },
+            "role" : {
+                "uuid" : "234be74d-2966-41c1-9dee-e47c8c63c14e",
+                "name" : "ADMIN"
+                },
+            "nestedRole": {
+                "uuid": "234be74d-2966-41c1-9dee-e47c8c63c14e",
+                "name": "ADMIN"
+            },
+            "node" : {
+                "uuid" : drive['uuid'],
+                "name" : drive['name'],
+                "nodeType" : drive['nodeType']
+                },
+            "type" : "DRIVE"
+        }
+        data = self.request_post(query_url, payload)
+        self.assertEqual (data['account']['firstName'],user1['firstName'])
+        self.shared_space_delete(drive['uuid'])
+        return data
+
+    def test_soft_propagate_shared_space_member_role(self):
+        """Test user API create a shared space member."""
+        user1 = self.get_user1()
+        drive = self.test_create_shared_space_drive()
+        """Create a workGroup into the drive."""
+        query_url = self.user_base_url + '/shared_spaces/'
+        payload = {
+            "name": "Workgroup_test",
+            "nodeType": "WORK_GROUP",
+            "parentUuid":drive['uuid']
+        }
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data_workgroup = req.json()
+        """Create a a member into the drive."""
+        query_url = self.user_base_url + '/shared_spaces/' + drive['uuid'] + '/members'
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                "firstName" : user1['firstName'],
+                "lastName" : user1['lastName'],
+                "mail" : user1['mail'],
+                },
+            "role" : {
+                "uuid" : "234be74d-2966-41c1-9dee-e47c8c63c14e",
+                "name" : "ADMIN"
+                },
+            "nestedRole": {
+                "uuid": "234be74d-2966-41c1-9dee-e47c8c63c14e",
+                "name": "ADMIN"
+            },
+            "node" : {
+                "uuid" : drive['uuid'],
+                "name" : drive['name'],
+                "nodeType" : drive['nodeType']
+                },
+            "type" : "DRIVE"
+        }
+        data_member = self.request_post(query_url, payload)
+        self.assertEqual (data_member['account']['firstName'],user1['firstName'])
+        self.assertEqual (data_member['nestedRole']['name'],'ADMIN')
+        """Soft update of a member into the drive."""
+        query_url = self.user_base_url + '/shared_spaces/' + drive['uuid'] + '/members/' + data_member['uuid'] + '?force=false'
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                "firstName" : user1['firstName'],
+                "lastName" : user1['lastName'],
+                "mail" : user1['mail'],
+                },
+            "role" : {
+                "uuid" : "234be74d-2966-41c1-9dee-e47c8c63c14e",
+                "name" : "ADMIN"
+                },
+            "nestedRole": {
+                "uuid": "b206c2ba-37de-491e-8e9c-88ed3be70682",
+                "name": "CONTRIBUTOR"
+            },
+            "node" : {
+                "uuid" : drive['uuid'],
+                "name" : drive['name'],
+                "nodeType" : drive['nodeType']
+                },
+            "type" : "DRIVE"
+        }
+        data_member = self.request_put(query_url, payload)
+        self.assertEqual (data_member['account']['firstName'],user1['firstName'])
+        self.assertEqual (data_member['nestedRole']['name'],'CONTRIBUTOR')
+        """Check the new created member into the nested workgroup."""
+        query_url = self.user_base_url + '/shared_spaces?withRole=TRUE'
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.assertTrue(data[0]['role']['name'], 'ADMIN')
+        self.shared_space_delete(drive['uuid'])
+        return data
+
+    def test_force_propagate_shared_space_member_role(self):
+        """Test user API create a shared space member."""
+        user1 = self.get_user1()
+        drive = self.test_create_shared_space_drive()
+        """Create a workGroup into the drive."""
+        query_url = self.user_base_url + '/shared_spaces/'
+        payload = {
+            "name": "Workgroup_test",
+            "nodeType": "WORK_GROUP",
+            "parentUuid":drive['uuid']
+        }
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data_workgroup = req.json()
+        """Create a a member into the drive."""
+        query_url = self.user_base_url + '/shared_spaces/' + drive['uuid'] + '/members'
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                "firstName" : user1['firstName'],
+                "lastName" : user1['lastName'],
+                "mail" : user1['mail'],
+                },
+            "role" : {
+                "uuid" : "234be74d-2966-41c1-9dee-e47c8c63c14e",
+                "name" : "ADMIN"
+                },
+            "nestedRole": {
+                "uuid": "234be74d-2966-41c1-9dee-e47c8c63c14e",
+                "name": "ADMIN"
+            },
+            "node" : {
+                "uuid" : drive['uuid'],
+                "name" : drive['name'],
+                "nodeType" : drive['nodeType']
+                },
+            "type" : "DRIVE"
+        }
+        data_member = self.request_post(query_url, payload)
+        self.assertEqual (data_member['account']['firstName'],user1['firstName'])
+        self.assertEqual (data_member['nestedRole']['name'],'ADMIN')
+        """Soft update of a member into the drive."""
+        query_url = self.user_base_url + '/shared_spaces/' + drive['uuid'] + '/members/' + data_member['uuid'] + '?force=true'
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                "firstName" : user1['firstName'],
+                "lastName" : user1['lastName'],
+                "mail" : user1['mail'],
+                },
+            "role" : {
+                "uuid" : "234be74d-2966-41c1-9dee-e47c8c63c14e",
+                "name" : "ADMIN"
+                },
+            "nestedRole": {
+                "uuid": "b206c2ba-37de-491e-8e9c-88ed3be70682",
+                "name": "CONTRIBUTOR"
+            },
+            "node" : {
+                "uuid" : drive['uuid'],
+                "name" : drive['name'],
+                "nodeType" : drive['nodeType']
+                },
+            "type" : "DRIVE"
+        }
+        data_member = self.request_put(query_url, payload)
+        self.assertEqual (data_member['account']['firstName'],user1['firstName'])
+        self.assertEqual (data_member['nestedRole']['name'],'CONTRIBUTOR')
+        """Check the new created member into the nested workgroup."""
+        query_url = self.user_base_url + '/shared_spaces?withRole=TRUE'
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.assertTrue(data[0]['role']['name'], 'CONTRIBUTOR')
+        self.shared_space_delete(drive['uuid'])
+        return data
+
+    def test_propagate_shared_space_member_drive(self):
+        """Test user API create a shared space member."""
+        user1 = self.get_user1()
+        drive = self.test_create_shared_space_drive()
+        """Create a workGroup into the drive."""
+        query_url = self.user_base_url + '/shared_spaces/'
+        payload = {
+            "name": "Workgroup_test",
+            "nodeType": "WORK_GROUP",
+            "parentUuid":drive['uuid']
+        }
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data_workgroup = req.json()
+        """Create new member into the drive."""
+        query_url = self.user_base_url + '/shared_spaces/' + drive['uuid'] + '/members'
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                "firstName" : user1['firstName'],
+                "lastName" : user1['lastName'],
+                "mail" : user1['mail'],
+                },
+            "nested" : False,
+            "role" : {
+                "uuid" : "234be74d-2966-41c1-9dee-e47c8c63c14e",
+                "name" : "ADMIN"
+                },
+            "nestedRole": {
+                "uuid": "234be74d-2966-41c1-9dee-e47c8c63c14e",
+                "name": "ADMIN"
+            },
+            "node" : {
+                "uuid" : drive['uuid'],
+                "name" : drive['name'],
+                "nodeType" : drive['nodeType']
+                },
+            "type" : "DRIVE"
+        }
+        data_member = self.request_post(query_url, payload)
+        self.assertEqual (data_member['account']['firstName'],user1['firstName'])
+        """Check the new created member into the nested workgroup."""
+        query_url = self.user_base_url + '/shared_spaces/' +  data_workgroup['uuid'] + '/members?accountUuid=' +data_member['account']['uuid']
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.shared_space_delete(drive['uuid'])
+        return data
+
+    def test_find_all_shared_spaces_members_drive(self):
+        """Test user find all shared spaces members."""
+        drive = self.test_create_shared_space_drive()
+        query_url = self.user_base_url + '/shared_spaces/' + drive['uuid'] + '/members'
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.shared_space_delete(drive['uuid'])
+        LOGGER.debug("data : %s", req.json())
+
+    def test_create_work_group_into_drive(self):
+        """Test user API create a workgroup into drive."""
+        drive = self.test_create_shared_space_drive()
+        query_url = self.user_base_url + '/shared_spaces/'
+        payload = {
+            "name": "Workgroup_test",
+            "nodeType": "WORK_GROUP",
+            "parentUuid":drive['uuid']
+        }
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual (data['name'],"Workgroup_test")
+        self.assertEqual (data['parentUuid'],drive['uuid'])
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
 
