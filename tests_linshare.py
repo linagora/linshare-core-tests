@@ -230,7 +230,12 @@ class TestAdminApiJwt(TestCase):
         }
         data = self.request_post(query_url, payload)
         uuid = data['uuid']
-        data = self.request_delete(query_url + '/' + uuid)
+        req = requests.delete(
+            query_url + '/' + uuid,
+            data=json.dumps(None),
+            headers = self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
         self.assertEqual(data['domain']['uuid'], user1['domain'])
         self.assertEqual(data['actor']['uuid'], user1['uuid'])
         self.assertEqual(data['label'], 'test_label_for_delete')
