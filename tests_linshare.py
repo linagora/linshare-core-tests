@@ -15,7 +15,7 @@ from requests_toolbelt.utils import dump
 from requests_toolbelt import (MultipartEncoder, MultipartEncoderMonitor)
 from clint.textui.progress import Bar as ProgressBar
 
-
+# Import the global configuration
 CONFIG = configparser.ConfigParser()
 CONFIG.read('linshare.admin.ini')
 DEBUG = False
@@ -32,6 +32,9 @@ else:
     logging.basicConfig()
 LOGGER = logging.getLogger()
 
+# Import the configuration related to LinShare user API 
+CONFIG_USER = configparser.ConfigParser()
+CONFIG_USER.read('linshare.user.ini')
 
 def create_callback(encoder):
     """TODO"""
@@ -47,10 +50,8 @@ class TestCase(unittest.TestCase):
 
     host = CONFIG['DEFAULT']['host']
     base_url = host + '/linshare/webservice/rest/admin'
-    user_base_url = host + '/linshare/webservice/rest/user/v2'
-    user1_email = CONFIG['DEFAULT']['user1_email']
-    user1_password = CONFIG['DEFAULT']['user1_password']
     email = CONFIG['DEFAULT']['email']
+    user1_email = CONFIG['DEFAULT']['user1_email']
     verify = not NO_VERIFY
     password = CONFIG['DEFAULT']['password']
     headers = {
@@ -163,6 +164,13 @@ class TestCase(unittest.TestCase):
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
 
+
+class UserTestCase(TestCase):
+    user_host = CONFIG_USER['DEFAULT']['user_host']
+    user_base_url = user_host + '/linshare/webservice/rest/user/v2'
+    user_email = CONFIG_USER['DEFAULT']['user_email']
+    user_password = CONFIG_USER['DEFAULT']['user_password']
+    
 
 class TestAdminApiJwt(TestCase):
     """Test admin api"""
