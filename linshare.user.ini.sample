@@ -2,6 +2,6 @@
 # You need to create your  user.ini file and configure it on your need 
 
 [DEFAULT]
-user_host=https://user.linshare.local
-user_email=amy.wolsh@int6.linshare.dev
-user_password=secret
+host=https://user.linshare.local
+email=amy.wolsh@int6.linshare.dev
+password=secret
