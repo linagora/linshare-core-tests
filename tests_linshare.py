@@ -247,7 +247,70 @@ class UserTestCase(TestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
         return req.json()
-        
+
+    def request_post(self, query_url, payload):
+        """Do POST request"""
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+    
+    def request_delete(self, query_url, payload=None):
+        """Do POST request"""
+        data = None
+        if payload:
+            data = json.dumps(payload),
+        req = requests.delete(
+            query_url,
+            data=data,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+    
+    def request_patch(self, query_url, payload):
+        req = requests.patch(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
+
+    def request_put(self, query_url, payload):
+        """Do PUT request"""
+        req = requests.put(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+                
 class TestAdminApiJwt(TestCase):
     """Test admin api"""
 
@@ -975,10 +1038,8 @@ class TestUserApiContactList(TestCase):
         LOGGER.debug("data : %s", req.json())
 
 
-class TestUserApiSharedSpaceNode(TestCase):
+class TestUserApiSharedSpaceNode(UserTestCase):
     """Test User api sharedSpaceNode"""
-    host = CONFIG['DEFAULT']['host']
-    base_url = host + '/linshare/webservice/rest/user/v2'
 
     def create_shared_space(self):
         """Test user API create a shared space."""
@@ -994,7 +1055,7 @@ class TestUserApiSharedSpaceNode(TestCase):
     def create_shared_space_node(self):
         """Test user API create a shared space node."""
         workgroup = self.create_shared_space()
-        query_url = self.base_url + workgroup['uuid'] + '/nodes'
+        query_url = self.base_url + '/shared_spaces/' +workgroup['uuid'] + '/nodes'
         payload = {
             "name": "FOLDER_test",
             "type": "FOLDER"
@@ -1098,7 +1159,7 @@ class TestUserApiSharedSpaceNode(TestCase):
     def test_patch_shared_space_node(self):
         """Test create and update a shared space node."""
         folder = self.create_shared_space_node();
-        query_url = self.user_base_url + '/shared_space_nodes/' + folder['uuid']
+        query_url = self.base_url + '/shared_spaces/' + folder['workGroup']
         payload = {
             "name": "name",
             "value": "renamed_node"
@@ -1110,7 +1171,7 @@ class TestUserApiSharedSpaceNode(TestCase):
     def test_find_specific_shared_spaces_audit(self):
         """Test user find all shared space."""
         folder = self.create_shared_space_node();
-        query_url = self.base_url + folder['workGroup'] + "/audits" +"?nodeUuid=" + folder['uuid']
+        query_url = self.base_url + '/shared_spaces/'+ folder['workGroup'] +'/nodes/'+ folder['uuid'] + '/audit'
         req = requests.get(
             query_url,
             headers={'Accept': 'application/json'},
@@ -1246,7 +1307,7 @@ class TestUserApiSharedSpace(UserTestCase):
         return data
         
     def test_shared_space_delete(self):
-        """Trying to create and delete a shared_space"""
+        """Trying to create and delete a shared_space WORKGROUP"""
         shared_space = self.test_create_shared_space();
         query_url = self.base_url + '/shared_spaces'
         payload = {
@@ -1269,7 +1330,7 @@ class TestUserApiSharedSpace(UserTestCase):
         return data
 
     def test_shared_space_delete_no_payload(self):
-        """Trying to create and delete a shared_space with no payload"""
+        """Trying to create and delete a shared_space WORKGROUP with no payload"""
         shared_space = self.test_create_shared_space();
         query_url = self.base_url +'/shared_spaces/'+ shared_space['uuid']
         req = requests.delete(
@@ -1329,8 +1390,69 @@ class TestUserApiSharedSpace(UserTestCase):
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
 
+    def test_create_shared_space_member_workgroup_explicit_type(self):
+        """ Test user API add a member to a WORKGROUP """
+        user1 = self.get_user1()
+        workgroup = self.test_create_shared_space()
+        query_url = '{base_url}/shared_spaces/{workgroupUuid}/members'.format_map({
+            'base_url': self.base_url,
+            'workgroupUuid': workgroup['uuid']
+            })
+        role = self.getRole('READER')
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                },
+            "role" : {
+                "uuid" : role['uuid'],
+                },
+            "node" : {
+                "uuid" : workgroup['uuid'],
+                "name" : workgroup['name'],
+                "nodeType" : workgroup['nodeType']
+                },
+            "type" : "WORK_GROUP"
+            }
+        request = requests.post(
+            query_url,
+            json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        self.assertEqual(request.status_code, 200, "FAILED")
+        
+    def test_create_shared_space_member_workgroup_implicit_type(self):
+        """ Test user API add a member to a WORKGROUP """
+        user1 = self.get_user1()
+        workgroup = self.test_create_shared_space()
+        query_url = '{base_url}/shared_spaces/{workgroupUuid}/members'.format_map({
+            'base_url': self.base_url,
+            'workgroupUuid': workgroup['uuid']
+            })
+        role = self.getRole('READER')
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                },
+            "role" : {
+                "uuid" : role['uuid'],
+                },
+            "node" : {
+                "uuid" : workgroup['uuid'],
+                "name" : workgroup['name'],
+                "nodeType" : workgroup['nodeType']
+                },
+            }
+        request = requests.post(
+            query_url,
+            json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        self.assertEqual(request.status_code, 200, "FAILED")          
+            
     def test_create_shared_space_member_drive(self):
-        """Test user API create a shared space member."""
+        """Test user API add a shared space member into a DRIVE"""
         nestedRole = self.getRole('ADMIN')
         role = self.getRole('DRIVE_ADMIN')
         drive = self.test_create_shared_space_drive()
