@@ -1055,7 +1055,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
     def create_shared_space_node(self):
         """Test user API create a shared space node."""
         workgroup = self.create_shared_space()
-        query_url = self.base_url + '/shared_spaces/' +workgroup['uuid'] + '/nodes'
+        query_url = self.base_url + '/shared_spaces/' + workgroup['uuid'] + '/nodes'
         payload = {
             "name": "FOLDER_test",
             "type": "FOLDER"
@@ -1188,7 +1188,7 @@ class TestUserApiSharedSpace(UserTestCase):
     This API is responsible of Drive and Workgroups management
     """
         
-    def test_create_shared_space(self):
+    def test_create_shared_space_Wg(self):
         """Test user API create a shared space WORKGROUP."""
         query_url = self.base_url + '/shared_spaces'
         payload = {
@@ -1205,9 +1205,9 @@ class TestUserApiSharedSpace(UserTestCase):
         LOGGER.debug("result : %s", data)
         return data
     
-    def test_find_shared_space(self):
+    def test_find_shared_space_Wg(self):
         """"Test user find a shared space WORKGROUP"""
-        workgroup = self.test_create_shared_space();
+        workgroup = self.test_create_shared_space_Wg();
         query_url = self.base_url + '/shared_spaces/' + workgroup['uuid']
         req = requests.get(
             query_url,
@@ -1224,7 +1224,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_find_shared_space_quota(self):
         """"Test user find shared space WORKGROUP quota"""
-        workgroup = self.test_create_shared_space();
+        workgroup = self.test_create_shared_space_Wg();
         query_url = self.base_url + '/quota/' + workgroup['quotaUuid']
         req = requests.get(
             query_url,
@@ -1262,7 +1262,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_update_shared_space_with_uuid_path(self):
         """Test create and update a shared space."""
-        shared_space = self.test_create_shared_space();
+        shared_space = self.test_create_shared_space_Wg();
         query_url = self.base_url + '/shared_spaces/' + shared_space['uuid']
         payload = {
             "name": "Update_shared_space_Name",
@@ -1285,7 +1285,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_update_shared_space_without_uuid_path(self):
         """Test create and update a shared space."""
-        shared_space = self.test_create_shared_space();
+        shared_space = self.test_create_shared_space_Wg();
         query_url = self.base_url + '/shared_spaces'
         payload = {
             "name": "Update_shared_space_Name",
@@ -1308,7 +1308,7 @@ class TestUserApiSharedSpace(UserTestCase):
         
     def test_shared_space_delete(self):
         """Trying to create and delete a shared_space WORKGROUP"""
-        shared_space = self.test_create_shared_space();
+        shared_space = self.test_create_shared_space_Wg();
         query_url = self.base_url + '/shared_spaces'
         payload = {
             "name": "workgroup_test",
@@ -1331,7 +1331,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_shared_space_delete_no_payload(self):
         """Trying to create and delete a shared_space WORKGROUP with no payload"""
-        shared_space = self.test_create_shared_space();
+        shared_space = self.test_create_shared_space_Wg();
         query_url = self.base_url +'/shared_spaces/'+ shared_space['uuid']
         req = requests.delete(
             query_url,
@@ -1358,7 +1358,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_find_all_shared_spaces_audit(self):
         """Test user find all shared space audit."""
-        shared_space = self.test_create_shared_space();
+        shared_space = self.test_create_shared_space_Wg();
         query_url = self.base_url + '/shared_spaces/' + shared_space['uuid'] + "/audit"
         req = requests.get(
             query_url,
@@ -1393,7 +1393,7 @@ class TestUserApiSharedSpace(UserTestCase):
     def test_create_shared_space_member_workgroup_explicit_type(self):
         """ Test user API add a member to a WORKGROUP """
         user1 = self.get_user1()
-        workgroup = self.test_create_shared_space()
+        workgroup = self.test_create_shared_space_Wg()
         query_url = '{base_url}/shared_spaces/{workgroupUuid}/members'.format_map({
             'base_url': self.base_url,
             'workgroupUuid': workgroup['uuid']
@@ -1424,7 +1424,7 @@ class TestUserApiSharedSpace(UserTestCase):
     def test_create_shared_space_member_workgroup_implicit_type(self):
         """ Test user API add a member to a WORKGROUP """
         user1 = self.get_user1()
-        workgroup = self.test_create_shared_space()
+        workgroup = self.test_create_shared_space_Wg()
         query_url = '{base_url}/shared_spaces/{workgroupUuid}/members'.format_map({
             'base_url': self.base_url,
             'workgroupUuid': workgroup['uuid']
@@ -1800,27 +1800,11 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual (data['parentUuid'],drive['uuid'])
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
-        
-
-class TestUserApiSharedSpaceMembers(TestCase):
-    """Test User api sharedSpace"""
-    host = CONFIG['DEFAULT']['host']
-
-    def test_create_shared_space(self):
-        """Test user API create a shared space."""
-        base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
-        payload = {
-            "name": "workgroup_test",
-            "nodeType": "WORK_GROUP"
-        }
-        data = self.request_post(base_url, payload)
-        self.assertEqual(data['name'], 'workgroup_test')
-        return data
-
+   
     def test_create_shared_space_member(self):
         """Test user API create a shared space member."""
         user1 = self.get_user1()
-        shared_space = self.test_create_shared_space();
+        shared_space = self.test_create_shared_space_Wg();
         base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
         query_url = base_url + shared_space['uuid'] + "/members"
         payload = {
@@ -1843,37 +1827,22 @@ class TestUserApiSharedSpaceMembers(TestCase):
         data = self.request_post(query_url, payload)
         self.assertEqual (data['account']['firstName'],user1['firstName'])
         return data
-
-    def test_update_shared_space_member(self):
-        """Test user API create a shared space member."""
-        shared_space_member = self.test_create_shared_space_member();
-        base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
-        query_url = base_url + shared_space_member['node']['uuid'] + "/members/" +shared_space_member['uuid']
-        payload = {
-            "account" : shared_space_member['account'],
-            "role" : {
-                "uuid" : "4ccbed61-71da-42a0-a513-92211953ac95",
-                "name" : "READER"
-                },
-            "node" : shared_space_member['node'],
-        }
-        data = self.request_put(query_url, payload)
-        self.assertEqual (data['role']['name'],'READER')
-        return data
-
+     
     def test_delete_shared_space_member(self):
-        """Test user API create a shared space member."""
+        """Test user API delete a shared space member from a WORKGROUP."""
         shared_space_member = self.test_create_shared_space_member();
-        base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
-        query_url = base_url + shared_space_member['node']['uuid'] + "/members/"
+        query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
+            'base_url': self.base_url,
+            'nodeUuid' : shared_space_member['node']['uuid'],
+            'memberUuid': shared_space_member['uuid']
+            })
         payload = {
             "account" : shared_space_member['account'],
             "role" : {
                 "uuid" : "4ccbed61-71da-42a0-a513-92211953ac95",
                 "name" : "READER"
                 },
-            "node" : shared_space_member['node'],
-            "uuid":shared_space_member['uuid']
+            "node" : shared_space_member['node']
         }
         req = requests.delete(
             query_url,
@@ -1885,12 +1854,16 @@ class TestUserApiSharedSpaceMembers(TestCase):
         data = req.json()
         self.assertEqual (data['account']['firstName'],shared_space_member['account']['firstName'])
         return data
-
+    
     def test_delete_shared_space_member_no_payload(self):
         """Test user API create a shared space member."""
         shared_space_member = self.test_create_shared_space_member();
-        base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
-        query_url = base_url + shared_space_member['node']['uuid'] + "/members/" + shared_space_member['uuid']
+        #query_url = self.base_url + '/' + shared_space_member['node']['uuid'] + "/members/" + 
+        query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
+            'base_url': self.base_url,
+            'nodeUuid' : shared_space_member['node']['uuid'],
+            'memberUuid': shared_space_member['uuid']
+            })
         req = requests.delete(
             query_url,
             headers = self.headers,
@@ -1920,7 +1893,7 @@ class TestUserApiSharedSpaceMembers(TestCase):
 
     def test_find_all_shared_spaces_members(self):
         """Test user find all shared spaces members."""
-        shared_space = self.test_create_shared_space();
+        shared_space = self.test_create_shared_space_Wg();
         base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
         query_url = base_url + shared_space['uuid'] + "/members"
         req = requests.get(
@@ -1932,6 +1905,29 @@ class TestUserApiSharedSpaceMembers(TestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
+        
+    def test_update_shared_space_member(self):
+        """Test user API create a shared space member."""
+        shared_space_member = self.test_create_shared_space_member();
+        query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
+            'base_url': self.base_url,
+            'nodeUuid' : shared_space_member['node']['uuid'],
+            'memberUuid': shared_space_member['uuid']
+            })
+        payload = {
+            "account" : shared_space_member['account'],
+            "role" : {
+                "uuid" : "4ccbed61-71da-42a0-a513-92211953ac95",
+                "name" : "READER"
+                },
+            "node" : shared_space_member['node'],
+        }
+        data = self.request_put(query_url, payload)
+        self.assertEqual (data['role']['name'],'READER')
+        return data    
+    
+class TestUserApiSharedSpaceMembers(UserTestCase):
+    """Test User api sharedSpace Members TO DO : Use SharedSpaceMemberAPI to wirite tests"""
 
 
 class TestUserGuest (TestCase):
