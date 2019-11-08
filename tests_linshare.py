@@ -121,6 +121,7 @@ class AbstractTestCase(unittest.TestCase):
 
 class AdminTestCase(AbstractTestCase):
     """Default test case class"""
+    
     user1_email = CONFIG['DEFAULT']['user1_email']
     user1_password = CONFIG['DEFAULT']['user1_password']
     user_base_url = AbstractTestCase.host + '/linshare/webservice/rest/user/v2'
@@ -248,6 +249,7 @@ class UserTestCase(AbstractTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
         return req.json()
+
 
 class TestAdminApiJwt(AdminTestCase):
     """Test admin api"""
@@ -1863,29 +1865,28 @@ class TestUserApiSharedSpace(UserTestCase):
         data = self.request_put(query_url, payload)
         self.assertEqual (data['role']['name'],'READER')
         return data    
-    
+
+
 class TestUserApiSharedSpaceMembers(UserTestCase):
     """Test User api sharedSpace Members TO DO : Use SharedSpaceMemberAPI to wirite tests"""
 
 
-class TestUserGuest (AdminTestCase):
+class TestUserApiGuest (UserTestCase):
     """"Test user API guests """
     def test_create_guest(self):
         """Test user API create a guest."""
-        user1 = self.get_user1()
         payload = {
-            "domain": user1['domain'],
             "firstName": "bart",
             "lastName": "simpson",
             "mail":"bart.simpson@int1.linshare.dev",
             "restricted":False
         }
-        query_url = self.user_base_url + '/guests'
+        query_url = self.base_url + '/guests'
         req = requests.post(
             query_url,
             data=json.dumps(payload),
             headers=self.headers,
-            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
@@ -1904,18 +1905,18 @@ class TestUserGuest (AdminTestCase):
             "mail":"homer.simpson@int1.linshare.dev",
             "restricted":False
         }
-        query_url = self.user_base_url + '/guests'
+        query_url = self.base_url + '/guests'
         req = requests.post(
             query_url,
             data=json.dumps(payload),
             headers=self.headers,
-            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         data = req.json()
-        query_url = self.user_base_url + '/guests/' + data['uuid']
+        query_url = self.base_url + '/guests/' + data['uuid']
         req = requests.delete(
             query_url,
             headers = self.headers,
@@ -1935,12 +1936,12 @@ class TestUserGuest (AdminTestCase):
             "mail":"lisa.simpson@int1.linshare.dev",
             "restricted":False
         }
-        query_url = self.user_base_url + '/guests'
+        query_url = self.base_url + '/guests'
         req = requests.post(
             query_url,
             data=json.dumps(payload),
             headers=self.headers,
-            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
@@ -1953,12 +1954,12 @@ class TestUserGuest (AdminTestCase):
             "mail":"lisa.simpson@int1.linshare.dev",
             "restricted":False
         }
-        query_url = self.user_base_url + '/guests/' + data['uuid']
+        query_url = self.base_url + '/guests/' + data['uuid']
         req = requests.put(
             query_url,
             data=json.dumps(payload),
             headers=self.headers,
-            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         data = req.json()
         self.assertEqual (data['lastName'],'Updated')
@@ -1974,22 +1975,22 @@ class TestUserGuest (AdminTestCase):
             "mail":"maggie.simpson@int1.linshare.dev",
             "restricted":False
         }
-        query_url = self.user_base_url + '/guests'
+        query_url = self.base_url + '/guests'
         req = requests.post(
             query_url,
             data=json.dumps(payload),
             headers=self.headers,
-            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         data = req.json()
-        query_url = self.user_base_url + '/guests/' + data['uuid']
+        query_url = self.base_url + '/guests/' + data['uuid']
         req = requests.get(
             query_url,
             headers={'Accept': 'application/json'},
-            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify
         )
         data = req.json()
@@ -2001,11 +2002,11 @@ class TestUserGuest (AdminTestCase):
 
     def test_find_all_guests(self):
         """Test user find all guests."""
-        query_url = self.user_base_url + '/guests'
+        query_url = self.base_url + '/guests'
         req = requests.get(
             query_url,
             headers={'Accept': 'application/json'},
-            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
@@ -2025,7 +2026,7 @@ class TestFindQuota(AdminTestCase):
             query_url,
             data=json.dumps(payload),
             headers=self.headers,
-            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            auth=HTTPBasicAuth(self.user1_email, self.password),
             verify=self.verify)
         data = req.json()
         LOGGER.debug("status_code : %s", req.status_code)
@@ -2042,7 +2043,7 @@ class TestFindQuota(AdminTestCase):
         req = requests.get(
             query_url,
             headers={'Accept': 'application/json'},
-            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            auth=HTTPBasicAuth(self.user1_email, self.password),
             verify=self.verify
         )
         data = req.json()
