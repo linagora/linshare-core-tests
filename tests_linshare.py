@@ -45,22 +45,85 @@ def create_callback(encoder):
         bar.show(monitor.bytes_read)
     return callback
 
-
-class TestCase(unittest.TestCase):
-    """Default test case class"""
-
+class AbstractTestCase(unittest.TestCase):
     host = CONFIG['DEFAULT']['host']
     base_url = host + '/linshare/webservice/rest/admin'
-    user_base_url = host + '/linshare/webservice/rest/user/v2'
-    user1_email = CONFIG['DEFAULT']['user1_email']
-    user1_password = CONFIG['DEFAULT']['user1_password']
     email = CONFIG['DEFAULT']['email']
-    verify = not NO_VERIFY
     password = CONFIG['DEFAULT']['password']
+    verify = not NO_VERIFY
     headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
     }
+
+    def request_post(self, query_url, payload):
+        """Do POST request"""
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
+    def request_delete(self, query_url, payload=None):
+        """Do POST request"""
+        data = None
+        if payload:
+            data = json.dumps(payload),
+        req = requests.delete(
+            query_url,
+            data=data,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
+    def request_put(self, query_url, payload):
+        """Do PUT request"""
+        req = requests.put(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
+    def request_patch(self, query_url, payload):
+        req = requests.patch(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
+
+class AdminTestCase(AbstractTestCase):
+    """Default test case class"""
+    user1_email = CONFIG['DEFAULT']['user1_email']
+    user1_password = CONFIG['DEFAULT']['user1_password']
+    user_base_url = AbstractTestCase.host + '/linshare/webservice/rest/user/v2'
 
     def get_user1(self):
         """Return user info for user1"""
@@ -105,70 +168,8 @@ class TestCase(unittest.TestCase):
             self.assertEqual(req.status_code, 200)
             return req.json()
 
-    def request_post(self, query_url, payload):
-        """Do POST request"""
-        req = requests.post(
-            query_url,
-            data=json.dumps(payload),
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        data = req.json()
-        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
-        return data
 
-    def request_delete(self, query_url, payload=None):
-        """Do POST request"""
-        data = None
-        if payload:
-            data = json.dumps(payload),
-        req = requests.delete(
-            query_url,
-            data=data,
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        data = req.json()
-        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
-        return data
-
-    def request_put(self, query_url, payload):
-        """Do PUT request"""
-        req = requests.put(
-            query_url,
-            data=json.dumps(payload),
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        data = req.json()
-        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
-        return data
-    
-    def request_patch(self, query_url, payload):
-        req = requests.patch(
-            query_url,
-            data=json.dumps(payload),
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        data = req.json()
-        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
-        return data
-
-
-class UserTestCase(TestCase):
+class UserTestCase(AbstractTestCase):
     host = CONFIG_USER['DEFAULT']['host']
     base_url = host + '/linshare/webservice/rest/user/v2'
     email = CONFIG_USER['DEFAULT']['email']
@@ -189,10 +190,10 @@ class UserTestCase(TestCase):
     def get_user1(self):
         """Return user info for user1"""
         parameters = {
-            'host': CONFIG['DEFAULT']['host']
+            'host': AbstractTestCase.host
             }
         query_url = '{host}/linshare/webservice/rest/admin/users/search'.format_map(parameters)
-        payload = {"mail": self.user1_email}
+        payload = {"mail": AdminTestCase.user1_email}
         req = requests.post(
             query_url,
             data=json.dumps(payload),
@@ -204,7 +205,7 @@ class UserTestCase(TestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
         if not req.json():
-            LOGGER.error("invalid user email. can't find : %s", self.user1_email)
+            LOGGER.error("invalid user email. can't find : %s", AdminTestCase.user1_email)
             sys.exit(1)
         user1 = req.json()[0]
         query_url = self.base_url + '/users/' + req.json()[0]['uuid']
@@ -248,70 +249,7 @@ class UserTestCase(TestCase):
         LOGGER.debug("data : %s", req.json())
         return req.json()
 
-    def request_post(self, query_url, payload):
-        """Do POST request"""
-        req = requests.post(
-            query_url,
-            data=json.dumps(payload),
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        data = req.json()
-        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
-        return data
-    
-    def request_delete(self, query_url, payload=None):
-        """Do POST request"""
-        data = None
-        if payload:
-            data = json.dumps(payload),
-        req = requests.delete(
-            query_url,
-            data=data,
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        data = req.json()
-        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
-        return data
-    
-    def request_patch(self, query_url, payload):
-        req = requests.patch(
-            query_url,
-            data=json.dumps(payload),
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        data = req.json()
-        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
-        return data
-
-
-    def request_put(self, query_url, payload):
-        """Do PUT request"""
-        req = requests.put(
-            query_url,
-            data=json.dumps(payload),
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        data = req.json()
-        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
-        return data
-                
-class TestAdminApiJwt(TestCase):
+class TestAdminApiJwt(AdminTestCase):
     """Test admin api"""
 
     def test_auth(self):
@@ -405,7 +343,7 @@ class TestAdminApiJwt(TestCase):
         self.assertEqual(data['description'], 'jwt description')
 
 
-class TestUserApiDocuments(TestCase):
+class TestUserApiDocuments(AdminTestCase):
     """Test user api"""
 
     host = CONFIG['DEFAULT']['host']
@@ -476,7 +414,7 @@ class TestUserApiDocuments(TestCase):
         return data
 
 
-class TestMailAttachment(TestCase):
+class TestMailAttachment(AdminTestCase):
 
     def test_mail_attachments_create(self):
         """Trying to create a mail attachment as an admin"""
@@ -753,7 +691,7 @@ class TestMailAttachment(TestCase):
         LOGGER.debug("data : %s", req.json())
 
 
-class TestUserApiDocumentRevision(TestCase):
+class TestUserApiDocumentRevision(AdminTestCase):
     """Test User api"""
 
     host = CONFIG['DEFAULT']['host']
@@ -869,7 +807,7 @@ class TestUserApiDocumentRevision(TestCase):
         LOGGER.debug("data : %s", req.json())
 
 
-class TestUserApiJwtPermanentToken(TestCase):
+class TestUserApiJwtPermanentToken(AdminTestCase):
     """Test User api"""
 
     host = CONFIG['DEFAULT']['host']
@@ -917,7 +855,7 @@ class TestUserApiJwtPermanentToken(TestCase):
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
 
 
-class TestUpdateCanCreateGuest(TestCase):
+class TestUpdateCanCreateGuest(AdminTestCase):
     def test_update_can_create_guest(self):
         """Test update canCreateGuest for user"""
         data = self.get_user1()
@@ -955,7 +893,7 @@ class TestUpdateCanCreateGuest(TestCase):
         self.assertEqual(data['canCreateGuest'], not initCanCreateGuest)
 
 
-class TestUserApiContactList(TestCase):
+class TestUserApiContactList(AdminTestCase):
     """Test User api"""
     host = CONFIG['DEFAULT']['host']
     base_url = host + '/linshare/webservice/rest/user/v2/contact_lists'
@@ -1490,7 +1428,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def shared_space_delete(self, uuid):
         """Trying to create and delete a shared_space with no payload"""
-        query_url = self.user_base_url + '/shared_spaces/' + uuid
+        query_url = self.base_url + '/shared_spaces/' + uuid
         req = requests.delete(
             query_url,
             headers = self.headers,
@@ -1511,7 +1449,7 @@ class TestUserApiSharedSpace(UserTestCase):
         
         """Create a workGroup into the drive."""
         
-        query_url = self.user_base_url + '/shared_spaces/'
+        query_url = self.base_url + '/shared_spaces/'
         payload = {
             "name": "Workgroup_test",
             "nodeType": "WORK_GROUP",
@@ -1562,7 +1500,7 @@ class TestUserApiSharedSpace(UserTestCase):
         """Soft update of a member into the drive."""
 
         query_url = '{base_url}/shared_spaces/{driveUuid}/members/{memberUuid}/?force=false'.format_map({
-            'base_url': self.user_base_url,
+            'base_url': self.base_url,
             'driveUuid': drive['uuid'],
             'memberUuid': data_member['uuid']
         })
@@ -1594,11 +1532,11 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual (data_member['account']['firstName'],user1['firstName'])
         self.assertEqual (data_member['nestedRole']['name'],'CONTRIBUTOR')
         """Check the new created member into the nested workgroup."""
-        query_url = self.user_base_url + '/shared_spaces?withRole=TRUE'
+        query_url = self.base_url + '/shared_spaces?withRole=TRUE'
         req = requests.get(
             query_url,
             headers={'Accept': 'application/json'},
-            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify
         )
         data = req.json()
@@ -1617,7 +1555,7 @@ class TestUserApiSharedSpace(UserTestCase):
         nestedRoleContributor = self.getRole('CONTRIBUTOR')
         role = self.getRole('DRIVE_ADMIN')
         """Create a workGroup into the drive."""
-        query_url = self.user_base_url + '/shared_spaces/'
+        query_url = self.base_url + '/shared_spaces/'
         payload = {
             "name": "Workgroup_test",
             "nodeType": "WORK_GROUP",
@@ -1634,7 +1572,7 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual(req.status_code, 200)
         data_workgroup = req.json()
         """Create a a member into the drive."""
-        query_url = self.user_base_url + '/shared_spaces/' + drive['uuid'] + '/members'
+        query_url = self.base_url + '/shared_spaces/' + drive['uuid'] + '/members'
         payload = {
             "account" : {
                 "uuid" : user1['uuid'],
@@ -1659,7 +1597,7 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual (data_member['account']['firstName'],user1['firstName'])
         self.assertEqual (data_member['nestedRole']['name'],'ADMIN')
         """Soft update of a member into the drive."""
-        query_url = self.user_base_url + '/shared_spaces/' + drive['uuid'] + '/members/' + data_member['uuid'] + '?force=true'
+        query_url = self.base_url + '/shared_spaces/' + drive['uuid'] + '/members/' + data_member['uuid'] + '?force=true'
         payload = {
             "account" : {
                 "uuid" : user1['uuid'],
@@ -1684,11 +1622,11 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual (data_member['account']['firstName'],user1['firstName'])
         self.assertEqual (data_member['nestedRole']['name'],'CONTRIBUTOR')
         """Check the new created member into the nested workgroup."""
-        query_url = self.user_base_url + '/shared_spaces?withRole=TRUE'
+        query_url = self.base_url + '/shared_spaces?withRole=TRUE'
         req = requests.get(
             query_url,
             headers={'Accept': 'application/json'},
-            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify
         )
         data = req.json()
@@ -1706,7 +1644,7 @@ class TestUserApiSharedSpace(UserTestCase):
         nestedRole = self.getRole('ADMIN')
         role = self.getRole('DRIVE_ADMIN')
         """Create a workGroup into the drive."""
-        query_url = self.user_base_url + '/shared_spaces/'
+        query_url = self.base_url + '/shared_spaces/'
         payload = {
             "name": "Workgroup_test",
             "nodeType": "WORK_GROUP",
@@ -1723,7 +1661,7 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual(req.status_code, 200)
         data_workgroup = req.json()
         """Create new member into the drive."""
-        query_url = self.user_base_url + '/shared_spaces/' + drive['uuid'] + '/members'
+        query_url = self.base_url + '/shared_spaces/' + drive['uuid'] + '/members'
         payload = {
             "account" : {
                 "uuid" : user1['uuid'],
@@ -1748,11 +1686,11 @@ class TestUserApiSharedSpace(UserTestCase):
         data_member = self.request_post(query_url, payload)
         self.assertEqual (data_member['account']['firstName'],user1['firstName'])
         """Check the new created member into the nested workgroup."""
-        query_url = self.user_base_url + '/shared_spaces/' +  data_workgroup['uuid'] + '/members?accountUuid=' +data_member['account']['uuid']
+        query_url = self.base_url + '/shared_spaces/' +  data_workgroup['uuid'] + '/members?accountUuid=' +data_member['account']['uuid']
         req = requests.get(
             query_url,
             headers={'Accept': 'application/json'},
-            auth=HTTPBasicAuth(self.user1_email, self.user1_password),
+            auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify
         )
         data = req.json()
@@ -1765,7 +1703,7 @@ class TestUserApiSharedSpace(UserTestCase):
     def test_find_all_shared_spaces_members_drive(self):
         """Test user find all shared spaces members."""
         drive = self.test_create_shared_space_drive()
-        query_url = self.user_base_url + '/shared_spaces/' + drive['uuid'] + '/members'
+        query_url = self.base_url + '/shared_spaces/' + drive['uuid'] + '/members'
         req = requests.get(
             query_url,
             headers={'Accept': 'application/json'},
@@ -1780,7 +1718,7 @@ class TestUserApiSharedSpace(UserTestCase):
     def test_create_work_group_into_drive(self):
         """Test user API create a workgroup into drive."""
         drive = self.test_create_shared_space_drive()
-        query_url = self.user_base_url + '/shared_spaces/'
+        query_url = self.base_url + '/shared_spaces/'
         payload = {
             "name": "Workgroup_test",
             "nodeType": "WORK_GROUP",
@@ -1930,7 +1868,7 @@ class TestUserApiSharedSpaceMembers(UserTestCase):
     """Test User api sharedSpace Members TO DO : Use SharedSpaceMemberAPI to wirite tests"""
 
 
-class TestUserGuest (TestCase):
+class TestUserGuest (AdminTestCase):
     """"Test user API guests """
     def test_create_guest(self):
         """Test user API create a guest."""
@@ -2075,7 +2013,7 @@ class TestUserGuest (TestCase):
         LOGGER.debug("data : %s", req.json())
 
 
-class TestFindQuota(TestCase):
+class TestFindQuota(AdminTestCase):
     def create_shared_space(self):
         """Test user create a shared space."""
         query_url = self.user_base_url + '/shared_spaces'
@@ -2114,7 +2052,7 @@ class TestFindQuota(TestCase):
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
 
 
-class TestAdminWorkGroupPattern (TestCase):
+class TestAdminWorkGroupPattern (AdminTestCase):
     """"Test admin API workGroup pattern """
 
     def find_model(self):
