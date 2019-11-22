@@ -2155,6 +2155,314 @@ class TestAdminWorkGroupPattern (AdminTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
 
+class TestUserApiUploadRequestGroup(UserTestCase):
+    """"Test user API upload request group """
+    def test_create_upload_request_group(self):
+        """"Test create upload request group"""
+        query_url = '{base_url}/upload_request_groups'.format_map({
+            'base_url': self.base_url
+            })
+        payload = {
+            "label": "upload request group",
+            "canDelete":True,
+            "canClose":True,
+            "contactList":["peter.wilson@int6.linshare.dev"],
+            "body":"test body",
+            "enableNotification":False,
+            "dirty":False
+       }
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual (data['label'],"upload request group")
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
+    def test_create_upload_request_group_grouped_mode_true(self):
+        """"Test create upload request group with grouped mode true"""
+        query_url = '{base_url}/upload_request_groups?groupMode={groupMode}'.format_map({
+            'base_url': self.base_url,
+            'groupMode' : 'true'
+            })
+        payload = {
+            "label": "upload request group",
+            "canDelete":True,
+            "canClose":True,
+            "contactList":["peter.wilson@int6.linshare.dev", "walker.mccallister@int6.linshare.dev", "felton.gumper@int6.linshare.dev"],
+            "body":"test body",
+            "enableNotification":False,
+            "dirty":False
+       }
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual (data['label'],"upload request group")
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : data['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.assertEqual(len(data), 1)
+        return data
+
+    def test_create_upload_request_group_grouped_mode_false(self):
+        """"Test create upload request group with grouped mode false"""
+        query_url = '{base_url}/upload_request_groups?groupMode={groupMode}'.format_map({
+            'base_url': self.base_url,
+            'groupMode' : 'false'
+            })
+        payload = {
+            "label": "upload request group",
+            "canDelete":True,
+            "canClose":True,
+            "contactList":["peter.wilson@int6.linshare.dev", "walker.mccallister@int6.linshare.dev", "felton.gumper@int6.linshare.dev"],
+            "body":"test body",
+            "enableNotification":False,
+            "dirty":False
+       }
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual (data['label'],"upload request group")
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : data['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.assertEqual(len(data), 3)
+        return data
+
+    def test_find_upload_request_group(self):
+        """"Test find upload request group"""
+        upload_request_group = self.test_create_upload_request_group();
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        self.assertEqual (data['label'], upload_request_group['label'])
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_find_all_upload_request_group(self):
+        """"Test findAll upload request group"""
+        query_url = '{base_url}/upload_request_groups'.format_map({
+            'base_url': self.base_url,
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_find_all_upload_requests_of_URG(self):
+        """"Test findAll upload requests of an upload request group"""
+        upload_request_group = self.test_create_upload_request_group();
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_find_all_closed_upload_requests_of_URG(self):
+        """"Test findAll closed upload requests of an upload request group"""
+        upload_request_group = self.test_create_upload_request_group();
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests?status = {status}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : upload_request_group['uuid'],
+            'status' : 'CLOSED'
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_find_all_closed_upload_requests_group(self):
+        """"Test findAll closed upload request group"""
+        query_url = '{base_url}/upload_request_groups?status = {status}'.format_map({
+            'base_url': self.base_url,
+            'status' : 'CLOSED'
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_find_all_audits_of_URG(self):
+        """"Test findAll audits of an upload request group"""
+        upload_request_group = self.test_create_upload_request_group();
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/audit'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        data = req.json()
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+
+    def test_update_status_URG(self):
+        """Test create and update status of an upload request group."""
+        upload_request_group = self.test_create_upload_request_group();
+        self.assertEqual(upload_request_group['status'], 'ENABLED')
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/status/{status}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : upload_request_group['uuid'],
+            'status' : 'CLOSED'
+            })
+        req = requests.put(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual(data['status'], 'CLOSED')
+        return data
+
+    def test_update_upload_request_group(self):
+        """Test create and update a upload request group."""
+        upload_request_group = self.test_create_upload_request_group();
+        self.assertEqual(upload_request_group['enableNotification'], False)
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        payload = {
+            "label": upload_request_group['label'],
+            "canDelete":upload_request_group['canDelete'],
+            "canClose":upload_request_group['canClose'],
+            "body":upload_request_group['body'],
+            "enableNotification":True
+       }
+        req = requests.put(
+            query_url,
+            json.dumps(payload),
+            headers= self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual(data['enableNotification'], True)
+        return data
+
+    def test_add_recipient_upload_request_group(self):
+        """Test create upload request group and add a new recipient."""
+        upload_request_group = self.test_create_upload_request_group();
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/recipients'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        payload = [
+                {
+                "firstName": "walker",
+                "lastName": "mccallister",
+                "mail": "walker.mccallister@int6.linshare.dev"
+                }
+            ]
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        return data
+
 
 if __name__ == '__main__':
     unittest.main()
