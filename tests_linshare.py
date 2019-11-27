@@ -2158,7 +2158,7 @@ class TestAdminWorkGroupPattern (AdminTestCase):
 class TestUserApiUploadRequestGroup(UserTestCase):
     """"Test user API upload request group """
     def test_create_upload_request_group(self):
-        """"Test create upload request group"""
+        """"Test create upload request group with one recipient"""
         query_url = '{base_url}/upload_request_groups'.format_map({
             'base_url': self.base_url
             })
@@ -2166,7 +2166,35 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "label": "upload request group",
             "canDelete":True,
             "canClose":True,
-            "contactList":["peter.wilson@int6.linshare.dev"],
+            "contactList":["external1@linshare.org"],
+            "body":"test body",
+            "enableNotification":False,
+            "dirty":False
+       }
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual (data['label'],"upload request group")
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        return data
+
+    def test_create_upload_request_group_two_recipients(self):
+        """"Test create upload request group with two recipients"""
+        query_url = '{base_url}/upload_request_groups'.format_map({
+            'base_url': self.base_url
+            })
+        payload = {
+            "label": "upload request group",
+            "canDelete":True,
+            "canClose":True,
+            "contactList":["external1@linshare.org", "external2@linshare.org"],
             "body":"test body",
             "enableNotification":False,
             "dirty":False
@@ -2195,7 +2223,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "label": "upload request group",
             "canDelete":True,
             "canClose":True,
-            "contactList":["peter.wilson@int6.linshare.dev", "walker.mccallister@int6.linshare.dev", "felton.gumper@int6.linshare.dev"],
+            "contactList":["external1@linshare.org", "external2@linshare.org", "external3@linshare.org"],
             "body":"test body",
             "enableNotification":False,
             "dirty":False
@@ -2239,7 +2267,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "label": "upload request group",
             "canDelete":True,
             "canClose":True,
-            "contactList":["peter.wilson@int6.linshare.dev", "walker.mccallister@int6.linshare.dev", "felton.gumper@int6.linshare.dev"],
+            "contactList":["external1@linshare.org", "external2@linshare.org", "external3@linshare.org"],
             "body":"test body",
             "enableNotification":False,
             "dirty":False
@@ -2292,6 +2320,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         self.assertEqual(req.status_code, 200)
         self.assertEqual (data['label'], upload_request_group['label'])
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        return data
 
     def test_find_all_upload_request_group(self):
         """"Test findAll upload request group"""
@@ -2309,6 +2338,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        return data
 
     def test_find_all_upload_requests_of_URG(self):
         """"Test findAll upload requests of an upload request group"""
@@ -2328,6 +2358,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        return data
 
     def test_find_all_closed_upload_requests_of_URG(self):
         """"Test findAll closed upload requests of an upload request group"""
@@ -2348,6 +2379,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        return data
 
     def test_find_all_closed_upload_requests_group(self):
         """"Test findAll closed upload request group"""
@@ -2366,6 +2398,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        return data
 
     def test_find_all_audits_of_URG(self):
         """"Test findAll audits of an upload request group"""
@@ -2385,6 +2418,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        return data
 
     def test_update_status_URG(self):
         """Test create and update status of an upload request group."""
@@ -2448,7 +2482,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
                 {
                 "firstName": "walker",
                 "lastName": "mccallister",
-                "mail": "walker.mccallister@int6.linshare.dev"
+                "mail": "external2@linshare.org"
                 }
             ]
         req = requests.post(
