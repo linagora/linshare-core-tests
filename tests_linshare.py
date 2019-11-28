@@ -1329,6 +1329,31 @@ class TestUserApiSharedSpace(UserTestCase):
         data = req.json()
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
+    
+    def test_create_nested_wg_in_drive(self):
+        """Test user API create a workgroup  into a drive."""
+        drive = self.test_create_shared_space_drive()
+        query_url = '{baseUrl}/shared_spaces'.format_map({
+            'baseUrl' : self.base_url
+            })
+        payload = {
+            "name": "Nested_workgroup",
+            "nodeType": "WORK_GROUP",
+            "parentUuid":drive["uuid"]
+        }
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        nested_wg = req.json()
+        self.assertEqual(req.status_code, 200)
+        self.assertEqual(nested_wg['parentUuid'], drive['uuid'])
+        LOGGER.debug("data : %s", json.dumps(nested_wg, sort_keys=True, indent=2))
+        return nested_wg
 
     def test_create_shared_space_member_workgroup_explicit_type(self):
         """ Test user API add a member to a WORKGROUP """
@@ -1392,7 +1417,7 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual(request.status_code, 200, "FAILED")          
             
     def test_create_shared_space_member_drive(self):
-        """Test user API add a shared space member into a DRIVE"""
+        """Test user API add a shared space member into a DRIVE """
         nestedRole = self.getRole('ADMIN')
         role = self.getRole('DRIVE_ADMIN')
         drive = self.test_create_shared_space_drive()
@@ -1427,6 +1452,175 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual (data['account']['firstName'], user1['firstName'])
         self.shared_space_delete(drive['uuid'])
         return data
+    
+    def test_add_shared_space_member_in_drive_and_its_nested_wg(self):
+        """Test user API add a shared space member into a DRIVE and its nested workgroups"""
+        nestedRole = self.getRole('ADMIN')
+        role = self.getRole('DRIVE_ADMIN')
+        
+        """Create the Shared space DRIVE (parent)"""
+        drive = self.test_create_shared_space_drive()
+        
+        """Get an LS internal user to add in Shared space"""
+        user1 = self.get_user1()
+        
+        wg_create_query_url = '{baseUrl}/shared_spaces'.format_map({
+            'baseUrl' : self.base_url
+            })
+        
+        """Payload to create the first nested workgroup"""
+        
+        wg_payload_1 = {
+            "name": "Nested_workgroup_1",
+            "nodeType": "WORK_GROUP",
+            "parentUuid":drive["uuid"]
+        }
+        
+        """Payload to create the second nested workgroup"""
+        wg_payload_2 = {
+            "name": "Nested_workgroup_2",
+            "nodeType": "WORK_GROUP",
+            "parentUuid":drive["uuid"]
+        }
+        
+        """Payload to create the third nested workgroup"""
+        wg_payload_3 = {
+            "name": "Nested_workgroup_3",
+            "nodeType": "WORK_GROUP",
+            "parentUuid":drive["uuid"]
+        }
+        
+        """Add nested WG 1"""
+        nested_wg_1 = requests.post(
+            wg_create_query_url,
+            data=json.dumps(wg_payload_1),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify).json()
+            
+        """Add nested WG 2"""    
+        nested_wg_2 = requests.post(
+            wg_create_query_url,
+            data=json.dumps(wg_payload_2),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify).json()
+            
+        """Add nested WG 3"""    
+        nested_wg_3 = requests.post(
+            wg_create_query_url,
+            data=json.dumps(wg_payload_3),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify).json()
+            
+        """Add a member to the Drive (parent)"""
+        add_membr_query_url = '{baseUrl}/shared_spaces/{driveUuid}/members'.format_map({
+            "baseUrl":self.base_url ,
+            "driveUuid": drive['uuid']})
+        
+        member_payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                "firstName" : user1['firstName'],
+                "lastName" : user1['lastName'],
+                "mail" : user1['mail'],
+                },
+            "role" : {
+                "uuid" : role['uuid'],
+                },
+            "nestedRole": {
+                "uuid": nestedRole['uuid'],
+            },
+            "node" : {
+                "uuid" : drive['uuid'],
+                "name" : drive['name'],
+                "nodeType" : drive['nodeType']
+                },
+            "type" : "DRIVE"
+        }
+        
+        """Get all the members of the node"""
+        get_members_of_wg1_query_url = '{baseUrl}/shared_spaces/{nodeUuid}/members'.format_map({
+            "baseUrl" : self.base_url ,
+            "nodeUuid" : nested_wg_1['uuid']})
+        
+        get_members_of_wg2_query_url = '{baseUrl}/shared_spaces/{nodeUuid}/members'.format_map({
+            "baseUrl" : self.base_url ,
+            "nodeUuid" : nested_wg_2['uuid']})
+        
+        get_members_of_wg3_query_url = '{baseUrl}/shared_spaces/{nodeUuid}/members'.format_map({
+            "baseUrl" : self.base_url ,
+            "nodeUuid" : nested_wg_3['uuid']})
+        
+        member_1 = requests.get(
+            get_members_of_wg1_query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify).json()
+        
+        member_2 = requests.get(
+            get_members_of_wg2_query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify).json()
+            
+        member_3 = requests.get(
+            get_members_of_wg3_query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify).json()
+        
+        request = requests.post(
+            add_membr_query_url,
+            json.dumps(member_payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        member_drive = request.json()
+        """Assertions"""
+        self.assertEqual(request.status_code, 200)
+        self.assertEqual (member_drive['account']['firstName'], user1['firstName'])
+        self.assertEqual(member_1[0]['nested'], True, "FAILED, created member is not nested")
+        self.assertEqual(member_2[0]['nested'], True, "FAILED, created member is not nested")
+        self.assertEqual(member_3[0]['nested'], True, "FAILED, created member is not nested")
+        return member_drive
+    
+    def test_add_shared_space_member_in_nested_wg(self):
+        """Test user API add a shared space member into a nested WORKGROUP"""
+        """The role that's given to the member in the nested node"""
+        role = self.getRole('ADMIN')
+        workgroup = self.test_create_nested_wg_in_drive()
+        user1 = self.get_user1()
+        query_url = '{baseUrl}/shared_spaces/{nodeUuid}/members'.format_map({
+            'baseUrl' : self.base_url,
+            'nodeUuid': workgroup['uuid']})
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                "firstName" : user1['firstName'],
+                "lastName" : user1['lastName'],
+                "mail" : user1['mail'],
+                },
+            "role" : {
+                "uuid" : role['uuid'],
+                },
+            "node" : {
+                "uuid" : workgroup['uuid']
+                }
+        }
+        add_request = requests.post(
+            query_url,
+            json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        member = add_request.json()
+        self.assertEqual(add_request.status_code, 200 , 'FAILED shared space member not created')
+        self.assertEqual (member['account']['firstName'], user1['firstName'])
+        self.assertEqual(member['node']['nodeType'], workgroup['nodeType'], "FAILED, node type is different")
+        self.assertEqual(member['nested'], True, "FAILED, created member is not nested")
+        return member
 
     def shared_space_delete(self, uuid):
         """Trying to create and delete a shared_space with no payload"""
@@ -1640,11 +1834,28 @@ class TestUserApiSharedSpace(UserTestCase):
         return data
 
     def test_propagate_shared_space_member_drive(self):
-        """Test user API create a shared space member."""
+        """Test user API propagate the creation of member in nested nodes."""
         user1 = self.get_user1()
         drive = self.test_create_shared_space_drive()
         nestedRole = self.getRole('ADMIN')
         role = self.getRole('DRIVE_ADMIN')
+        
+        """Create new member into a drive."""
+        query_url = self.base_url + '/shared_spaces/' + drive['uuid'] + '/members'
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid']
+                },
+            "role" : {
+                "uuid" : role['uuid'],
+                },
+            "node" : {
+                "uuid" : drive['uuid'],
+                }
+        }
+        data_member_drive = self.request_post(query_url, payload)
+        self.assertEqual (data_member_drive['account']['uuid'], user1['uuid'])
+
         """Create a workGroup into the drive."""
         query_url = self.base_url + '/shared_spaces/'
         payload = {
@@ -1661,34 +1872,16 @@ class TestUserApiSharedSpace(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
-        data_workgroup = req.json()
-        """Create new member into the drive."""
-        query_url = self.base_url + '/shared_spaces/' + drive['uuid'] + '/members'
-        payload = {
-            "account" : {
-                "uuid" : user1['uuid'],
-                "firstName" : user1['firstName'],
-                "lastName" : user1['lastName'],
-                "mail" : user1['mail'],
-                },
-            "nested" : False,
-            "role" : {
-                "uuid" : role['uuid'],
-                },
-            "nestedRole": {
-                "uuid": nestedRole['uuid'],
-            },
-            "node" : {
-                "uuid" : drive['uuid'],
-                "name" : drive['name'],
-                "nodeType" : drive['nodeType']
-                },
-            "type" : "DRIVE"
-        }
-        data_member = self.request_post(query_url, payload)
-        self.assertEqual (data_member['account']['firstName'],user1['firstName'])
-        """Check the new created member into the nested workgroup."""
-        query_url = self.base_url + '/shared_spaces/' +  data_workgroup['uuid'] + '/members?accountUuid=' +data_member['account']['uuid']
+        data_nested_workgroup = req.json()
+
+        """Check the new created member is into the nested workgroup."""
+        accountUuid = data_member_drive['account']['uuid']
+        encode = urllib.parse.urlencode({
+            'accountUuid': data_member_drive['account']['uuid']})
+        query_url = '{baseUrl}/shared_spaces/{nodeUuid}/members/?{encode}'.format_map({
+            "baseUrl" : self.base_url,
+            "nodeUuid" : data_nested_workgroup['uuid'],
+            "encode" : encode })
         req = requests.get(
             query_url,
             headers={'Accept': 'application/json'},
