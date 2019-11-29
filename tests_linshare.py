@@ -2668,8 +2668,8 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         self.assertEqual(data['enableNotification'], True)
         return data
 
-    def test_add_recipient_upload_request_group(self):
-        """Test create upload request group and add a new recipient."""
+    def test_add_recipient_upload_request_group_grouped_mode_false(self):
+        """Test create upload request group and add a new recipient the grouped mode is false by default."""
         upload_request_group = self.test_create_upload_request_group();
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/recipients'.format_map({
             'base_url': self.base_url,
@@ -2692,7 +2692,91 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         data = req.json()
+        """"Test findAll upload requests of an upload request group"""
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data = req.json()
+        self.assertEqual(len(data), 2)
         return data
+
+    def test_add_recipient_upload_request_group_grouped_mode_true(self):
+        """Test create upload request group and add a new recipient the grouped mode is true"""
+        query_url = '{base_url}/upload_request_groups?groupMode={groupMode}'.format_map({
+            'base_url': self.base_url,
+            'groupMode' : 'true'
+            })
+        payload = {
+            "label": "upload request group",
+            "canDelete":True,
+            "canClose":True,
+            "contactList":["external1@linshare.org", "external2@linshare.org", "external3@linshare.org"],
+            "body":"test body",
+            "enableNotification":False,
+            "dirty":False
+       }
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual (data['label'],"upload request group")
+        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        """Add new recipient to the upload request group with grouped mode is true"""
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/recipients'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : data['uuid']
+            })
+        payload = [
+                {
+                "firstName": "walker",
+                "lastName": "mccallister",
+                "mail": "external4@linshare.org"
+                }
+            ]
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        """"Test findAll upload requests of an upload request group"""
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : data['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data = req.json()
+        self.assertEqual(len(data), 1)
+        return data
+
 
 class TestUserApiUploadRequestEntry(UserTestCase):
     """"Test user API upload request entry """
