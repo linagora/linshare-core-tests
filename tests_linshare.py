@@ -175,9 +175,11 @@ class UserTestCase(AbstractTestCase):
     base_url = host + '/linshare/webservice/rest/user/v2'
     base_test_url = host + '/linshare/webservice/rest/test/user/v2'
     base_test_upload_request_url = host + '/linshare/webservice/rest/uploadrequest/v2/flow/upload'
+    base_external_url = host + '/linshare/webservice/rest/uploadrequest/v2'
     email = CONFIG_USER['DEFAULT']['email']
     password = CONFIG_USER['DEFAULT']['password']
-    
+    email_external = CONFIG_USER['DEFAULT']['email_external']
+    password_external = CONFIG_USER['DEFAULT']['password_external']
     def currentUser(self):
         """Return user info for the current user"""
         query_url = self.base_url + '/authentication/authorized'
@@ -3102,6 +3104,232 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
+
+
+class TestUserApiUploadRequestExternal(UserTestCase):
+    """"Test user API upload request for externals """
+    upload_request_group_class = TestUserApiUploadRequestGroup()
+    def test_close_upload_request_by_external(self):
+        """"Test close an upload request by an external user"""
+        upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
+        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_test_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data_upload_request = req.json()
+        self.assertEqual(data_upload_request[0]['status'], 'ENABLED')
+        self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
+        """Close an uploadRequest by an external"""
+        query_url = '{base_external_url}/requests/{upload_url_uuid}'.format_map({
+            'base_external_url': self.base_external_url,
+            'upload_url_uuid' : data_upload_request[0]['uploadRequestURLs'][0]['uuid']
+            })
+        req = requests.put(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.base_external_url, self.password_external),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data = req.json()
+        """Check the updated status to CLOSED after the update by the external user"""
+        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_test_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data_upload_request = req.json()
+        self.assertEqual(data_upload_request[0]['status'], 'CLOSED')
+        return data
+
+    def test_delete_upload_request_entry_by_external_no_payload(self):
+        """"Test delete an upload request entry by an external user"""
+        upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
+        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_test_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data_upload_request = req.json()
+        self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
+        """Upload an upload request entry"""
+        query_url = self.base_test_upload_request_url
+        file_path = 'file10M'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'flowTotalChunks' : '1',
+                    'flowChunkSize': str(filesize),
+                    'flowTotalSize': str(filesize),
+                    'file': ('file10M.new', file_stream),
+                    'flowIdentifier' : 'entry',
+                    'flowFilename' : 'file10M',
+                    "flowRelativePath" : file_path,
+                    'requestUrlUuid' : data_upload_request[0]['uploadRequestURLs'][0]['uuid'],
+                    'password' : 'test',
+                    'body':'Test upload an upload request entry',
+                    'flowChunkNumber':'1'
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            req = requests.post(
+                query_url,
+                data=monitor,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email_external, self.password_external),
+                verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        """Find upload request entry"""
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : data_upload_request[0]['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data_entry = req.json()
+        """Delete an upload request entry by an external"""
+        query_url = '{base_external_url}/requests/{upload_req_url}/{upload_req_entry_uuid}'.format_map({
+            'base_external_url': self.base_external_url,
+            'upload_req_url' : data_upload_request[0]['uploadRequestURLs'][0]['uuid'],
+            'upload_req_entry_uuid' : data_entry[0]['uuid'],
+            })
+        req = requests.delete(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email_external, self.password_external),
+            verify=self.verify
+        )
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 204)
+
+    def test_delete_upload_request_entry_by_external_payload(self):
+        """"Test delete an upload request entry by an external user"""
+        upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
+        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_test_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data_upload_request = req.json()
+        self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
+        """Upload an upload request entry"""
+        query_url = self.base_test_upload_request_url
+        file_path = 'file10M'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'flowTotalChunks' : '1',
+                    'flowChunkSize': str(filesize),
+                    'flowTotalSize': str(filesize),
+                    'file': ('file10M.new', file_stream),
+                    'flowIdentifier' : 'entry',
+                    'flowFilename' : 'file10M',
+                    "flowRelativePath" : file_path,
+                    'requestUrlUuid' : data_upload_request[0]['uploadRequestURLs'][0]['uuid'],
+                    'password' : 'test',
+                    'body':'Test upload an upload request entry',
+                    'flowChunkNumber':'1'
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            req = requests.post(
+                query_url,
+                data=monitor,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email_external, self.password_external),
+                verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        """Find upload request entry"""
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : data_upload_request[0]['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data_entry = req.json()
+        """Delete an upload request entry by an external"""
+        query_url = '{base_external_url}/requests/{upload_req_url}'.format_map({
+            'base_external_url': self.base_external_url,
+            'upload_req_url' : data_upload_request[0]['uploadRequestURLs'][0]['uuid']
+            })
+        payload = {
+            'uuid': data_entry[0]['uuid'],
+            'name': data_entry[0]['name']
+        }
+        req = requests.delete(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email_external, self.password_external),
+            verify=self.verify
+        )
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 204)
 
 
 if __name__ == '__main__':
