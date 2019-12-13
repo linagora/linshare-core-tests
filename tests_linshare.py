@@ -178,8 +178,10 @@ class UserTestCase(AbstractTestCase):
     base_external_url = host + '/linshare/webservice/rest/uploadrequest/v2'
     email = CONFIG_USER['DEFAULT']['email']
     password = CONFIG_USER['DEFAULT']['password']
-    email_external = CONFIG_USER['DEFAULT']['email_external']
-    password_external = CONFIG_USER['DEFAULT']['password_external']
+    email_external1 = CONFIG_USER['DEFAULT']['email_external1']
+    password_external1 = CONFIG_USER['DEFAULT']['password_external1']
+    email_external2 = CONFIG_USER['DEFAULT']['email_external2']
+    email_external3 = CONFIG_USER['DEFAULT']['email_external3']
     def currentUser(self):
         """Return user info for the current user"""
         query_url = self.base_url + '/authentication/authorized'
@@ -2383,7 +2385,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "label": "upload request group",
             "canDelete":True,
             "canClose":True,
-            "contactList":["external1@linshare.org"],
+            "contactList":[self.email_external1],
             "body":"test body",
             "enableNotification":False,
             "dirty":False
@@ -2411,7 +2413,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "label": "upload request group",
             "canDelete":True,
             "canClose":True,
-            "contactList":["external1@linshare.org", "external2@linshare.org"],
+            "contactList":[self.email_external1, self.email_external2],
             "body":"test body",
             "enableNotification":False,
             "dirty":False
@@ -2440,7 +2442,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "label": "upload request group",
             "canDelete":True,
             "canClose":True,
-            "contactList":["external1@linshare.org", "external2@linshare.org", "external3@linshare.org"],
+            "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
             "enableNotification":False,
             "dirty":False
@@ -2484,7 +2486,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "label": "upload request group",
             "canDelete":True,
             "canClose":True,
-            "contactList":["external1@linshare.org", "external2@linshare.org", "external3@linshare.org"],
+            "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
             "enableNotification":False,
             "dirty":False
@@ -2740,7 +2742,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "label": "upload request group",
             "canDelete":True,
             "canClose":True,
-            "contactList":["external1@linshare.org", "external2@linshare.org", "external3@linshare.org"],
+            "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
             "enableNotification":False,
             "dirty":False
@@ -3240,7 +3242,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         req = requests.put(
             query_url,
             headers=self.headers,
-            auth=HTTPBasicAuth(self.base_external_url, self.password_external),
+            auth=HTTPBasicAuth(self.email_external1, self.password_external1),
             verify=self.verify
         )
         self.assertEqual(req.status_code, 200)
@@ -3312,7 +3314,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
                 query_url,
                 data=monitor,
                 headers=headers,
-                auth=HTTPBasicAuth(self.email_external, self.password_external),
+                auth=HTTPBasicAuth(self.email_external1, self.password_external1),
                 verify=self.verify)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
@@ -3341,7 +3343,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         req = requests.delete(
             query_url,
             headers=self.headers,
-            auth=HTTPBasicAuth(self.email_external, self.password_external),
+            auth=HTTPBasicAuth(self.email_external1, self.password_external1),
             verify=self.verify
         )
         LOGGER.debug("status_code : %s", req.status_code)
@@ -3395,7 +3397,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
                 query_url,
                 data=monitor,
                 headers=headers,
-                auth=HTTPBasicAuth(self.email_external, self.password_external),
+                auth=HTTPBasicAuth(self.email_external1, self.password_external1),
                 verify=self.verify)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
@@ -3428,7 +3430,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             query_url,
             data=json.dumps(payload),
             headers=self.headers,
-            auth=HTTPBasicAuth(self.email_external, self.password_external),
+            auth=HTTPBasicAuth(self.email_external1, self.password_external1),
             verify=self.verify
         )
         LOGGER.debug("status_code : %s", req.status_code)

@@ -1,7 +1,13 @@
 # This file inherit from the admin.ini
 # You need to create your  user.ini file and configure it on your need 
+# To success you authentication you need to use the local LDAP
 
 [DEFAULT]
 host=https://user.linshare.local
-email=amy.wolsh@int6.linshare.dev
-password=secret
+email=user1@linshare.org
+password=password1
+# For some tests of upload request we will use an external users to test the external api
+email_external1=external1@linshare.org
+password_external1=password1
+email_external2=external2@linshare.org
+email_external3=external3@linshare.org
