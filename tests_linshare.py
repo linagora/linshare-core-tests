@@ -3438,5 +3438,209 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         self.assertEqual(req.status_code, 204)
 
 
+class TestUserApiUploadRequest(UserTestCase):
+    """"Test user API upload request """
+    upload_request_group = TestUserApiUploadRequestGroup()
+    def test_find_upload_request(self):
+        """"Test find an upload request"""
+        upload_request = self.upload_request_group.test_find_all_upload_requests_of_URG()
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : upload_request[0]['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        return data
+
+    def test_update_status_upload_request(self):
+        """Test update status of an upload request."""
+        upload_request = self.test_find_upload_request();
+        self.assertEqual(upload_request['status'], 'ENABLED')
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}/status/{status}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : upload_request['uuid'],
+            'status' : 'CLOSED'
+            })
+        req = requests.put(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual(data['status'], 'CLOSED')
+        return data
+
+    def test_update_status_upload_request_copy_true(self):
+        """"Test create upload request group"""
+        query_url = '{base_url}/upload_request_groups'.format_map({
+            'base_url': self.base_url
+            })
+        payload = {
+            "label": "upload request group",
+            "canDelete":True,
+            "canClose":True,
+            "contactList":["external1@linshare.org"],
+            "body":"test body",
+            "enableNotification":False,
+            "dirty":False
+       }
+        req = requests.post(
+            query_url,
+            data=json.dumps(payload),
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        upload_request_group = req.json()
+        self.assertEqual (upload_request_group['label'],"upload request group")
+        """find upoadRequest all uploadRequests of an URG"""
+        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_test_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        upload_requests = req.json()
+        self.assertEqual(len(upload_requests[0]['uploadRequestURLs']), 1)
+        """Upload an upload request entry"""
+        query_url = self.base_test_upload_request_url
+        file_path = 'file10M'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'flowTotalChunks' : '1',
+                    'flowChunkSize': str(filesize),
+                    'flowTotalSize': str(filesize),
+                    'file': ('file10M.new', file_stream),
+                    'flowIdentifier' : 'entry',
+                    'flowFilename' : 'file10M',
+                    "flowRelativePath" : file_path,
+                    'requestUrlUuid' : upload_requests[0]['uploadRequestURLs'][0]['uuid'],
+                    'password' : 'test',
+                    'body':'Test upload an upload request entry',
+                    'flowChunkNumber':'1'
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            req = requests.post(
+                query_url,
+                data=monitor,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email, self.password),
+                verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        """Test close an upload request."""
+        self.assertEqual(upload_requests[0]['status'], 'ENABLED')
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}/status/{status}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : upload_requests[0]['uuid'],
+            'status' : 'CLOSED'
+            })
+        req = requests.put(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual(data['status'], 'CLOSED')
+        """Before copying an entries we need to update status to PURGED"""
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}/status/{status}?copy=true'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : upload_requests[0]['uuid'],
+            'status' : 'ARCHIVED'
+            })
+        req = requests.put(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual(data['status'], 'ARCHIVED')
+        return data
+
+    def test_update_upload_request(self):
+        """Test update an upload request."""
+        upload_request = self.test_find_upload_request();
+        self.assertEqual(upload_request['enableNotification'], False)
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : upload_request['uuid']
+            })
+        payload = {
+            "label": upload_request['label'],
+            "canClose":upload_request['canClose'],
+            "body":upload_request['body'],
+            "enableNotification":True
+       }
+        req = requests.put(
+            query_url,
+            json.dumps(payload),
+            headers= self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+        data = req.json()
+        self.assertEqual(data['enableNotification'], True)
+        return data
+
+    def test_find_all_upload_request_entries(self):
+        """"Test find all upload request entries"""
+        upload_request = self.test_find_upload_request();
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : upload_request['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        return data
+
+
 if __name__ == '__main__':
     unittest.main()
