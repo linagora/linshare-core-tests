@@ -3335,7 +3335,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data_entry = req.json()
         """Delete an upload request entry by an external"""
-        query_url = '{base_external_url}/requests/{upload_req_url}/{upload_req_entry_uuid}'.format_map({
+        query_url = '{base_external_url}/requests/{upload_req_url}/entries/{upload_req_entry_uuid}'.format_map({
             'base_external_url': self.base_external_url,
             'upload_req_url' : data_upload_request[0]['uploadRequestURLs'][0]['uuid'],
             'upload_req_entry_uuid' : data_entry[0]['uuid'],
@@ -3348,7 +3348,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         )
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 204)
+        self.assertEqual(req.status_code, 200)
 
     def test_delete_upload_request_entry_by_external_payload(self):
         """"Test delete an upload request entry by an external user"""
@@ -3418,7 +3418,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data_entry = req.json()
         """Delete an upload request entry by an external"""
-        query_url = '{base_external_url}/requests/{upload_req_url}'.format_map({
+        query_url = '{base_external_url}/requests/{upload_req_url}/entries/'.format_map({
             'base_external_url': self.base_external_url,
             'upload_req_url' : data_upload_request[0]['uploadRequestURLs'][0]['uuid']
             })
@@ -3435,7 +3435,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         )
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 204)
+        self.assertEqual(req.status_code, 200)
 
 
 class TestUserApiUploadRequest(UserTestCase):
