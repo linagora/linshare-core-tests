@@ -3453,16 +3453,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             "enableNotification":False,
             "dirty":False
        }
-        req = requests.post(
-            query_url,
-            data=json.dumps(payload),
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        upload_request_group = req.json()
+        upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
         """Test get all uploadRequests of an uploadRequest group with groupedMode false"""
         query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
@@ -3581,16 +3572,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             "enableNotification":False,
             "dirty":False
        }
-        req = requests.post(
-            query_url,
-            data=json.dumps(payload),
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        upload_request_group = req.json()
+        upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
         """Test get all uploadRequests of an uploadRequest group with groupedMode false"""
         query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
