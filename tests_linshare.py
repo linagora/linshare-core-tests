@@ -713,6 +713,25 @@ class TestMailAttachment(AdminTestCase):
         self.assertEqual(req.status_code, 404)
         LOGGER.debug("data : %s", req.json())
 
+    def test_find_all_audits_mail_attachment(self):
+        """"Test findAll audits of a mail attachment"""
+        mail_attachment = self.test_mail_attachments_create()
+        query_url = '{base_url}/mail_attachments/{mail_attachment_uuid}/audits'.format_map({
+            'base_url': self.base_url,
+            'mail_attachment_uuid' : mail_attachment['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        return req.json()
+
 
 class TestUserApiDocumentRevision(AdminTestCase):
     """Test User api"""
