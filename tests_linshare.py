@@ -55,6 +55,20 @@ class AbstractTestCase(unittest.TestCase):
         'Accept': 'application/json',
         'Content-Type': 'application/json'
     }
+    
+    def request_get(self, query_url):
+        """GET request"""
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        data = req.json()
+        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        return data
 
     def request_post(self, query_url, payload):
         """Do POST request"""
