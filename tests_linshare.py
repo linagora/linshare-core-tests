@@ -720,17 +720,21 @@ class TestMailAttachment(AdminTestCase):
             'base_url': self.base_url,
             'mail_attachment_uuid' : mail_attachment['uuid']
             })
-        req = requests.get(
-            query_url,
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify
-        )
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
-        return req.json()
+        mail_attachments = self.request_get(query_url)
+        return mail_attachments
+    
+    def test_find_all_audits_mail_attachment_filtred_by_actions(self):
+        """"Test findAll audits of a mail attachment filtered by  
+        list of actions [CREATE, UPDATE, DELETE]"""
+        mail_attachment = self.test_mail_attachments_create()
+        encode = urllib.parse.urlencode({'actions' : ['create','update']}, doseq=True)
+        query_url = '{base_url}/mail_attachments/{mail_attachment_uuid}/audits?{encode}'.format_map({
+            'base_url': self.base_url,
+            'mail_attachment_uuid' : mail_attachment['uuid'],
+            'encode': encode
+            })
+        mail_attachments = self.request_get(query_url)
+        return mail_attachments
 
 
 class TestUserApiDocumentRevision(AdminTestCase):
