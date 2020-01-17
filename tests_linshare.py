@@ -69,6 +69,20 @@ class AbstractTestCase(unittest.TestCase):
         data = req.json()
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
         return data
+    
+    def _assertJsonPayload(self, expected, payloadResponse):
+        """Method that allows to assert information returned on the responses
+        Parameters:
+        expected: list of expected fields in the source object. 
+        payloadResponse : returned object to be tested.
+         """
+        allFieldsExists = True
+        for item in expected:
+            if item not in payloadResponse:
+                allFieldsExists = False
+                LOGGER.error(" %s does not exists in the response payload", item)
+        self.assertTrue(allFieldsExists, " List of expected fields is different with response field's")
+        self.assertEqual(len(expected), len(payloadResponse.keys()))
 
     def request_post(self, query_url, payload):
         """Do POST request"""
@@ -438,6 +452,8 @@ class TestUserApiDocuments(AdminTestCase):
 
 
 class TestMailAttachment(AdminTestCase):
+    
+    EXPECTED_FIELD_LIST = ['uuid', 'enable', 'enableForAll', 'language', 'description', 'name', 'cid']
 
     def test_mail_attachments_create(self):
         """Trying to create a mail attachment as an admin"""
@@ -720,20 +736,22 @@ class TestMailAttachment(AdminTestCase):
             'base_url': self.base_url,
             'mail_attachment_uuid' : mail_attachment['uuid']
             })
-        mail_attachments = self.request_get(query_url)
-        return mail_attachments
+        mail_attachments_audit = self.request_get(query_url)
+        self._assertJsonPayload(self.EXPECTED_FIELD_LIST, mail_attachments_audit[0].get('resource'))
+        return mail_attachments_audit
     
     def test_find_all_audits_mail_attachment_filtred_by_actions(self):
         """"Test findAll audits of a mail attachment filtered by  
         list of actions [CREATE, UPDATE, DELETE]"""
         mail_attachment = self.test_mail_attachments_create()
-        encode = urllib.parse.urlencode({'actions' : ['create','update']}, doseq=True)
+        encode = urllib.parse.urlencode({'actions' : ['create', 'update']}, doseq=True)
         query_url = '{base_url}/mail_attachments/{mail_attachment_uuid}/audits?{encode}'.format_map({
             'base_url': self.base_url,
             'mail_attachment_uuid' : mail_attachment['uuid'],
             'encode': encode
             })
         mail_attachments = self.request_get(query_url)
+        self._assertJsonPayload(self.EXPECTED_FIELD_LIST, mail_attachments[0].get('resource'))
         return mail_attachments
 
 
