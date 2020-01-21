@@ -704,20 +704,21 @@ class TestMailAttachment(AdminTestCase):
         return data
 
     def test_findAll(self):
-        """Test user authentication."""
+        """Test find all mail attachments"""
         query_url = self.base_url + '/mail_attachments?configUuid=946b190d-4c95-485f-bfe6-d288a2de1edd'
-        req = requests.get(
-            query_url,
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("data : %s", req.json())
+        mail_attachments = self.request_get(query_url)
+        return mail_attachments
+        
+    def test_findAll_without_configUuid(self):
+        """Test find all mail attachments without set configUuid."""
+        query_url = '{baseUrl}/mail_attachments'.format_map({'baseUrl': self.base_url})
+        mail_attachments = self.request_get(query_url)
+        if mail_attachments:
+            self._assertJsonPayload(['uuid', 'enable', 'enableForAll', 'language', 'description', 'name', 'cid', 'mailConfig'], mail_attachments[0])
 
     def test_findAll_wrong_mail_config(self):
-        """Test user authentication."""
+        """Test findaAll mail attachments returns not found http status 
+        with a wrong configuration uuid."""
         query_url = self.base_url + '/mail_attachments?configUuid=946b190d-4c95-485f-bfe6-d288a2de1ede'
         req = requests.get(
             query_url,
