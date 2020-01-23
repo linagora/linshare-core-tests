@@ -1349,19 +1349,10 @@ class TestUserApiSharedSpace(UserTestCase):
     def test_find_all_shared_spaces(self):
         """Test user find all shared spaces."""
         query_url = self.base_url + '/shared_spaces'
-        req = requests.get(
-            query_url,
-            headers={'Accept': 'application/json'},
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        self.assertEqual(req.status_code, 200)
-        nodes = req.json()
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
+        nodes = self.request_get(query_url)
         if len(nodes) != 0:
             for node in nodes:
-                self.assertEqual(node['parent'], None, "One of returned Shared space is not on top level")
-        LOGGER.debug("data : %s", req.json())
+                self.assertEqual(node['parentUuid'], None, "One of returned Shared space is not on top level")
         
     def test_find_all_shared_spaces_with_role(self):
         """Test user api find all with the role of the member of this node shared spaces """
