@@ -84,12 +84,18 @@ class AbstractTestCase(unittest.TestCase):
         self.assertTrue(allFieldsExists, " List of expected fields is different with response field's")
         self.assertEqual(len(expected), len(payloadResponse.keys()))
 
-    def request_post(self, query_url, payload):
+    def request_post(self, query_url, payload, headers=None):
         """Do POST request"""
+        if not headers:
+            headers = self.headers
+        if (headers['Content-Type'] != 'application/json'):
+            body = payload
+        else:
+            body=json.dumps(payload)
         req = requests.post(
             query_url,
-            data=json.dumps(payload),
-            headers=self.headers,
+            headers=headers,
+            data=body,
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         LOGGER.debug("status_code : %s", req.status_code)
@@ -149,7 +155,6 @@ class AbstractTestCase(unittest.TestCase):
 
 class AdminTestCase(AbstractTestCase):
     """Default test case class"""
-    
     user1_email = CONFIG['DEFAULT']['user1_email']
     user1_password = CONFIG['DEFAULT']['user1_password']
     user_base_url = AbstractTestCase.host + '/linshare/webservice/rest/user/v2'
@@ -754,6 +759,104 @@ class TestMailAttachment(AdminTestCase):
         mail_attachments = self.request_get(query_url)
         self._assertJsonPayload(self.EXPECTED_FIELD_LIST, mail_attachments[0].get('resource'))
         return mail_attachments
+
+    def create_abstract_domain(self):
+        """Get linShareRootDomain"""
+        query_url = '{base_url}/domains/{Domain}'.format_map({
+            'base_url': self.base_url,
+            'Domain' : 'LinShareRootDomain'
+            })
+        domain = self.request_get(query_url)
+        """Create an abstract domain"""
+        query_url = '{base_url}/domains'.format_map({
+            'base_url': self.base_url,
+            })
+        payload = {
+            "parent":domain['identifier'],
+            "type":"TOPDOMAIN",
+            "providers":[],
+            "externalMailLocale":"ENGLISH",
+            "language":"ENGLISH",
+            "mailConfigUuid":domain['mailConfigUuid'],
+            "currentWelcomeMessage":domain['currentWelcomeMessage'],
+            "mimePolicyUuid":domain['mimePolicyUuid'],
+            "userRole":"SIMPLE",
+            "policy":{"identifier":"DefaultDomainPolicy"},
+            "label":"TopDomain",
+            "description":"test creating top domain"
+        }
+        data = self.request_post(query_url, payload)
+        self.assertEqual(data['label'], 'TopDomain')
+        return data
+
+    def create_mail_configuration(self):
+        """Get a default mail configuration"""
+        domain = self.create_abstract_domain()
+        query_url = '{base_url}/mail_configs/{default_mail_config}'.format_map({
+            'base_url': self.base_url,
+            'default_mail_config' : domain['mailConfigUuid']
+            })
+        default_mail_config = self.request_get(query_url)
+        """Create an mail configuration"""
+        query_url = '{base_url}/mail_configs'.format_map({
+            'base_url': self.base_url,
+            })
+        payload = {
+            "name":"default mail config",
+            "visible":True,
+            "domain":domain['identifier'],
+            "readonly":False,
+            "mailLayout":default_mail_config['mailLayout'],
+            "mailFooterLangs":default_mail_config['mailFooterLangs'],
+            "mailContentLangs":default_mail_config['mailContentLangs']
+        }
+        data = self.request_post(query_url, payload)
+        self.assertEqual(data['name'], 'default mail config')
+        return data
+
+    def test_find_all_audits_mail_attachment_by_domain(self):
+        """"Create mail configuration"""
+        mail_configuration = self.create_mail_configuration()
+        """Create a mail attachment as an admin"""
+        query_url = '{base_url}/mail_attachments'.format_map({
+            'base_url': self.base_url,
+            })
+        file_path = 'LinShare.jpg'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'filesize': str(filesize),
+                    'file': ('LinShare.jpg', file_stream),
+                    'description': 'Test mail attachment',
+                    'enableForAll': 'False',
+                    'enable':'True',
+                    'mail_config':mail_configuration['uuid'],
+                    'cid':'logo.mail.attachment.test',
+                    'language' : 'ENGLISH'
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            mail_attachment = self.request_post(query_url, monitor, headers)
+        """"Test findAll audits of mail attachments of a choosen domain"""
+        encode = urllib.parse.urlencode({'domainUuid' : mail_configuration['domain']})
+        query_url = '{base_url}/mail_attachments/audits?{encode}'.format_map({
+            'base_url' : self.base_url,
+            'encode' : encode})
+        mail_attachments_audits = self.request_get(query_url)
+        self._assertJsonPayload(self.EXPECTED_FIELD_LIST, mail_attachments_audits[0].get('resource'))
+
+    def test_find_all_audits_mail_attachment_without_domain(self):
+        """"Test findAll audits of mail attachments of all domains"""
+        query_url = '{base_url}/mail_attachments/audits'.format_map({
+            'base_url': self.base_url,
+            })
+        mail_attachments_audit = self.request_get(query_url)
+        self._assertJsonPayload(self.EXPECTED_FIELD_LIST, mail_attachments_audit[0].get('resource'))
 
 
 class TestUserApiDocumentRevision(AdminTestCase):
