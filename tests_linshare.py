@@ -125,7 +125,7 @@ class AbstractTestCase(unittest.TestCase):
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
 
-    def request_put(self, query_url, payload):
+    def request_put(self, query_url, payload, expected_status=200, busines_err_code=None):
         """Do PUT request"""
         req = requests.put(
             query_url,
@@ -135,9 +135,11 @@ class AbstractTestCase(unittest.TestCase):
             verify=self.verify)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
+        self.assertEqual(req.status_code, expected_status)
         data = req.json()
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        if busines_err_code:
+            self.assertEqual (data['errCode'], busines_err_code)
         return data
 
     def request_patch(self, query_url, payload):
@@ -1650,7 +1652,6 @@ class TestUserApiSharedSpace(UserTestCase):
         }
         data = self.request_post(query_url, payload)
         self.assertEqual (data['account']['firstName'], user1['firstName'])
-        self.shared_space_delete(drive['uuid'])
         return data
     
     def test_create_shared_space_member_drive_fails_with_wrong_role(self):
@@ -2291,6 +2292,65 @@ class TestUserApiSharedSpace(UserTestCase):
         data = self.request_put(query_url, payload)
         self.assertEqual (data['role']['name'],'READER')
         return data    
+
+    def test_update_shared_space_member_drive(self):
+        """Test user API update shared space member drive"""
+        shared_space_member = self.test_create_shared_space_member_drive();
+        role = self.getRole('DRIVE_READER')
+        nestedRole = self.getRole('READER')
+        query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
+            'base_url': self.base_url,
+            'nodeUuid' : shared_space_member['node']['uuid'],
+            'memberUuid': shared_space_member['uuid']
+            })
+        payload = {
+            "account" : shared_space_member['account'],
+            "role" : {
+                "uuid" : role['uuid']
+                },
+            "nestedRole": {
+                "uuid": nestedRole['uuid'],
+            },
+            "node" : shared_space_member['node'],
+            "type" : shared_space_member['node']["nodeType"]
+        }
+        self.request_put(query_url, payload)
+
+    def test_update_shared_space_member_work_group_wrong_role(self):
+        """Test user API update shared space member work group with wrong role."""
+        shared_space_member = self.test_create_shared_space_member();
+        role = self.getRole('DRIVE_ADMIN')
+        query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
+            'base_url': self.base_url,
+            'nodeUuid' : shared_space_member['node']['uuid'],
+            'memberUuid': shared_space_member['uuid']
+            })
+        payload = {
+            "account" : shared_space_member['account'],
+            "role" : {
+                "uuid" : role['uuid']
+                },
+            "node" : shared_space_member['node'],
+        }
+        self.request_put(query_url, payload,expected_status=403 , busines_err_code=60005)
+
+    def test_update_shared_space_member_drive_wrong_role(self):
+        """Test user API update shared space member drive with wrong role."""
+        shared_space_member = self.test_create_shared_space_member_drive();
+        nestedRole = self.getRole('ADMIN')
+        query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
+            'base_url': self.base_url,
+            'nodeUuid' : shared_space_member['node']['uuid'],
+            'memberUuid': shared_space_member['uuid']
+            })
+        payload = {
+            "account" : shared_space_member['account'],
+            "role" : {
+                "uuid" : nestedRole['uuid']
+                },
+            "node" : shared_space_member['node'],
+        }
+        self.request_put(query_url, payload,expected_status=403 , busines_err_code=60005)
 
 
 class TestUserApiSharedSpaceMembers(UserTestCase):
