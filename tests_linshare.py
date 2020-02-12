@@ -84,7 +84,7 @@ class AbstractTestCase(unittest.TestCase):
         self.assertTrue(allFieldsExists, " List of expected fields is different with response field's")
         self.assertEqual(len(expected), len(payloadResponse.keys()))
 
-    def request_post(self, query_url, payload, headers=None):
+    def request_post(self, query_url, payload, headers=None, expected_status=200, busines_err_code=None):
         """Do POST request"""
         if not headers:
             headers = self.headers
@@ -100,9 +100,11 @@ class AbstractTestCase(unittest.TestCase):
             verify=self.verify)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
+        self.assertEqual(req.status_code, expected_status)
         data = req.json()
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        if busines_err_code: 
+            self.assertEqual (data['errCode'], busines_err_code)
         return data
 
     def request_delete(self, query_url, payload=None):
@@ -1563,6 +1565,32 @@ class TestUserApiSharedSpace(UserTestCase):
             verify=self.verify)
         self.assertEqual(request.status_code, 200, "FAILED")
         
+    def test_create_shared_space_member_workgroup_wrong_with_role_type(self):
+        """ Test user API add a member FORBIDDEN to a WORKGROUP 
+        by give a DRIVE role type to a WORKGROUP member """
+        user1 = self.get_user1()
+        workgroup = self.test_create_shared_space_Wg()
+        query_url = '{base_url}/shared_spaces/{workgroupUuid}/members'.format_map({
+            'base_url': self.base_url,
+            'workgroupUuid': workgroup['uuid']
+            })
+        role = self.getRole('DRIVE_READER')
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                },
+            "role" : {
+                "uuid" : role['uuid'],
+                },
+            "node" : {
+                "uuid" : workgroup['uuid'],
+                "name" : workgroup['name'],
+                "nodeType" : workgroup['nodeType']
+                },
+            "type" : "WORK_GROUP"
+            }
+        self.request_post(query_url, payload, expected_status=403 , busines_err_code=60005)
+        
     def test_create_shared_space_member_workgroup_implicit_type(self):
         """ Test user API add a member to a WORKGROUP """
         user1 = self.get_user1()
@@ -1620,15 +1648,43 @@ class TestUserApiSharedSpace(UserTestCase):
                 },
             "type" : "DRIVE"
         }
-        data = requests.post(
-            query_url,
-            json.dumps(payload),
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify).json()
+        data = self.request_post(query_url, payload)
         self.assertEqual (data['account']['firstName'], user1['firstName'])
         self.shared_space_delete(drive['uuid'])
         return data
+    
+    def test_create_shared_space_member_drive_fails_with_wrong_role(self):
+        """Test user API add a shared space member FORBIDDEN into a DRIVE 
+        by give Work_GROUP role type to DRIVE member"""
+        nestedRole = self.getRole('ADMIN')
+        role = self.getRole('DRIVE_ADMIN')
+        drive = self.test_create_shared_space_drive()
+        user1 = self.get_user1()
+        query_url = '{baseUrl}/shared_spaces/{driveUuid}/members'.format_map({
+            'driveUuid' : drive['uuid'],
+            'baseUrl' : self.base_url
+            })
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                "firstName" : user1['firstName'],
+                "lastName" : user1['lastName'],
+                "mail" : user1['mail'],
+                },
+            "role" : {
+                "uuid" : nestedRole['uuid'],
+                },
+            "nestedRole": {
+                "uuid": role['uuid'],
+            },
+            "node" : {
+                "uuid" : drive['uuid'],
+                "name" : drive['name'],
+                "nodeType" : drive['nodeType']
+                },
+            "type" : "DRIVE"
+        }
+        self.request_post(query_url, payload, expected_status=403, busines_err_code=60005)
     
     def test_add_shared_space_member_in_drive_and_its_nested_wg(self):
         """Test user API add a shared space member into a DRIVE and its nested workgroups"""
