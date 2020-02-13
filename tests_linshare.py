@@ -1294,10 +1294,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
 
 
 class TestUserApiSharedSpace(UserTestCase):
-    """Test User api sharedSpace.
-    This API is responsible of Drive and Workgroups management
-    """
-        
+    """Test User api sharedSpaces: Drive and Workgroups management."""
     def test_create_shared_space_Wg(self):
         """Test user API create a shared space WORKGROUP."""
         query_url = self.base_url + '/shared_spaces'
@@ -1314,7 +1311,7 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual(data['name'], 'workgroup_test')
         LOGGER.debug("result : %s", data)
         return data
-    
+
     def test_find_shared_space_Wg(self):
         """"Test user find a shared space WORKGROUP"""
         workgroup = self.test_create_shared_space_Wg();
@@ -1345,30 +1342,6 @@ class TestUserApiSharedSpace(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
-
-    def test_create_shared_space_drive_forbidden(self):
-        """Test user API create a shared space DRIVE fails.
-        This Test should fails on core Drive feature branch
-        because it is available only for LS versions not implementing Drive feature
-        DRAFT: should be changed after DRIVE feature branch merge
-        """
-        query_url = self.base_url + '/shared_spaces'
-        payload = {
-            "name": "workgroup_test",
-            "nodeType": "DRIVE"
-        }
-        req = requests.post(
-            query_url,
-            data=json.dumps(payload),
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 400)
-        data = req.json()
-        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
-        return data
 
     def test_update_shared_space_with_uuid_path(self):
         """Test create and update a shared space."""
@@ -1415,7 +1388,7 @@ class TestUserApiSharedSpace(UserTestCase):
         data = request.json()
         self.assertEqual(data['name'], payload['name'])
         return data
-        
+
     def test_shared_space_delete(self):
         """Trying to create and delete a shared_space WORKGROUP"""
         shared_space = self.test_create_shared_space_Wg();
@@ -1460,7 +1433,7 @@ class TestUserApiSharedSpace(UserTestCase):
         if len(nodes) != 0:
             for node in nodes:
                 self.assertEqual(node['parentUuid'], None, "One of returned Shared space is not on top level")
-        
+
     def test_find_all_shared_spaces_with_role(self):
         """Test user api find all with the role of the member of this node shared spaces """
         encode = urllib.parse.urlencode({'withRole' : True})
@@ -1510,7 +1483,7 @@ class TestUserApiSharedSpace(UserTestCase):
         data = req.json()
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
-    
+
     def test_create_nested_wg_in_drive(self):
         """Test user API create a workgroup  into a drive."""
         drive = self.test_create_shared_space_drive()
@@ -1566,7 +1539,7 @@ class TestUserApiSharedSpace(UserTestCase):
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         self.assertEqual(request.status_code, 200, "FAILED")
-        
+
     def test_create_shared_space_member_workgroup_wrong_with_role_type(self):
         """ Test user API add a member FORBIDDEN to a WORKGROUP 
         by give a DRIVE role type to a WORKGROUP member """
@@ -1592,7 +1565,7 @@ class TestUserApiSharedSpace(UserTestCase):
             "type" : "WORK_GROUP"
             }
         self.request_post(query_url, payload, expected_status=403 , busines_err_code=60005)
-        
+
     def test_create_shared_space_member_workgroup_implicit_type(self):
         """ Test user API add a member to a WORKGROUP """
         user1 = self.get_user1()
@@ -1622,7 +1595,7 @@ class TestUserApiSharedSpace(UserTestCase):
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         self.assertEqual(request.status_code, 200, "FAILED")          
-            
+
     def test_create_shared_space_member_drive(self):
         """Test user API add a shared space member into a DRIVE """
         nestedRole = self.getRole('ADMIN')
@@ -1653,7 +1626,7 @@ class TestUserApiSharedSpace(UserTestCase):
         data = self.request_post(query_url, payload)
         self.assertEqual (data['account']['firstName'], user1['firstName'])
         return data
-    
+
     def test_create_shared_space_member_drive_fails_with_wrong_role(self):
         """Test user API add a shared space member FORBIDDEN into a DRIVE 
         by give Work_GROUP role type to DRIVE member"""
@@ -1686,7 +1659,7 @@ class TestUserApiSharedSpace(UserTestCase):
             "type" : "DRIVE"
         }
         self.request_post(query_url, payload, expected_status=403, busines_err_code=60005)
-    
+
     def test_add_shared_space_member_in_drive_and_its_nested_wg(self):
         """Test user API add a shared space member into a DRIVE and its nested workgroups"""
         nestedRole = self.getRole('ADMIN')
@@ -1716,14 +1689,12 @@ class TestUserApiSharedSpace(UserTestCase):
             "nodeType": "WORK_GROUP",
             "parentUuid":drive["uuid"]
         }
-        
         """Payload to create the third nested workgroup"""
         wg_payload_3 = {
             "name": "Nested_workgroup_3",
             "nodeType": "WORK_GROUP",
             "parentUuid":drive["uuid"]
         }
-        
         """Add nested WG 1"""
         nested_wg_1 = requests.post(
             wg_create_query_url,
@@ -1752,7 +1723,6 @@ class TestUserApiSharedSpace(UserTestCase):
         add_membr_query_url = '{baseUrl}/shared_spaces/{driveUuid}/members'.format_map({
             "baseUrl":self.base_url ,
             "driveUuid": drive['uuid']})
-        
         member_payload = {
             "account" : {
                 "uuid" : user1['uuid'],
@@ -1773,7 +1743,6 @@ class TestUserApiSharedSpace(UserTestCase):
                 },
             "type" : "DRIVE"
         }
-        
         """Get all the members of the node"""
         get_members_of_wg1_query_url = '{baseUrl}/shared_spaces/{nodeUuid}/members'.format_map({
             "baseUrl" : self.base_url ,
@@ -1819,7 +1788,7 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual(member_2[0]['nested'], True, "FAILED, created member is not nested")
         self.assertEqual(member_3[0]['nested'], True, "FAILED, created member is not nested")
         return member_drive
-    
+
     def test_add_shared_space_member_in_nested_wg(self):
         """Test user API add a shared space member into a nested WORKGROUP"""
         """The role that's given to the member in the nested node"""
@@ -1867,10 +1836,9 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual(req.status_code, 200)
         data = req.json()
         return data
-    
+
     def test_soft_propagate_shared_space_member_role(self):
         """soft update role member ."""
-        
         user1 = self.get_user1()
         drive = self.test_create_shared_space_drive()
         nestedRole = self.getRole('ADMIN')
@@ -1926,9 +1894,8 @@ class TestUserApiSharedSpace(UserTestCase):
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify).json()
         self.assertEqual (data_member['account']['firstName'], user1['firstName'])
-        
-        """Soft update of a member into the drive."""
 
+        """Soft update of a member into the drive."""
         query_url = '{base_url}/shared_spaces/{driveUuid}/members/{memberUuid}/?force=false'.format_map({
             'base_url': self.base_url,
             'driveUuid': drive['uuid'],
@@ -2167,7 +2134,7 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual (data['parentUuid'],drive['uuid'])
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
-   
+
     def test_create_shared_space_member(self):
         """Test user API create a shared space member."""
         user1 = self.get_user1()
@@ -2194,7 +2161,7 @@ class TestUserApiSharedSpace(UserTestCase):
         data = self.request_post(query_url, payload)
         self.assertEqual (data['account']['firstName'],user1['firstName'])
         return data
-     
+
     def test_delete_shared_space_member(self):
         """Test user API delete a shared space member from a WORKGROUP."""
         shared_space_member = self.test_create_shared_space_member();
@@ -2221,7 +2188,7 @@ class TestUserApiSharedSpace(UserTestCase):
         data = req.json()
         self.assertEqual (data['account']['firstName'],shared_space_member['account']['firstName'])
         return data
-    
+
     def test_delete_shared_space_member_no_payload(self):
         """Test user API create a shared space member."""
         shared_space_member = self.test_create_shared_space_member();
@@ -2272,7 +2239,7 @@ class TestUserApiSharedSpace(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
-        
+
     def test_update_shared_space_member(self):
         """Test user API create a shared space member."""
         shared_space_member = self.test_create_shared_space_member();
@@ -2351,10 +2318,6 @@ class TestUserApiSharedSpace(UserTestCase):
             "node" : shared_space_member['node'],
         }
         self.request_put(query_url, payload,expected_status=403 , busines_err_code=60005)
-
-
-class TestUserApiSharedSpaceMembers(UserTestCase):
-    """Test User api sharedSpace Members TO DO : Use SharedSpaceMemberAPI to wirite tests"""
 
 
 class TestUserApiGuest (UserTestCase):
