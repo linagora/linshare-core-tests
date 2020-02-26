@@ -220,6 +220,7 @@ class UserTestCase(AbstractTestCase):
     email_external2 = CONFIG_USER['DEFAULT']['email_external2']
     password_external2 = CONFIG_USER['DEFAULT']['password_external2']
     email_external3 = CONFIG_USER['DEFAULT']['email_external3']
+    shared_space_kind = "SHARED_SPACE"
     def currentUser(self):
         """Return user info for the current user"""
         query_url = self.base_url + '/authentication/authorized'
@@ -863,15 +864,12 @@ class TestMailAttachment(AdminTestCase):
         self._assertJsonPayload(self.EXPECTED_FIELD_LIST, mail_attachments_audit[0].get('resource'))
 
 
-class TestUserApiDocumentRevision(AdminTestCase):
-    """Test User api"""
-
-    host = CONFIG['DEFAULT']['host']
-    base_url = host + '/linshare/webservice/rest/user/v2'
-
+class TestUserApiDocumentRevision(UserTestCase):
+    """Test User api workgroup documents and workgroup document revisions"""
     def test_create_ss_node(self):
         """Test user create a shared space node."""
-        query_url = self.base_url + '/shared_spaces'
+        query_url = '{baseUrl}/shared_spaces'.format_map({
+            'baseUrl' : self.base_url})
         payload = {
             "name": "workgroup_test",
             "nodeType": "WORK_GROUP"
@@ -882,7 +880,9 @@ class TestUserApiDocumentRevision(AdminTestCase):
 
     def create_workgroup_document(self, workgroup_uuid):
         """create a workgroup document."""
-        query_url = self.base_url + '/work_groups/' + workgroup_uuid + '/nodes'
+        query_url = '{baseUrl}/work_groups/{workgroup_uuid}/nodes'.format_map({
+            'baseUrl' : self.base_url,
+            'workgroup_uuid' : workgroup_uuid})
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
         with open(file_path, 'rb') as file_stream:
@@ -911,25 +911,17 @@ class TestUserApiDocumentRevision(AdminTestCase):
         return data
 
     def update_workgroup_document(self, workgroup_uuid, workgroup_node_uuid):
-        """create a workgroup document."""
-        query_url = self.base_url + '/work_groups/' + workgroup_uuid + '/nodes'
+        """Update a workgroup document."""
+        query_url = '{baseUrl}/work_groups/{workgroup_uuid}/nodes/{workgroup_node_uuid}'.format_map({
+            'baseUrl' : self.base_url,
+            'workgroup_uuid' : workgroup_uuid,
+            'workgroup_node_uuid' : workgroup_node_uuid})
         payload = {
             'uuid': workgroup_node_uuid,
             'name': 'test1',
             'type': 'DOCUMENT'
         }
-        req = requests.put(
-            query_url + '/' + workgroup_node_uuid,
-            data=json.dumps(payload),
-            headers = self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(200, req.status_code)
-        data = req.json()
-        LOGGER.debug("data : %s", data)
-        return data
+        return self.request_put(query_url, payload)
 
     def test_create_workgroup_document_revision(self):
         """Test user create a workgroup document revision."""
@@ -937,15 +929,58 @@ class TestUserApiDocumentRevision(AdminTestCase):
         """Upload the same file twice"""
         first_upload = self.create_workgroup_document(workgroup_uuid)
         self.create_workgroup_document(workgroup_uuid)
-        query_url = self.base_url + '/work_groups/' + workgroup_uuid + '/nodes?parent=' + first_upload['uuid']
-        req = requests.get(
-            query_url,
-            headers={'Accept': 'application/json'},
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        data = req.json()
-        self.assertEqual(200, req.status_code)
-        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        encode = urllib.parse.urlencode({'parent' : first_upload['uuid']})
+        query_url = '{baseUrl}/work_groups/{workgroup_uuid}/nodes?{encode}'.format_map({
+            'baseUrl' : self.base_url,
+            'workgroup_uuid' : workgroup_uuid,
+            'encode' : encode})
+        self.request_get(query_url)
+
+    def test_copy_workgroup_document_revision(self):
+        """Test copy a workgroup document revision."""
+        workgroup_uuid = self.test_create_ss_node()['uuid']
+        """Upload the same file twice"""
+        workgroup_document = self.create_workgroup_document(workgroup_uuid)
+        workgroup_document_revision = self.create_workgroup_document(workgroup_uuid)
+        """Copy the workGroup document"""
+        query_url = '{baseUrl}/documents/copy'.format_map({
+            'baseUrl' : self.base_url})
+        payload = {
+            "kind" : self.shared_space_kind,
+            "uuid" : workgroup_document_revision['uuid'],
+            "contextUuid" : workgroup_uuid
+        }
+        data = self.request_post(query_url, payload)
+        self.assertEqual(data[0]["name"], workgroup_document_revision["name"])
+
+    def test_copy_workgroup_document(self):
+        """Test copy a workgroup document."""
+        workgroup_uuid = self.test_create_ss_node()['uuid']
+        workgroup_document = self.create_workgroup_document(workgroup_uuid)
+        """Create revision: create the workgroup document twice"""
+        workgroup_document_revision = self.create_workgroup_document(workgroup_uuid)
+        """Update workgroup document name"""
+        payload = {
+            'uuid': workgroup_document['uuid'],
+            'name': 'renamed_document',
+            'type': 'DOCUMENT'
+        }
+        query_url = '{baseUrl}/work_groups/{workgroup_uuid}/nodes/{workgroup_node_uuid}'.format_map({
+            'baseUrl' : self.base_url,
+            'workgroup_uuid' : workgroup_uuid,
+            'workgroup_node_uuid' : workgroup_document['uuid']})
+        workgroup_document_updated = self.request_put(query_url, payload)
+        self.assertNotEqual(workgroup_document_updated['name'], workgroup_document_revision['name'])
+        """Copy the workGroup document"""
+        query_url = '{baseUrl}/documents/copy'.format_map({
+            'baseUrl' : self.base_url})
+        payload = {
+            "kind" : self.shared_space_kind,
+            "uuid" : workgroup_document_updated['uuid'],
+            "contextUuid" : workgroup_uuid
+        }
+        data = self.request_post(query_url, payload)
+        self.assertEqual(data[0]["name"], workgroup_document_updated["name"])
 
     def test_find_all_audit_document(self):
         """Test user create a workgroup document revision."""
@@ -955,28 +990,11 @@ class TestUserApiDocumentRevision(AdminTestCase):
         self.create_workgroup_document(workgroup_uuid)
         # update the name of document
         document = self.update_workgroup_document(workgroup_uuid, document['uuid'])
-        query_url = self.base_url + '/work_groups/' + workgroup_uuid + '/nodes/' + document['uuid'] + '/audit'
-        req = requests.get(
-            query_url,
-            headers={'Accept': 'application/json'},
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        self.assertEqual(req.status_code, 200)
-        self.assertEqual(3, len(req.json()))
-        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
-
-    def test_find_all_shared_spaces(self):
-        """Test user find all shared spaces."""
-        query_url = self.base_url + '/shared_spaces'
-        req = requests.get(
-            query_url,
-            headers={'Accept': 'application/json'},
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("data : %s", req.json())
+        query_url = '{baseUrl}/work_groups/{workgroup_uuid}/nodes/{document_uuid}/audit'.format_map({
+            'baseUrl' : self.base_url,
+            'workgroup_uuid' : workgroup_uuid,
+            'document_uuid' : document['uuid']})
+        self.request_get(query_url)
 
 
 class TestUserApiJwtPermanentToken(AdminTestCase):
