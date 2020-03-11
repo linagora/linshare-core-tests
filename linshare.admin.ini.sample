@@ -7,3 +7,10 @@ user1_email=user2@linshare.org
 no_verify=0
 # 0: no debug traces, 1: display debug traces.
 debug=0
+
+local_ldap_url=ldap://172.17.0.1:20389
+local_ldap_user_dn=cn=linshare,dc=linshare,dc=org
+local_ldap_password=linshare
+local_ldap_group_base_dn=ou=Groups,dc=linshare,dc=org
+
+default_drive_pattern=c59078f1-2366-4360-baa0-6c089202e9a6

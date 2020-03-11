@@ -162,7 +162,11 @@ class AdminTestCase(AbstractTestCase):
     user1_email = CONFIG['DEFAULT']['user1_email']
     user1_password = CONFIG['DEFAULT']['user1_password']
     user_base_url = AbstractTestCase.host + '/linshare/webservice/rest/user/v2'
-
+    local_ldap_url=CONFIG['DEFAULT']['local_ldap_url']
+    local_ldap_user_dn=CONFIG['DEFAULT']['local_ldap_user_dn']
+    local_ldap_password=CONFIG['DEFAULT']['local_ldap_password']
+    local_ldap_group_base_dn=CONFIG['DEFAULT']['local_ldap_group_base_dn']
+    default_drive_pattern=CONFIG['DEFAULT']['default_drive_pattern']
     def get_user1(self):
         """Return user info for user1"""
         query_url = self.base_url + '/users/search'
@@ -4125,6 +4129,121 @@ class TestUserApiUploadRequest(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data = req.json()
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        return data
+
+
+class TestAdminApiDriveProvider(AdminTestCase):
+
+    def create_ldap_connection(self):
+        """Create ldap connection"""
+        query_url = '{base_url}/ldap_connections'.format_map({
+            'base_url': self.base_url,
+            })
+        payload = {
+            "label":"local_ldap",
+            "providerUrl":self.local_ldap_url,
+            "securityPrincipal":self.local_ldap_user_dn,
+            "securityCredentials":self.local_ldap_password
+        }
+        data = self.request_post(query_url, payload)
+        return data
+
+    def create_ldap_pattern(self):
+        """Create ldap pattern"""
+        query_url = '{base_url}/group_patterns/{pattern_uuid}'.format_map({
+            'base_url': self.base_url,
+            'pattern_uuid' : self.default_drive_pattern
+            })
+        default_drive_pattern = self.request_get(query_url)
+        payload = {
+            "uuid":default_drive_pattern["uuid"],
+            "label":"drive_pattern_test",
+            "description":default_drive_pattern["description"],
+            "searchPageSize":default_drive_pattern["searchPageSize"],
+            "searchAllGroupsQuery":default_drive_pattern["searchAllGroupsQuery"],
+            "searchGroupQuery":default_drive_pattern["searchGroupQuery"],
+            "groupPrefix":default_drive_pattern["groupPrefix"],
+            "groupName":default_drive_pattern["groupName"],
+            "groupMember":default_drive_pattern["groupMember"],
+            "memberMail":default_drive_pattern["memberMail"],
+            "memberFirstName":default_drive_pattern["memberFirstName"],
+            "memberLastName":default_drive_pattern["memberLastName"]
+        }
+        query_url = '{base_url}/group_patterns'.format_map({
+            'base_url': self.base_url,
+            })
+        data = self.request_post(query_url, payload)
+        return data
+
+    def test_create_abstract_domain_create_drive_provider(self):
+        """Get linShareRootDomain"""
+        ldap_connection = self.create_ldap_connection()
+        drive_pattern = self.create_ldap_pattern()
+        query_url = '{base_url}/domains/{Domain}'.format_map({
+            'base_url': self.base_url,
+            'Domain' : 'LinShareRootDomain'
+            })
+        domain = self.request_get(query_url)
+        """Create an abstract domain"""
+        query_url = '{base_url}/domains'.format_map({
+            'base_url': self.base_url,
+            })
+        payload = {
+            "parent":domain['identifier'],
+            "type":"TOPDOMAIN",
+            "providers":[],
+            "driveProviders":[{
+                "baseDn": self.local_ldap_group_base_dn,
+                "connection":{"label":ldap_connection["label"],"uuid":ldap_connection["uuid"]},
+                "pattern":{"label":drive_pattern["label"],"uuid":drive_pattern["uuid"]},
+                "searchInOtherDomains":False
+                }],
+            "externalMailLocale":"ENGLISH",
+            "language":"ENGLISH",
+            "mailConfigUuid":domain['mailConfigUuid'],
+            "currentWelcomeMessage":domain['currentWelcomeMessage'],
+            "mimePolicyUuid":domain['mimePolicyUuid'],
+            "userRole":"SIMPLE",
+            "policy":{"identifier":"DefaultDomainPolicy"},
+            "label":"TopDomain",
+            "description":"test creating top domain"
+        }
+        data = self.request_post(query_url, payload)
+        self.assertTrue(data['driveProviders'])
+        return data
+
+    def test_update_abstract_domain_update_drive_provider(self):
+        """update_abstract_domain_update"""
+        domain = self.test_create_abstract_domain_create_drive_provider()
+        self.assertEqual(domain['driveProviders'][0]["searchInOtherDomains"], False)
+        query_url = '{base_url}/domains'.format_map({
+            'base_url': self.base_url
+            })
+        payload = {
+            "identifier":domain['identifier'],
+            "parent":domain["parent"],
+            "type":"TOPDOMAIN",
+            "providers":[],
+            "driveProviders":[{
+                "uuid": domain["driveProviders"][0]["uuid"],
+                "baseDn": self.local_ldap_group_base_dn,
+                "connection":{"label":domain["driveProviders"][0]["connection"]["label"],"uuid":domain["driveProviders"][0]['connection']["uuid"]},
+                "pattern":{"label":domain["driveProviders"][0]["pattern"]["label"],"uuid":domain["driveProviders"][0]["pattern"]["uuid"]},
+                "searchInOtherDomains":True
+                }],
+            "externalMailLocale":"ENGLISH",
+            "language":"ENGLISH",
+            "mailConfigUuid":domain['mailConfigUuid'],
+            "currentWelcomeMessage":domain['currentWelcomeMessage'],
+            "mimePolicyUuid":domain['mimePolicyUuid'],
+            "userRole":"SIMPLE",
+            "policy":{"identifier":"DefaultDomainPolicy"},
+            "label":"TopDomain",
+            "description":"test updating top domain",
+            "authShowOrder": domain['authShowOrder']
+        }
+        data = self.request_put(query_url, payload)
+        self.assertEqual(data['driveProviders'][0]["searchInOtherDomains"], True)
         return data
 
 
