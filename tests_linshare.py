@@ -111,7 +111,7 @@ class AbstractTestCase(unittest.TestCase):
         """Do POST request"""
         data = None
         if payload:
-            data = json.dumps(payload),
+            data = json.dumps(payload)
         req = requests.delete(
             query_url,
             data=data,
@@ -1476,15 +1476,39 @@ class TestUserApiSharedSpace(UserTestCase):
         """Test user find all shared space audit."""
         shared_space = self.test_create_shared_space_Wg();
         query_url = self.base_url + '/shared_spaces/' + shared_space['uuid'] + "/audit"
-        req = requests.get(
-            query_url,
-            headers={'Accept': 'application/json'},
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("data : %s", req.json())
+        audits = self.request_get(query_url)
+        self.assertTrue(audits)
+        """Create shared space node (folder)"""
+        query_url = '{baseUrl}/shared_spaces/{shared_space_uuid}/nodes'.format_map({
+            "baseUrl" : self.base_url,
+            "shared_space_uuid" : shared_space['uuid'
+        ]})
+        payload = {
+            "name": "FOLDER_test",
+            "type": "FOLDER"
+        }
+        created_node = self.request_post(query_url, payload)
+        """Delete shared space node (folder)"""
+        query_url = '{baseUrl}/shared_spaces/{shared_space_uuid}/nodes'.format_map({
+            "baseUrl" : self.base_url,
+            "shared_space_uuid" : shared_space['uuid'
+        ]})
+        payload = {
+            "name": "FOLDER_test",
+            "type": "FOLDER",
+            "uuid":created_node['uuid']
+        }
+        deleted_node = self.request_delete(query_url, payload)
+        """Find audit traces related to the folder"""
+        encode = urllib.parse.urlencode({
+            'nodeUuid': deleted_node['uuid']})
+        query_url = '{baseUrl}/shared_spaces/{shared_space_uuid}/audit?{encode}'.format_map({
+            "baseUrl" : self.base_url,
+            "shared_space_uuid" : shared_space['uuid'],
+            "encode" : encode })
+        audits = self.request_get(query_url)
+        self.assertTrue(audits)
+        self.assertEqual(len(audits), 2)
 
     def test_create_shared_space_drive(self):
         """Test user API create a drive."""
@@ -2340,123 +2364,6 @@ class TestUserApiSharedSpace(UserTestCase):
             "node" : shared_space_member['node'],
         }
         self.request_put(query_url, payload,expected_status=403 , busines_err_code=60005)
-
-    def test_propagate_update_nested_role_pristine_drive(self):
-        """Create a workGroup into the drive."""
-        user1 = self.get_user1()
-        drive = self.test_create_shared_space_drive()
-        nestedRole = self.getRole('ADMIN')
-        nestedRoleContributor = self.getRole('CONTRIBUTOR')
-        role = self.getRole('DRIVE_ADMIN')
-        query_url = self.base_url + '/shared_spaces/'
-        payload = {
-            "name": "Workgroup_test",
-            "nodeType": "WORK_GROUP",
-            "parentUuid":drive['uuid']
-        }
-        req = requests.post(
-            query_url,
-            data=json.dumps(payload),
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        data_workgroup = req.json()
-        
-        """Add  a member into the drive."""
-        
-        query_url = '{base_url}/shared_spaces/{driveUuid}/members'.format_map({  
-            'driveUuid' : drive['uuid'],
-            'base_url': self.base_url
-        })
-        payload = {
-            "account" : {
-                "uuid" : user1['uuid'],
-                },
-            "role" : {
-                "uuid" : role['uuid'],
-                },
-            "nestedRole": {
-                "uuid": nestedRole['uuid'],
-            },
-            "node" : {
-                "uuid" : drive['uuid'],
-                "name" : drive['name'],
-                "nodeType" : drive['nodeType']
-                },
-            "type" : "DRIVE"
-        }
-        data_member = self.request_post(query_url, payload)
-        self.assertEqual (data_member['account']['firstName'], user1['firstName'])
-
-        """Get sharedSpace member to update member into nested workgroup."""
-
-        query_url = '{base_url}/shared_spaces/{nodeUuid}/members'.format_map({
-            'base_url': self.base_url,
-            'nodeUuid' : data_workgroup['uuid'],
-            })
-        members = self.request_get(query_url)
-        data = req.json()
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        self.assertEqual (members[1]['account']['firstName'],'Jane')
-
-        """Update member into nested workgroup."""
-
-        self.assertEqual (members[1]['pristine'],True)
-        self.assertEqual (members[1]['role']['name'],nestedRole['name'])
-        query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
-            'base_url': self.base_url,
-            'nodeUuid' : data_workgroup['uuid'],
-            'memberUuid': members[1]['uuid']
-            })
-        payload = {
-            "account" : members[1]['account'],
-            "role" : {
-                "uuid" : nestedRoleContributor['uuid']
-                },
-            "node" : {
-                "name": data_workgroup['name'],
-                "nodeType": data_workgroup['nodeType'],
-                "parentUuid": data_workgroup['parentUuid'],
-                "uuid": data_workgroup['uuid']
-                }
-        }
-        updated_nested_member = self.request_put(query_url, payload)
-        self.assertEqual (updated_nested_member['role']['name'],nestedRoleContributor['name'])
-        self.assertEqual (updated_nested_member['pristine'],False)
-
-        """Prpagate update of a member with pristine is true (means the member is not updated manually before)"""
-        self.assertEqual (members[0]['pristine'],True)
-        self.assertEqual (members[0]['role']['name'],nestedRole['name'])
-        query_url = '{base_url}/shared_spaces/{driveUuid}/members/{memberUuid}/?propagate=true'.format_map({
-            'base_url': self.base_url,
-            'driveUuid': drive['uuid'],
-            'memberUuid': members[0]['uuid']
-        })
-        payload = {
-            "account" : {
-                "uuid" : members[0]['account']['uuid'],
-                },
-            "role" : {
-                "uuid" : role['uuid']
-                },
-            "nestedRole": {
-                "uuid": nestedRoleContributor['uuid']
-            },
-            "node" : {
-                "uuid" : drive['uuid'],
-                "name" : drive['name'],
-                "nodeType" : drive['nodeType']
-                },
-            "type" : "DRIVE"
-        }
-        updated_member = self.request_put(query_url, payload)
-        self.assertEqual (updated_member['nestedRole']['name'],nestedRoleContributor['name'])
-        return updated_member
 
 
 class TestUserApiGuest (UserTestCase):
