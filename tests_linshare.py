@@ -2366,6 +2366,31 @@ class TestUserApiSharedSpace(UserTestCase):
         self.request_put(query_url, payload,expected_status=403 , busines_err_code=60005)
 
 
+class TestUserApiSharedSpaceRoles(UserTestCase):
+    """"Test user API SharedSpaceRoles """
+    def test_find_all_shared_spaces_roles_by_node_type_default(self):
+        """Test user api find all shared spaces role by nodeType."""
+        query_url = '{base_url}/shared_space_roles'.format_map({
+            'base_url': self.base_url,
+            })
+        roles = self.request_get(query_url)
+        if len(roles) != 0:
+            for role in roles:
+                self.assertEqual(role['type'], "WORK_GROUP")
+
+    def test_find_all_shared_spaces_roles_by_node_type_drive(self):
+        """Test user api find all shared spaces role by nodeType."""
+        encode = urllib.parse.urlencode({'nodeType' : 'DRIVE'})
+        query_url = '{base_url}/shared_space_roles?{encode}'.format_map({
+            'base_url': self.base_url,
+            'encode' : encode
+            })
+        roles = self.request_get(query_url)
+        if len(roles) != 0:
+            for role in roles:
+                self.assertEqual(role['type'], "DRIVE")
+
+
 class TestUserApiGuest (UserTestCase):
     """"Test user API guests """
     def test_create_guest(self):
