@@ -215,8 +215,8 @@ class UserTestCase(AbstractTestCase):
     host = CONFIG_USER['DEFAULT']['host']
     base_url = host + '/linshare/webservice/rest/user/v2'
     base_test_url = host + '/linshare/webservice/rest/test/user/v2'
-    base_test_upload_request_url = host + '/linshare/webservice/rest/uploadrequest/v2/flow/upload'
-    base_external_url = host + '/linshare/webservice/rest/uploadrequest/v2'
+    base_test_upload_request_url = host + '/linshare/webservice/rest/uploadrequest/v4/flow/upload'
+    base_external_url = host + '/linshare/webservice/rest/uploadrequest/v4'
     email = CONFIG_USER['DEFAULT']['email']
     password = CONFIG_USER['DEFAULT']['password']
     email_external1 = CONFIG_USER['DEFAULT']['email_external1']
