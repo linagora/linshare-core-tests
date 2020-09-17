@@ -213,8 +213,8 @@ class AdminTestCase(AbstractTestCase):
 
 class UserTestCase(AbstractTestCase):
     host = CONFIG_USER['DEFAULT']['host']
-    base_url = host + '/linshare/webservice/rest/user/v2'
-    base_test_url = host + '/linshare/webservice/rest/test/user/v2'
+    base_url = host + '/linshare/webservice/rest/user/v4'
+    base_test_url = host + '/linshare/webservice/rest/test/user/v4'
     base_test_upload_request_url = host + '/linshare/webservice/rest/uploadrequest/v4/flow/upload'
     base_external_url = host + '/linshare/webservice/rest/uploadrequest/v4'
     email = CONFIG_USER['DEFAULT']['email']
@@ -480,10 +480,10 @@ class TestMailAttachment(AdminTestCase):
                     'filesize': str(filesize),
                     'file': ('LinShare.jpg', file_stream),
                     'description': 'Test mail attachment',
-                    'enableForAll': 'False',
+                    'enableForAll': 'True',
                     'enable':'True',
                     'mail_config':'946b190d-4c95-485f-bfe6-d288a2de1edd',
-                    'cid':'logo.mail.attachment.test',
+                    'cid':'logo.linshare@linshare.org',
                     'language' : 'ENGLISH'
                 }
             )
@@ -2688,7 +2688,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1],
             "body":"test body",
-            "enableNotification":False,
+            "enableNotification":True,
             "dirty":False
        }
         req = requests.post(
@@ -2716,7 +2716,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2],
             "body":"test body",
-            "enableNotification":False,
+            "enableNotification":True,
             "dirty":False
        }
         req = requests.post(
@@ -2745,7 +2745,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
-            "enableNotification":False,
+            "enableNotification":True,
             "dirty":False
        }
         req = requests.post(
@@ -2789,7 +2789,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
-            "enableNotification":False,
+            "enableNotification":True,
             "dirty":False
        }
         req = requests.post(
@@ -3045,7 +3045,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
-            "enableNotification":False,
+            "enableNotification":True,
             "dirty":False
        }
         req = requests.post(
@@ -3651,6 +3651,88 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
 
+    def test_delete_upload_request_entry_by_external_no_payload_no_content_type(self):
+        """"Test delete an upload request entry by an external user"""
+        upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
+        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_test_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data_upload_request = req.json()
+        self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
+        """Upload an upload request entry"""
+        query_url = self.base_test_upload_request_url
+        file_path = 'file10M'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'flowTotalChunks' : '1',
+                    'flowChunkSize': str(filesize),
+                    'flowTotalSize': str(filesize),
+                    'file': ('file10M.new', file_stream),
+                    'flowIdentifier' : 'entry',
+                    'flowFilename' : 'file10M',
+                    "flowRelativePath" : file_path,
+                    'requestUrlUuid' : data_upload_request[0]['uploadRequestURLs'][0]['uuid'],
+                    'password' : 'test',
+                    'body':'Test upload an upload request entry',
+                    'flowChunkNumber':'1'
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            req = requests.post(
+                query_url,
+                data=monitor,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email_external1, self.password_external1),
+                verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        """Find upload request entry"""
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : data_upload_request[0]['uuid']
+            })
+        req = requests.get(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        data_entry = req.json()
+        """Delete an upload request entry by an external"""
+        query_url = '{base_external_url}/requests/{upload_req_url}/entries/{upload_req_entry_uuid}'.format_map({
+            'base_external_url': self.base_external_url,
+            'upload_req_url' : data_upload_request[0]['uploadRequestURLs'][0]['uuid'],
+            'upload_req_entry_uuid' : data_entry[0]['uuid'],
+            })
+        req = requests.delete(
+            query_url,
+            auth=HTTPBasicAuth(self.email_external1, self.password_external1),
+            verify=self.verify
+        )
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
+
     def test_delete_upload_request_entry_by_external_payload(self):
         """"Test delete an upload request entry by an external user"""
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
@@ -3750,7 +3832,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
-            "enableNotification":False,
+            "enableNotification":True,
             "dirty":False
        }
         upload_request_group = self.request_post(query_url, payload)
@@ -3869,7 +3951,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
-            "enableNotification":False,
+            "enableNotification":True,
             "dirty":False
        }
         upload_request_group = self.request_post(query_url, payload)
