@@ -69,7 +69,19 @@ class AbstractTestCase(unittest.TestCase):
         data = req.json()
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
         return data
-    
+
+    def request_head(self, query_url):
+        """HEAD request"""
+        req = requests.head(
+            query_url,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+
+
     def _assertJsonPayload(self, expected, payloadResponse):
         """Method that allows to assert information returned on the responses
         Parameters:
@@ -4376,6 +4388,24 @@ class TestAdminApiDriveProvider(AdminTestCase):
         data = self.request_put(query_url, payload)
         self.assertEqual(data['driveProviders'][0]["searchInOtherDomains"], True)
         return data
+
+
+class TestUserApiEnums(UserTestCase):
+
+    def test_find_all_enums_get_verb(self):
+        """"Test find all enums"""
+        query_url = '{base_url}/enums'.format_map({
+            'base_url': self.base_url
+            })
+        data = self.request_get(query_url)
+        self.assertTrue(len(data) != 0, "The returned enums' list is empty")
+
+    def test_find_all_enums_head_verb(self):
+        """"Test find all enums"""
+        query_url = '{base_url}/enums'.format_map({
+            'base_url': self.base_url
+            })
+        self.request_head(query_url)
 
 
 if __name__ == '__main__':
