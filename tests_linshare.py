@@ -1224,6 +1224,25 @@ class TestUserApiSharedSpaceNode(UserTestCase):
         self.assertEqual(req.status_code, 200)
         self.assertEqual(data['name'], "FOLDER_test")
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        return data
+
+    def test_archive_download_folder(self):
+        """"Test user API download a folder"""
+        folder = self.test_find_shared_space_node()
+        self.assertEqual(folder['type'], "FOLDER")
+        query_url = '{baseUrl}/shared_spaces/{shared_spaces_uuid}/nodes/{shared_spaces_node_uuid}/download'.format_map({
+            'baseUrl' : self.base_url,
+            'shared_spaces_uuid' : folder['workGroup'],
+            'shared_spaces_node_uuid' : folder['uuid']})
+        req = requests.get(
+            query_url,
+            headers={'Accept': 'application/json'},
+            auth=HTTPBasicAuth(self.email, self.password),
+            verify=self.verify
+        )
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        self.assertEqual(req.status_code, 200)
 
     def test_update_shared_space_node_with_nodeuuid_path(self):
         """Test create and update a shared space node."""
