@@ -2996,7 +2996,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
     def test_update_upload_request_group(self):
         """Test create and update a upload request group."""
         upload_request_group = self.test_create_upload_request_group();
-        self.assertEqual(upload_request_group['enableNotification'], False)
+        self.assertEqual(upload_request_group['enableNotification'], True)
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -3006,7 +3006,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canDelete":upload_request_group['canDelete'],
             "canClose":upload_request_group['canClose'],
             "body":upload_request_group['body'],
-            "enableNotification":True
+            "enableNotification":False
        }
         req = requests.put(
             query_url,
@@ -3019,7 +3019,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         data = req.json()
-        self.assertEqual(data['enableNotification'], True)
+        self.assertEqual(data['enableNotification'], False)
         return data
 
     def test_add_recipient_upload_request_group_grouped_mode_false(self):
