@@ -48,6 +48,7 @@ def create_callback(encoder):
 class AbstractTestCase(unittest.TestCase):
     host = CONFIG['DEFAULT']['host']
     base_url = host + '/linshare/webservice/rest/admin'
+    base_url_v4 = host + '/linshare/webservice/rest/admin/v4'
     email = CONFIG['DEFAULT']['email']
     password = CONFIG['DEFAULT']['password']
     verify = not NO_VERIFY
@@ -407,6 +408,111 @@ class TestAdminApiJwt(AdminTestCase):
         self.assertEqual(data['description'], 'jwt description')
 
 
+class TestAdminApiFunctionalites(AdminTestCase):
+    """Class for tests on API V4 """
+    identifier_integer = 'UPLOAD_REQUEST__MAXIMUM_FILE_COUNT'
+    identifier_unit = 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION'
+    encoded_url = urllib.parse.urlencode({'domainId': "LinShareRootDomain"})
+    def test_find_all_functionalites(self):
+        """Test find all functionlaties for root domain on API v4"""
+        query_url = '{baseUrl}/functionalities?{encode}'.format_map({
+            'baseUrl' : self.base_url_v4,
+            'encode': self.encoded_url})
+        data = self.request_get(query_url)
+        self.assertTrue(data)
+        return data
+
+    def test_find_functionality_integer_type(self):
+        """Test find a functionality Integer type for a Admin API V4"""
+        query_url = '{base_url}/functionalities/{identifier}?{encode}'.format_map({
+            'base_url': self.base_url_v4,
+            'identifier' : self.identifier_integer,
+            'encode' : self.encoded_url
+            })
+        data = self.request_get(query_url)
+        self._assertJsonPayload(['integer', 'maxInteger', 'string', 'bool', 'type', 'select'], data['parameters'][0])
+        return data
+
+    def test_find_functionality_integer_type_admin_v1(self):
+        """Test find a functionality Integer type for a Admin API V1
+        Avoid to not expose filed maxInteger"""
+        query_url = '{base_url}/functionalities/{identifier}?{encode}'.format_map({
+            'base_url': self.base_url,
+            'identifier' : self.identifier_integer,
+            'encode' : self.encoded_url
+            })
+        data = self.request_get(query_url)
+        # Expected to not expose the field `maxInteger` on the old API
+        self._assertJsonPayload(['integer', 'string', 'bool', 'type', 'select'], data['parameters'][0])
+        return data
+
+    def test_find_functionality_unit_type(self):
+        """Test find a functionality Unit type for a Admin API V4"""
+        query_url = '{base_url}/functionalities/{identifier}?{encode}'.format_map({
+            'base_url': self.base_url_v4,
+            'identifier' : self.identifier_unit,
+            'encode' : self.encoded_url
+            })
+        data = self.request_get(query_url)
+        self._assertJsonPayload(['integer', 'maxInteger', 'maxString','string', 'bool', 'type', 'select'], data['parameters'][0])
+        return data
+
+    def test_find_functionality_unit_type_admin_v1(self):
+        """Test find a functionality Unit type for a Admin API V1
+        Avoid to not expose filed maxInteger and maxString"""
+        query_url = '{base_url}/functionalities/{identifier}?{encode}'.format_map({
+            'base_url': self.base_url,
+            'identifier' : self.identifier_unit,
+            'encode' : self.encoded_url
+            })
+        data = self.request_get(query_url)
+        # Expected to not expose the field `maxString` and `maxInteger` on the old API
+        self._assertJsonPayload(['integer', 'string', 'bool', 'type', 'select'], data['parameters'][0])
+        return data
+        
+    def test_update_functionality_integer_type(self):
+        """ Test update a functionality Integer type in admin V4 """
+        recovered_func = self.test_find_functionality_integer_type()
+        query_url = '{baseUrl}/functionalities'.format_map({'baseUrl' : self.base_url_v4 })
+        recovered_func['parameters'][0]['maxInteger'] = 15
+        recovered_func['parameters'][0]['integer'] = 12
+        data = self.request_put(query_url, recovered_func)
+        self.assertEqual(15, data['parameters'][0]['maxInteger'], 'Updating maxInteger parameter of functionality Integer type has failed | expected maxInteger = {} but was {}'.format(15, data['parameters'][0]['maxInteger']))
+        self.assertEqual(12, data['parameters'][0]['integer'], 'Updating integer parameter of functionality Integer type has failed | expected integer = {} but was {}'.format(12, data['parameters'][0]['integer']))
+
+    def test_update_functionality_integer_type_admin_v1(self):
+        """ Test update a functionality Integer type in admin V1 """
+        recovered_func = self.test_find_functionality_integer_type_admin_v1()
+        recovered_func['parameters'][0]['integer'] = 20
+        query_url = '{baseUrl}/functionalities'.format_map({'baseUrl' : self.base_url })
+        data = self.request_put(query_url, recovered_func )
+        self.assertEqual(20, data['parameters'][0]['integer'], 'Updating integer parameter of functionality Integer type has failed | expected integer = {}'.format(20))
+    
+    def test_update_functionality_unit_type(self):
+        """"Test update functionality Unit type on Admin V4"""
+        recovered_func = self.test_find_functionality_unit_type()
+        query_url = '{baseUrl}/functionalities'.format_map({'baseUrl' : self.base_url_v4 })
+        recovered_func ['parameters'][0]['integer'] = 1
+        recovered_func ['parameters'][0]['maxInteger'] = 2
+        recovered_func ['parameters'][0]['string'] = 'DAY'
+        recovered_func ['parameters'][0]['maxString'] = 'WEEK'
+        data = self.request_put(query_url, recovered_func)
+        self.assertEqual(1, data['parameters'][0]['integer'], 'Updating integer parameter of functionality unit type has failed | expected integer = {} but was {}'.format(1, data['parameters'][0]['integer']))
+        self.assertEqual(2, data['parameters'][0]['maxInteger'], 'Updating maxInteger parameter of functionality unit type has failed | expected maxInteger = {} but was {}'.format(2, data['parameters'][0]['maxInteger']))
+        self.assertEqual('DAY', data['parameters'][0]['string'], 'Updating string parameter of functionality unit type has failed | expected string = {} but was {}'.format('DAY', data['parameters'][0]['string']))
+        self.assertEqual('WEEK', data['parameters'][0]['maxString'], 'Updating maxString parameter of functionality unit type has failed | expected maxString = {} but was {}'.format('WEEK', data['parameters'][0]['maxString']))
+    
+    def test_update_functionality_unit_type_admin_v1(self):
+        """"Test update functionality Unit type on Admin V1"""
+        recovered_func = self.test_find_functionality_unit_type_admin_v1()
+        recovered_func['parameters'][0]['integer'] = 3
+        recovered_func['parameters'][0]['string'] = 'MONTH'
+        query_url = '{baseUrl}/functionalities'.format_map({'baseUrl' : self.base_url })
+        data = self.request_put(query_url, recovered_func)
+        self.assertEqual(3, data['parameters'][0]['integer'], 'Updating integer parameter of functionality unit type has failed | expected integer = {} but was {}'.format(3, data['parameters'][0]['integer']))
+        self.assertEqual('MONTH', data['parameters'][0]['string'], 'Updating string parameter of functionality unit type has failed | expected string = {} but was {}'.format('MONTH', data['parameters'][0]['string']))
+
+        
 class TestUserApiDocuments(AdminTestCase):
     """Test user api"""
 
@@ -4603,7 +4709,7 @@ class TestUserApiFunctionalties(UserTestCase):
             'identifier' : identifier
             })
         data = self.request_get(query_url)
-        self._assertJsonPayload(['type', 'identifier', 'enable' ,'canOverride', 'value', 'maxValue', 'unit', 'units'], data)
+        self._assertJsonPayload(['type', 'identifier', 'enable' ,'canOverride', 'value', 'maxValue', 'maxUnit','unit', 'units'], data)
 
     def test_find_functionality_string_type(self):
         """Test find a functionality String type for a giving user API V4"""
