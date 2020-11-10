@@ -3544,6 +3544,58 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
 
+    def test_find_all_audits_of_URE(self):
+        """"Test user API create an upload request entry """
+        upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
+        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_test_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        data = self.request_get(query_url)
+        self.assertEqual(len(data[0]['uploadRequestURLs']), 1)
+        LOGGER.debug("The upload requests of the upload request group are well recovered")
+        """Upload an upload request entry"""
+        query_url = self.base_test_upload_request_url
+        file_path = 'file10M'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'flowTotalChunks' : '1',
+                    'flowChunkSize': str(filesize),
+                    'flowTotalSize': str(filesize),
+                    'file': ('file10M.new', file_stream),
+                    'flowIdentifier' : 'entry',
+                    'flowFilename' : 'file10M',
+                    "flowRelativePath" : file_path,
+                    'requestUrlUuid' : data[0]['uploadRequestURLs'][0]['uuid'],
+                    'password' : '',
+                    'body':'Test upload an upload request entry',
+                    'flowChunkNumber':'1'
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            req = requests.post(
+                query_url,
+                data=monitor,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email, self.password),
+                verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
+        """"Test findAll audits of an upload request Entry"""
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/audit?entriesLogsOnly=true'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        data = self.request_get(query_url)
+        self.assertGreater(len(data),0)
+
 
 class TestUserApiUploadRequestExternal(UserTestCase):
     """"Test user API upload request for externals """
