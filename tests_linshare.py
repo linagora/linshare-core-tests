@@ -4147,6 +4147,8 @@ class TestUserApiUploadRequest(UserTestCase):
     """"Test user API upload request """
     upload_request_group = TestUserApiUploadRequestGroup()
     def test_find_upload_request(self):
+        expected = ['activationDate', 'body','canClose','canDeleteDocument', 'creationDate', 'modificationDate','closed','collective','dirty', 'enableNotification', 
+                    'expiryDate', 'label', 'locale', 'protectedByPassword','maxFileCount', 'maxFileSize','notificationDate', 'owner', 'recipients', 'status', 'usedSpace', 'uuid']
         """"Test find an upload request"""
         upload_request = self.upload_request_group.test_find_all_upload_requests_of_URG()
         query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
@@ -4164,6 +4166,7 @@ class TestUserApiUploadRequest(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data = req.json()
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        self._assertJsonPayload(expected, data)
         return data
 
     def test_update_status_upload_request(self):
