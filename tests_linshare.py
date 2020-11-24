@@ -137,7 +137,7 @@ class AbstractTestCase(unittest.TestCase):
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
 
-    def request_put(self, query_url, payload, expected_status=200, busines_err_code=None):
+    def request_put(self, query_url, payload=None, expected_status=200, busines_err_code=None):
         """Do PUT request"""
         req = requests.put(
             query_url,
@@ -3735,48 +3735,23 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
-        req = requests.get(
-            query_url,
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify
-        )
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        data_upload_request = req.json()
+        data_upload_request = self.request_get(query_url)
         self.assertEqual(data_upload_request[0]['status'], 'ENABLED')
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
+        """Upload upload request entry"""
+        self.upload_request_group_class.test_upload_upload_request_entry(data_upload_request[0]['uploadRequestURLs'][0]['uuid'])
         """Close an uploadRequest by an external"""
         query_url = '{base_external_url}/requests/{upload_url_uuid}'.format_map({
             'base_external_url': self.base_external_url,
             'upload_url_uuid' : data_upload_request[0]['uploadRequestURLs'][0]['uuid']
             })
-        req = requests.put(
-            query_url,
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email_external1, self.password_external1),
-            verify=self.verify
-        )
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        data = req.json()
+        data = self.request_put(query_url)
         """Check the updated status to CLOSED after the update by the external user"""
         query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
-        req = requests.get(
-            query_url,
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify
-        )
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        data_upload_request = req.json()
+        data_upload_request = self.request_get(query_url)
         self.assertEqual(data_upload_request[0]['status'], 'CLOSED')
         return data
 
