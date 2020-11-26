@@ -3447,17 +3447,8 @@ class TestUserApiUploadRequestEntry(UserTestCase):
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
-        req = requests.get(
-            query_url,
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify
-        )
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        data = req.json()
-        self.assertEqual(len(data[0]['uploadRequestURLs']), 1)
+        upload_requests = self.request_get(query_url)
+        self.assertEqual(len(upload_requests[0]['uploadRequestURLs']), 1)
         LOGGER.debug("The upload requests of the upload request group are well recovered")
         """Upload an upload request entry"""
         query_url = self.base_test_upload_request_url
@@ -3473,7 +3464,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
                     'flowIdentifier' : 'entry',
                     'flowFilename' : 'file10M',
                     "flowRelativePath" : file_path,
-                    'requestUrlUuid' : data[0]['uploadRequestURLs'][0]['uuid'],
+                    'requestUrlUuid' : upload_requests[0]['uploadRequestURLs'][0]['uuid'],
                     'password' : 'test',
                     'body':'Test upload an upload request entry',
                     'flowChunkNumber':'1'
@@ -3493,6 +3484,13 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
+        """Check the returned nbr of uploaded files of the uploadRequest"""
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : upload_requests[0]['uuid']
+            })
+        upload_request = self.request_get(query_url)
+        self.assertEqual(upload_request['nbrUploadedFiles'], 1)
 
     def test_find_upload_request_entry(self):
         """"Test user API find an upload request entry """
