@@ -3551,50 +3551,14 @@ class TestUserApiUploadRequestEntry(UserTestCase):
             'base_url': self.base_url,
             'upload_req_uuid' : data_upload_request[0]['uuid']
             })
-        req = requests.get(
-            query_url,
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify
-        )
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        data_entry = req.json()
-        """Before deleteing an upload request entry we need to close or archive the upload request"""
+        data_entry = self.request_get(query_url)
         self.assertEqual(data_upload_request[0]['status'], 'ENABLED')
-        query_url = '{base_url}/upload_requests/{upload_req_uuid}/status/{status}'.format_map({
-            'base_url': self.base_url,
-            'upload_req_uuid' : data_upload_request[0]['uuid'],
-            'status' : 'CLOSED'
-            })
-        req = requests.put(
-            query_url,
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify
-        )
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        data = req.json()
-        self.assertEqual(data['status'], 'CLOSED')
         """Delete an upload request entry"""
         query_url = '{base_url}/upload_request_entries/{upload_req_entry_uuid}'.format_map({
             'base_url': self.base_url,
             'upload_req_entry_uuid' : data_entry[0]['uuid'],
             })
-        req = requests.delete(
-            query_url,
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify
-        )
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        data = req.json()
-        return data
+        self.request_delete(query_url)
 
     def test_download_upload_request_entry(self):
         """"Test user API delete an upload request entry """
