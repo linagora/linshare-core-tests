@@ -3817,7 +3817,51 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         data_upload_request = self.request_get(query_url)
         self.assertEqual(data_upload_request[0]['status'], 'CLOSED')
         return data
+    
+    def test_update_upload_group_request_by_issuer(self):
+        # Test update upload request group by issuer 
+        upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
+        self.assertEqual(upload_request_group['status'], 'ENABLED')
+        self.assertEqual(upload_request_group['label'], 'upload request group')
+        self.assertEqual(upload_request_group['enableNotification'], True)
+        query_url_get_ur = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_test_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        data_upload_request = self.request_get(query_url_get_ur)
+        self.assertEqual(data_upload_request[0]['status'], 'ENABLED')
+        self.assertTrue(data_upload_request[0]['uploadRequestURLs'])
+        # Update URG from the issuer
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        payload = {
+            "label": "updated label",
+            "canDelete":upload_request_group['canDelete'],
+            "canClose":upload_request_group['canClose'],
+            "body":upload_request_group['body'],
+            "enableNotification":True
+       }
+        data_upload_request_group_updated_by_issuer = self.request_put(query_url, payload)
+        # Check updates from groups endpoint  
+        data_upload_request = self.request_get(query_url_get_ur)
+        self.assertEqual(data_upload_request[0]['label'], data_upload_request_group_updated_by_issuer['label'], "Update fails")
+        self.assertEqual(data_upload_request[0]['enableNotification'], True)
+        # Check if recipient receive updates
+        query_url_ext = '{base_external_url}/requests/{upload_url_uuid}'.format_map({
+            'base_external_url': self.base_external_url,
+            'upload_url_uuid' : data_upload_request[0]['uploadRequestURLs'][0]['uuid']
+            })
+        data_upload_request_from_ext = requests.get(
+            query_url_ext,
+            headers=self.headers,
+            auth=HTTPBasicAuth(self.email_external1, self.password_external1),
+            verify=self.verify
+        ).json()
+        self.assertEqual(data_upload_request_from_ext['subject'], data_upload_request_group_updated_by_issuer['label'], "The recipient didn't receive the updates")
 
+    
     def test_delete_upload_request_entry_by_external_no_payload(self):
         """"Test delete an upload request entry by an external user"""
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
@@ -4311,7 +4355,7 @@ class TestUserApiUploadRequest(UserTestCase):
     """"Test user API upload request """
     upload_request_group = TestUserApiUploadRequestGroup()
     def test_find_upload_request(self):
-        expected = ['activationDate', 'body','canClose','canDeleteDocument', 'creationDate', 'modificationDate','closed','collective','dirty', 'enableNotification', 
+        expected = ['activationDate', 'body','canClose','canDeleteDocument', 'creationDate', 'modificationDate','closed','collective', 'enableNotification', 
                     'expiryDate', 'label', 'locale', 'protectedByPassword','maxFileCount', 'maxFileSize','notificationDate', 'owner', 'recipients', 'status', 'usedSpace', 'uuid']
         """"Test find an upload request"""
         upload_request = self.upload_request_group.test_find_all_upload_requests_of_URG()
@@ -4467,7 +4511,8 @@ class TestUserApiUploadRequest(UserTestCase):
     def test_update_upload_request(self):
         """Test update an upload request."""
         upload_request = self.test_find_upload_request();
-        self.assertEqual(upload_request['enableNotification'], False)
+        # Use the method test_create_upload_request returned data 
+        self.assertEqual(upload_request['enableNotification'], True)
         query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : upload_request['uuid']
@@ -4476,7 +4521,7 @@ class TestUserApiUploadRequest(UserTestCase):
             "label": upload_request['label'],
             "canClose":upload_request['canClose'],
             "body":upload_request['body'],
-            "enableNotification":True
+            "enableNotification":False
        }
         req = requests.put(
             query_url,
@@ -4489,7 +4534,7 @@ class TestUserApiUploadRequest(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         data = req.json()
-        self.assertEqual(data['enableNotification'], True)
+        self.assertEqual(data['enableNotification'], False)
         return data
 
     def test_find_all_upload_request_entries(self):
