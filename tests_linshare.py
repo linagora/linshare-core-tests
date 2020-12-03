@@ -2827,7 +2827,6 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "contactList":[self.email_external1],
             "body":"test body",
             "enableNotification":True,
-            "dirty":False
        }
         req = requests.post(
             query_url,
@@ -2855,7 +2854,6 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "contactList":[self.email_external1, self.email_external2],
             "body":"test body",
             "enableNotification":True,
-            "dirty":False
        }
         req = requests.post(
             query_url,
@@ -2884,7 +2882,6 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
             "enableNotification":True,
-            "dirty":False
        }
         req = requests.post(
             query_url,
@@ -2928,7 +2925,6 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
             "enableNotification":True,
-            "dirty":False
        }
         req = requests.post(
             query_url,
@@ -3184,7 +3180,6 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
             "enableNotification":True,
-            "dirty":False
        }
         req = requests.post(
             query_url,
@@ -3287,7 +3282,6 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
             "enableNotification":True,
-            "dirty":False
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
@@ -3334,7 +3328,6 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
             "enableNotification":True,
-            "dirty":False
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
@@ -4090,7 +4083,6 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
             "enableNotification":True,
-            "dirty":False
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
@@ -4209,7 +4201,6 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
             "enableNotification":True,
-            "dirty":False
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
@@ -4376,7 +4367,6 @@ class TestUserApiUploadRequest(UserTestCase):
             "contactList":["external1@linshare.org"],
             "body":"test body",
             "enableNotification":False,
-            "dirty":False
        }
         req = requests.post(
             query_url,
