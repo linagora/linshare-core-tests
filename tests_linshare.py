@@ -238,6 +238,7 @@ class UserTestCase(AbstractTestCase):
     email_external2 = CONFIG_USER['DEFAULT']['email_external2']
     password_external2 = CONFIG_USER['DEFAULT']['password_external2']
     email_external3 = CONFIG_USER['DEFAULT']['email_external3']
+    email_external4 = CONFIG_USER['DEFAULT']['email_external4']
     shared_space_kind = "SHARED_SPACE"
     def currentUser(self):
         """Return user info for the current user"""
@@ -2826,7 +2827,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1],
             "body":"test body",
-            "enableNotification":True,
+            "enableNotification":True
        }
         req = requests.post(
             query_url,
@@ -2853,7 +2854,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2],
             "body":"test body",
-            "enableNotification":True,
+            "enableNotification":True
        }
         req = requests.post(
             query_url,
@@ -2869,11 +2870,11 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
 
-    def test_create_upload_request_group_grouped_mode_true(self):
-        """"Test create upload request group with grouped mode true"""
-        query_url = '{base_url}/upload_request_groups?groupMode={groupMode}'.format_map({
+    def test_create_upload_request_group_collective_mode_true(self):
+        """"Test create upload request group with collective mode true"""
+        query_url = '{base_url}/upload_request_groups?collective={collective}'.format_map({
             'base_url': self.base_url,
-            'groupMode' : 'true'
+            'collective' : 'true'
             })
         payload = {
             "label": "upload request group",
@@ -2881,7 +2882,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
-            "enableNotification":True,
+            "enableNotification":True
        }
         req = requests.post(
             query_url,
@@ -2912,11 +2913,11 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         self.assertEqual(len(data), 1)
         return data
 
-    def test_create_upload_request_group_grouped_mode_false(self):
-        """"Test create upload request group with grouped mode false"""
-        query_url = '{base_url}/upload_request_groups?groupMode={groupMode}'.format_map({
+    def test_create_upload_request_group_collective_mode_false(self):
+        """"Test create upload request group with collective mode false"""
+        query_url = '{base_url}/upload_request_groups?groupMode={collective}'.format_map({
             'base_url': self.base_url,
-            'groupMode' : 'false'
+            'collective' : 'false'
             })
         payload = {
             "label": "upload request group",
@@ -2924,7 +2925,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
-            "enableNotification":True,
+            "enableNotification":True
        }
         req = requests.post(
             query_url,
@@ -3125,8 +3126,8 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         self.assertEqual(data['enableNotification'], False)
         return data
 
-    def test_add_recipient_upload_request_group_grouped_mode_false(self):
-        """Test create upload request group and add a new recipient the grouped mode is false by default."""
+    def test_add_recipient_upload_request_group_collective_mode_false(self):
+        """Test create upload request group and add a new recipient the collective mode is false by default."""
         upload_request_group = self.test_create_upload_request_group();
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/recipients'.format_map({
             'base_url': self.base_url,
@@ -3136,7 +3137,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
                 {
                 "firstName": "walker",
                 "lastName": "mccallister",
-                "mail": "external2@linshare.org"
+                "mail": self.email_external2
                 }
             ]
         req = requests.post(
@@ -3167,11 +3168,11 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         self.assertEqual(len(data), 2)
         return data
 
-    def test_add_recipient_upload_request_group_grouped_mode_true(self):
-        """Test create upload request group and add a new recipient the grouped mode is true"""
-        query_url = '{base_url}/upload_request_groups?groupMode={groupMode}'.format_map({
+    def test_add_recipient_upload_request_group_collective_mode_true(self):
+        """Test create upload request group and add a new recipient the collective mode is true"""
+        query_url = '{base_url}/upload_request_groups?collective={collective}'.format_map({
             'base_url': self.base_url,
-            'groupMode' : 'true'
+            'collective' : 'true'
             })
         payload = {
             "label": "upload request group",
@@ -3179,7 +3180,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
-            "enableNotification":True,
+            "enableNotification":True
        }
         req = requests.post(
             query_url,
@@ -3202,7 +3203,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
                 {
                 "firstName": "walker",
                 "lastName": "mccallister",
-                "mail": "external4@linshare.org"
+                "mail": self.email_external4
                 }
             ]
         req = requests.post(
@@ -3271,9 +3272,9 @@ class TestUserApiUploadRequestGroup(UserTestCase):
 
     def test_archive_download_upload_request_entries_of_collective_urg(self):
         """"Test archive download of a collective URG"""
-        query_url = '{base_url}/upload_request_groups?groupMode={groupMode}'.format_map({
+        query_url = '{base_url}/upload_request_groups?collective={collective}'.format_map({
             'base_url': self.base_url,
-            'groupMode' : 'true'
+            'collective' : 'true'
             })
         payload = {
             "label": "upload request group",
@@ -3281,7 +3282,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
-            "enableNotification":True,
+            "enableNotification":True
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
@@ -3317,9 +3318,9 @@ class TestUserApiUploadRequestGroup(UserTestCase):
 
     def test_archive_download_upload_request_entries_of_individual_urg(self):
         """"Test create upload request group with grouped mode false"""
-        query_url = '{base_url}/upload_request_groups?groupMode={groupMode}'.format_map({
+        query_url = '{base_url}/upload_request_groups?collective={collective}'.format_map({
             'base_url': self.base_url,
-            'groupMode' : 'false'
+            'collective' : 'false'
             })
         payload = {
             "label": "upload request group",
@@ -3327,7 +3328,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
-            "enableNotification":True,
+            "enableNotification":True
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
@@ -4126,7 +4127,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
-            "enableNotification":True,
+            "enableNotification":True
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
@@ -4244,7 +4245,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             "canClose":True,
             "contactList":[self.email_external1, self.email_external2, self.email_external3],
             "body":"test body",
-            "enableNotification":True,
+            "enableNotification":True
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
