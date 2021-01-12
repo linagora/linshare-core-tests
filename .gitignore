@@ -2,3 +2,8 @@ linshare.admin.ini
 linshare.user.ini
 *.pyc
 *.swp
+.project
+.pydevproject
+.settings/
+.vscode/
+
