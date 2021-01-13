@@ -3161,6 +3161,83 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         self.assertEqual(data['enableNotification'], False)
         return data
 
+    def test_update_upload_request_group_with_force(self):
+        """"Test create upload request group with collective mode false"""
+        # 1- Create a group
+        query_url = '{base_url}/upload_request_groups?groupMode={collective}'.format_map({
+            'base_url': self.base_url,
+            'collective' : 'false'
+            })
+        payload = {
+            "label": "upload request group",
+            "canDelete":True,
+            "canClose":True,
+            "contactList":[self.email_external1, self.email_external2, self.email_external3],
+            "body":"test body",
+            "enableNotification":True
+            }
+        group = self.request_post(query_url, payload)
+        self.assertEqual(group['enableNotification'], True)
+        # Recover all related URs
+        query_url_urequests = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : group['uuid']
+            })
+        upload_requests = self.request_get(query_url_urequests)
+        self.assertEqual(upload_requests[0]['enableNotification'], True)
+        self.assertEqual(upload_requests[1]['enableNotification'], True)
+        self.assertEqual(upload_requests[2]['enableNotification'], True)
+        # 2- Update a group without force
+        query_url_update_grp = '{base_url}/upload_request_groups/{upload_req_group_uuid}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : group['uuid']
+            })
+        payload = {
+            "enableNotification":False
+            }
+        urg_updated = self.request_put(query_url_update_grp, payload)
+        self.assertEqual(urg_updated['enableNotification'], False)
+        # Get URs after update the group
+        upload_requests_updated = self.request_get(query_url_urequests)
+        self.assertEqual(upload_requests_updated[0]['enableNotification'], False)
+        self.assertEqual(upload_requests_updated[1]['enableNotification'], False)
+        self.assertEqual(upload_requests_updated[2]['enableNotification'], False)
+        # 3- update one upload request
+        upload_request_1 = upload_requests_updated[0]
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : upload_request_1['uuid']
+            })
+        payload = {
+            "enableNotification":True
+            }
+        updated_ur = self.request_put(query_url, payload)
+        self.assertEqual(updated_ur['enableNotification'], True)
+        # Update group without force parameter
+        payload = {
+            "enableNotification":False
+            }
+        urg_updated = self.request_put(query_url_update_grp, payload)
+        upload_requests_updated = self.request_get(query_url_urequests)
+        self.assertEqual(upload_requests_updated[0]['enableNotification'], True)
+        self.assertEqual(upload_requests_updated[1]['enableNotification'], False)
+        self.assertEqual(upload_requests_updated[2]['enableNotification'], False)
+        # Update group with force parameter | expected all UR updated
+        encoded_url = urllib.parse.urlencode({'force': "true"})
+        query_url_force = '{base_url}/upload_request_groups/{upload_req_group_uuid}?{encode}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : group['uuid'],
+            'encode': encoded_url
+            })
+        payload = {
+            "enableNotification":False
+            }
+        urg_updated = self.request_put(query_url_force, payload)
+        upload_requests_updated = self.request_get(query_url_urequests)
+        self.assertEqual(upload_requests_updated[0]['enableNotification'], False)
+        self.assertEqual(upload_requests_updated[1]['enableNotification'], False)
+        self.assertEqual(upload_requests_updated[2]['enableNotification'], False)
+
     def test_add_recipient_upload_request_group_collective_mode_false(self):
         """Test create upload request group and add a new recipient the collective mode is false by default."""
         upload_request_group = self.test_create_upload_request_group();
