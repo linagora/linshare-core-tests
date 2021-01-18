@@ -314,6 +314,41 @@ class UserTestCase(AbstractTestCase):
         LOGGER.debug("data : %s", req.json())
         return req.json()
 
+    def upload_upload_request_entry(self, request_url_uuid):
+        """method to upload an entry on upload request"""
+        query_url = self.base_test_upload_request_url
+        file_path = 'file10M'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'flowTotalChunks' : '1',
+                    'flowChunkSize': str(filesize),
+                    'flowTotalSize': str(filesize),
+                    'file': ('file10M.new', file_stream),
+                    'flowIdentifier' : 'entry',
+                    'flowFilename' : 'file10M',
+                    "flowRelativePath" : file_path,
+                    'requestUrlUuid' : request_url_uuid,
+                    'password' : '',
+                    'body':'Test upload an upload request entry',
+                    'flowChunkNumber':'1'
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            req = requests.post(
+                query_url,
+                data=monitor,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email, self.password),
+                verify=self.verify)
+        self.assertEqual(req.status_code, 200)
+        LOGGER.debug("status_code : %s", req.status_code)
+        LOGGER.debug("result : %s", req.text)
 
 class TestAdminApiJwt(AdminTestCase):
     """Test admin api"""
@@ -3234,42 +3269,6 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         self.assertEqual(len(data), 1)
         return data
 
-    def test_upload_upload_request_entry(self, request_url_uuid):
-        """Upload first upload request entry"""
-        query_url = self.base_test_upload_request_url
-        file_path = 'file10M'
-        filesize = os.path.getsize(file_path)
-        with open(file_path, 'rb') as file_stream:
-            encoder = MultipartEncoder(
-                fields={
-                    'flowTotalChunks' : '1',
-                    'flowChunkSize': str(filesize),
-                    'flowTotalSize': str(filesize),
-                    'file': ('file10M.new', file_stream),
-                    'flowIdentifier' : 'entry',
-                    'flowFilename' : 'file10M',
-                    "flowRelativePath" : file_path,
-                    'requestUrlUuid' : request_url_uuid,
-                    'password' : '',
-                    'body':'Test upload an upload request entry',
-                    'flowChunkNumber':'1'
-                }
-            )
-            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
-            headers = {
-                'Accept': 'application/json',
-                'Content-Type': monitor.content_type
-            }
-            req = requests.post(
-                query_url,
-                data=monitor,
-                headers=headers,
-                auth=HTTPBasicAuth(self.email, self.password),
-                verify=self.verify)
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-
     def test_archive_download_upload_request_entries_of_collective_urg(self):
         """"Test archive download of a collective URG"""
         query_url = '{base_url}/upload_request_groups?collective={collective}'.format_map({
@@ -3293,9 +3292,9 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         upload_request = self.request_get(query_url)
         self.assertEqual(len(upload_request), 1)
         """Upload first upload request entry"""
-        self.test_upload_upload_request_entry(upload_request[0]['uploadRequestURLs'][0]['uuid'])
+        self.upload_upload_request_entry(upload_request[0]['uploadRequestURLs'][0]['uuid'])
         """Upload a second upload request entry"""
-        self.test_upload_upload_request_entry(upload_request[0]['uploadRequestURLs'][0]['uuid'])
+        self.upload_upload_request_entry(upload_request[0]['uploadRequestURLs'][0]['uuid'])
         """Find the list of the uploaded upload request entries"""
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
@@ -3339,7 +3338,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         upload_requests = self.request_get(query_url)
         self.assertEqual(len(upload_requests), 3)
         """Upload an upload request entry"""
-        self.test_upload_upload_request_entry(upload_requests[0]['uploadRequestURLs'][0]['uuid'])
+        self.upload_upload_request_entry(upload_requests[0]['uploadRequestURLs'][0]['uuid'])
         """Find the list of the uploaded upload request entries"""
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
@@ -3803,7 +3802,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         self.assertEqual(data_upload_request[0]['status'], 'ENABLED')
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
         """Upload upload request entry"""
-        self.upload_request_group_class.test_upload_upload_request_entry(data_upload_request[0]['uploadRequestURLs'][0]['uuid'])
+        self.test_upload_upload_request_entry(data_upload_request[0]['uploadRequestURLs'][0]['uuid'])
         """Close an uploadRequest by an external"""
         query_url = '{base_external_url}/requests/{upload_url_uuid}'.format_map({
             'base_external_url': self.base_external_url,
