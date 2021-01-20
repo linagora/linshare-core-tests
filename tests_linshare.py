@@ -3048,6 +3048,9 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        self.assertEqual(data[0]['nbrUploadedFiles'], 0)
+        self.assertEqual(data[0]['usedSpace'], 0)
+
         return data
 
     def test_find_all_closed_upload_requests_of_URG(self):
@@ -3491,6 +3494,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
             })
         upload_request = self.request_get(query_url)
         self.assertEqual(upload_request['nbrUploadedFiles'], 1)
+        self.assertEqual(upload_request['usedSpace'], filesize)
 
     def test_find_upload_request_entry(self):
         """"Test user API find an upload request entry """
@@ -3560,6 +3564,14 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data = req.json()
         self.assertEqual(len(data), 1)
+        """Check the returned nbr of uploaded files of the uploadRequest"""
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : data_upload_request[0]['uuid']
+            })
+        upload_request = self.request_get(query_url)
+        self.assertEqual(upload_request['nbrUploadedFiles'], 1)
+        self.assertEqual(upload_request['usedSpace'], filesize)
         return data
 
     def test_delete_upload_request_entry(self):
@@ -3627,6 +3639,15 @@ class TestUserApiUploadRequestEntry(UserTestCase):
             'upload_req_entry_uuid' : data_entry[0]['uuid'],
             })
         self.request_delete(query_url)
+        """Check the returned nbr of uploaded files of the uploadRequest"""
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : data_upload_request[0]['uuid']
+            })
+        upload_request = self.request_get(query_url)
+        self.assertEqual(upload_request['nbrUploadedFiles'], 0)
+        self.assertEqual(upload_request['usedSpace'], 0)
+        
 
     def test_download_upload_request_entry(self):
         """"Test user API delete an upload request entry """
@@ -4431,7 +4452,7 @@ class TestUserApiUploadRequest(UserTestCase):
     upload_request_group = TestUserApiUploadRequestGroup()
     def test_find_upload_request(self):
         expected = ['activationDate', 'body','canClose','canDeleteDocument', 'creationDate', 'modificationDate','closed','collective', 'enableNotification', 
-                    'expiryDate', 'label', 'pristine','locale', 'protectedByPassword','maxFileCount', 'maxFileSize','notificationDate', 'owner', 'recipients', 'status', 'usedSpace', 'uuid']
+                    'expiryDate', 'label', 'pristine','locale', 'protectedByPassword','maxFileCount', 'maxFileSize','notificationDate', 'owner', 'recipients', 'status', 'usedSpace', 'nbrUploadedFiles','uuid']
         """"Test find an upload request"""
         upload_request = self.upload_request_group.test_find_all_upload_requests_of_URG()
         query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
@@ -4472,6 +4493,8 @@ class TestUserApiUploadRequest(UserTestCase):
         self.assertEqual(req.status_code, 200)
         data = req.json()
         self.assertEqual(data['status'], 'CLOSED')
+        self.assertEqual(upload_request['nbrUploadedFiles'], 0)
+        self.assertEqual(upload_request['usedSpace'], 0)
         return data
 
     def test_update_status_upload_request_copy_true(self):
