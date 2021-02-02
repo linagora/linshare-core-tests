@@ -3440,6 +3440,34 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         )
         self.assertEqual(req.status_code, 200)
 
+    def test_return_used_space_nbr_uploaded_files_urg(self):
+        """"Test user API return the number of uploaded files and used space on an URG """
+        upload_request_group = self.test_create_upload_request_group()
+        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+            'base_url': self.base_test_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        upload_requests = self.request_get(query_url)
+        self.assertEqual(len(upload_requests[0]['uploadRequestURLs']), 1)
+        LOGGER.debug("The upload requests of the upload request group are well recovered")
+        """Upload an upload request entry"""
+        self.upload_upload_request_entry(upload_requests[0]['uploadRequestURLs'][0]['uuid'])
+        """Find upload request's entries"""
+        query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
+            'base_url': self.base_url,
+            'upload_req_uuid' : upload_requests[0]['uuid']
+            })
+        upload_requets_entries = self.request_get(query_url)
+        """Check the returned nbr of uploaded files and used space of the uploadRequestGroup"""
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}'.format_map({
+            'base_url': self.base_url,
+            'upload_req_group_uuid' : upload_request_group['uuid']
+            })
+        upload_request = self.request_get(query_url)
+        self.assertEqual(upload_request['nbrUploadedFiles'], 1)
+        self.assertEqual(upload_request['usedSpace'], upload_requets_entries[0]['size'])
+
+
 class TestUserApiUploadRequestEntry(UserTestCase):
     """"Test user API upload request entry """
     upload_request_group_class = TestUserApiUploadRequestGroup()
