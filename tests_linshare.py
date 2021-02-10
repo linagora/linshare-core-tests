@@ -90,10 +90,11 @@ class AbstractTestCase(unittest.TestCase):
         payloadResponse : returned object to be tested.
          """
         allFieldsExists = True
-        for item in expected:
-            if item not in payloadResponse:
+        for item in payloadResponse:
+            if item not in expected:
                 allFieldsExists = False
-                LOGGER.error(" %s does not exists in the response payload", item)
+                LOGGER.error(" %s does not exists in the expected payload", item)
+                
         self.assertTrue(allFieldsExists, " List of expected fields is different with response field's")
         self.assertEqual(len(expected), len(payloadResponse.keys()))
 
@@ -314,7 +315,7 @@ class UserTestCase(AbstractTestCase):
         LOGGER.debug("data : %s", req.json())
         return req.json()
 
-    def upload_upload_request_entry(self, request_url_uuid):
+    def upload_upload_request_entry(self, email, password,request_url_uuid):
         """method to upload an entry on upload request"""
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
@@ -344,7 +345,7 @@ class UserTestCase(AbstractTestCase):
                 query_url,
                 data=monitor,
                 headers=headers,
-                auth=HTTPBasicAuth(self.email, self.password),
+                auth=HTTPBasicAuth(email, password),
                 verify=self.verify)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
@@ -2850,6 +2851,7 @@ class TestAdminWorkGroupPattern (AdminTestCase):
         LOGGER.debug("data : %s", req.json())
 
 class TestUserApiUploadRequestGroup(UserTestCase):
+    """NOTE: Tests of this class need that delay before expiration , notification and activation functionalities should be enabled"""
     """"Test user API upload request group """
     def test_create_upload_request_group(self):
         """"Test create upload request group with one recipient"""
@@ -3309,7 +3311,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         data = req.json()
         self.assertEqual (data['label'],"upload request group")
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
-        """Add new recipient to the upload request group with grouped mode is true"""
+        """Add new recipient to the collective upload request group """
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/recipients'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : data['uuid']
@@ -3372,9 +3374,9 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         upload_request = self.request_get(query_url)
         self.assertEqual(len(upload_request), 1)
         """Upload first upload request entry"""
-        self.upload_upload_request_entry(upload_request[0]['uploadRequestURLs'][0]['uuid'])
+        self.upload_upload_request_entry(self.email_external1, self.password_external1, upload_request[0]['uploadRequestURLs'][0]['uuid'])
         """Upload a second upload request entry"""
-        self.upload_upload_request_entry(upload_request[0]['uploadRequestURLs'][0]['uuid'])
+        self.upload_upload_request_entry(self.email_external1, self.password_external1, upload_request[0]['uploadRequestURLs'][0]['uuid'])
         """Find the list of the uploaded upload request entries"""
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
@@ -3396,7 +3398,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         self.assertEqual(req.status_code, 200)
 
     def test_archive_download_upload_request_entries_of_individual_urg(self):
-        """"Test create upload request group with grouped mode false"""
+        """"Test create individual upload request group """
         query_url = '{base_url}/upload_request_groups?collective={collective}'.format_map({
             'base_url': self.base_url,
             'collective' : 'false'
@@ -3418,7 +3420,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         upload_requests = self.request_get(query_url)
         self.assertEqual(len(upload_requests), 3)
         """Upload an upload request entry"""
-        self.upload_upload_request_entry(upload_requests[0]['uploadRequestURLs'][0]['uuid'])
+        self.upload_upload_request_entry(self.email_external1, self.password_external1, upload_requests[0]['uploadRequestURLs'][0]['uuid'])
         """Find the list of the uploaded upload request entries"""
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
@@ -3451,7 +3453,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         self.assertEqual(len(upload_requests[0]['uploadRequestURLs']), 1)
         LOGGER.debug("The upload requests of the upload request group are well recovered")
         """Upload an upload request entry"""
-        self.upload_upload_request_entry(upload_requests[0]['uploadRequestURLs'][0]['uuid'])
+        self.upload_upload_request_entry(self.email_external1, self.password_external1, upload_requests[0]['uploadRequestURLs'][0]['uuid'])
         """Find upload request's entries"""
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
@@ -3469,6 +3471,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
 
 
 class TestUserApiUploadRequestEntry(UserTestCase):
+    """NOTE: Tests of this class need that delay before expiration , notification and activation functionalities should be enabled"""
     """"Test user API upload request entry """
     upload_request_group_class = TestUserApiUploadRequestGroup()
     def test_create_upload_request_entry(self):
@@ -3913,7 +3916,8 @@ class TestUserApiUploadRequestEntry(UserTestCase):
 
 
 class TestUserApiUploadRequestExternal(UserTestCase):
-    """"Test user API upload request for externals """
+    """NOTE: Tests of this class need that delay before expiration , notification and activation functionalities should be enabled"""
+    """Test user API upload request for externals """
     upload_request_group_class = TestUserApiUploadRequestGroup()
     def test_close_upload_request_by_external(self):
         """"Test close an upload request by an external user"""
@@ -3926,7 +3930,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         self.assertEqual(data_upload_request[0]['status'], 'ENABLED')
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
         """Upload upload request entry"""
-        self.test_upload_upload_request_entry(data_upload_request[0]['uploadRequestURLs'][0]['uuid'])
+        self.upload_upload_request_entry(self.email_external1, self.password_external1, data_upload_request[0]['uploadRequestURLs'][0]['uuid'])
         """Close an uploadRequest by an external"""
         query_url = '{base_external_url}/requests/{upload_url_uuid}'.format_map({
             'base_external_url': self.base_external_url,
@@ -4238,8 +4242,8 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
 
-    def test_find_all_entries_group_grouped_mode_false(self):
-        """"Test create upload request group with grouped mode false"""
+    def test_find_all_entries_group_individual_mode(self):
+        """"Test create individual upload request group"""
         query_url = '{base_url}/upload_request_groups?groupMode={groupMode}'.format_map({
             'base_url': self.base_url,
             'groupMode' : 'false'
@@ -4254,7 +4258,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
-        """Test get all uploadRequests of an uploadRequest group with groupedMode false"""
+        """Test get all uploadRequests of an individual uploadRequest group"""
         query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -4356,9 +4360,9 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         self.assertEqual(len(data), 1)
         return data
 
-    def test_find_all_entries_group_grouped_mode_true(self):
-        """"Test create upload request group with grouped mode false"""
-        query_url = '{base_url}/upload_request_groups?groupMode={groupMode}'.format_map({
+    def test_find_all_entries_group_collective_mode(self):
+        """"Test create upload request group collective mode"""
+        query_url = '{base_url}/upload_request_groups?collective={groupMode}'.format_map({
             'base_url': self.base_url,
             'groupMode' : 'true'
             })
@@ -4372,90 +4376,16 @@ class TestUserApiUploadRequestExternal(UserTestCase):
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
-        """Test get all uploadRequests of an uploadRequest group with groupedMode false"""
+        """Test get all uploadRequests of a collective uploadRequest"""
         query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
-        req = requests.get(
-            query_url,
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify
-        )
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        data_upload_request = req.json()
+        data_upload_request = self.request_get(query_url)
         self.assertEqual(len(data_upload_request), 1)
         """Test create an uploadRequestEntry by ecternal1"""
-        query_url = self.base_test_upload_request_url
-        file_path = 'file10M'
-        filesize = os.path.getsize(file_path)
-        with open(file_path, 'rb') as file_stream:
-            encoder = MultipartEncoder(
-                fields={
-                    'flowTotalChunks' : '1',
-                    'flowChunkSize': str(filesize),
-                    'flowTotalSize': str(filesize),
-                    'file': ('file10M.new', file_stream),
-                    'flowIdentifier' : 'entry',
-                    'flowFilename' : 'file10M',
-                    "flowRelativePath" : file_path,
-                    'requestUrlUuid' : data_upload_request[0]['uploadRequestURLs'][0]['uuid'],
-                    'password' : 'test',
-                    'body':'Test upload an upload request entry',
-                    'flowChunkNumber':'1'
-                }
-            )
-            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
-            headers = {
-                'Accept': 'application/json',
-                'Content-Type': monitor.content_type
-            }
-            req = requests.post(
-                query_url,
-                data=monitor,
-                headers=headers,
-                auth=HTTPBasicAuth(self.email_external1, self.password_external1),
-                verify=self.verify)
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        """Test create an uploadRequestEntry by ecternal2"""
-        query_url = self.base_test_upload_request_url
-        file_path = 'file10M'
-        filesize = os.path.getsize(file_path)
-        with open(file_path, 'rb') as file_stream:
-            encoder = MultipartEncoder(
-                fields={
-                    'flowTotalChunks' : '1',
-                    'flowChunkSize': str(filesize),
-                    'flowTotalSize': str(filesize),
-                    'file': ('file10M.new', file_stream),
-                    'flowIdentifier' : 'entry',
-                    'flowFilename' : 'file10M',
-                    "flowRelativePath" : file_path,
-                    'requestUrlUuid' : data_upload_request[0]['uploadRequestURLs'][1]['uuid'],
-                    'password' : 'test',
-                    'body':'Test upload an upload request entry',
-                    'flowChunkNumber':'1'
-                }
-            )
-            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
-            headers = {
-                'Accept': 'application/json',
-                'Content-Type': monitor.content_type
-            }
-            req = requests.post(
-                query_url,
-                data=monitor,
-                headers=headers,
-                auth=HTTPBasicAuth(self.email_external2, self.password_external2),
-                verify=self.verify)
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
+        self.upload_upload_request_entry(self.email_external1, self.password_external1, data_upload_request[0]['uploadRequestURLs'][0]['uuid'])
+        self.upload_upload_request_entry(self.email_external1, self.password_external1, data_upload_request[0]['uploadRequestURLs'][1]['uuid'])
         """Test findAll uploadRequestEntries"""
         query_url = '{base_external_url}/requests/{upload_req_url_uuid}/entries'.format_map({
             'base_external_url': self.base_external_url,
@@ -4479,8 +4409,11 @@ class TestUserApiUploadRequest(UserTestCase):
     """"Test user API upload request """
     upload_request_group = TestUserApiUploadRequestGroup()
     def test_find_upload_request(self):
-        expected = ['activationDate', 'body','canClose','canDeleteDocument', 'creationDate', 'modificationDate','closed','collective', 'enableNotification', 
-                    'expiryDate', 'label', 'pristine','locale', 'protectedByPassword','maxFileCount', 'maxFileSize','notificationDate', 'owner', 'recipients', 'status', 'usedSpace', 'nbrUploadedFiles','uuid']
+        expected = ['activationDate', 'body','canClose','canDeleteDocument', 'creationDate',
+                     'modificationDate','closed','collective', 'enableNotification', 
+                    'expiryDate', 'label', 'pristine','locale', 'protectedByPassword',
+                    'maxFileCount', 'maxDepositSize','maxFileSize','notificationDate', 'owner', 
+                    'recipients', 'status', 'usedSpace', 'nbrUploadedFiles','uuid']
         """"Test find an upload request"""
         upload_request = self.upload_request_group.test_find_all_upload_requests_of_URG()
         query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
