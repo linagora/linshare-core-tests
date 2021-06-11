@@ -457,7 +457,55 @@ class TestAdminApiJwt(AdminTestCase):
         data = self.request_put(query_url + '/' + uuid, payload)
         self.assertEqual(data['description'], 'jwt description')
 
+class TestAdminV5ApiUsers(AdminTestCase):
+    def test_findAll_users(self):
+        query_url = '{baseUrl}/users'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        self.request_get(query_url)
+    def test_find_user(self):
+        query_url = '{baseUrl}/users/{user1_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'user1_uuid' : self.get_user1()["uuid"]})
+        return self.request_get(query_url)
 
+    def test_find_user_quota(self):
+        user1 = self.test_find_user()
+        query_url = '{baseUrl}/users/{user1_uuid}/quota/{user_quota_uuid}'.format_map({
+            'baseUrl': self.base_admin_v5_url,
+            'user1_uuid': user1["uuid"],
+            'user_quota_uuid': user1["quotaUuid"]})
+        data = self.request_get(query_url)
+        self._assertJsonPayload(['account', 'creationDate', 'defaultMaxFileSize', 'defaultQuota', 'maintenance', 'maxFileSize',
+                                 'maxFileSizeOverride', 'modificationDate', 'quota', 'quotaOverride', 'realTimeUsedSpace', 'usedSpace', 'uuid', 'yesterdayUsedSpace'],
+                                 data)
+        return data
+
+    def test_update_user_quota_null_payload(self):
+        # update quota with a payload that have no fields
+        quota_user1 = self.test_find_user_quota()
+        query_url = '{baseUrl}/users/{user1_uuid}/quota/{user_quota_uuid}'.format_map({
+            'baseUrl': self.base_admin_v5_url,
+            'user1_uuid': quota_user1["account"]["uuid"],
+            'user_quota_uuid': quota_user1["uuid"]})
+        payload = {
+        }
+        data = self.request_put(query_url, payload, expected_status=400, busines_err_code=20005)
+
+    def test_update_user_quota(self):
+        quota_user1 = self.test_find_user_quota()
+        query_url = '{baseUrl}/users/{user1_uuid}/quota/{user_quota_uuid}'.format_map({
+            'baseUrl': self.base_admin_v5_url,
+            'user1_uuid': quota_user1["account"]["uuid"],
+            'user_quota_uuid': quota_user1["uuid"]})
+        payload = {
+            'quota': 9000000
+        }
+        data = self.request_put(query_url, payload)
+        self._assertJsonPayload(['account', 'creationDate', 'defaultMaxFileSize', 'defaultQuota', 'maintenance', 'maxFileSize',
+                                 'maxFileSizeOverride', 'modificationDate', 'quota', 'quotaOverride', 'realTimeUsedSpace', 'usedSpace', 'uuid', 'yesterdayUsedSpace'],
+                                 data)
+        self.assertEqual(data["quota"], 9000000)
+        
 class TestAdminApiFunctionalites(AdminTestCase):
     """Class for tests on API V4 """
     identifier_integer = 'UPLOAD_REQUEST__MAXIMUM_FILE_COUNT'
