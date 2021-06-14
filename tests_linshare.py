@@ -49,6 +49,7 @@ class AbstractTestCase(unittest.TestCase):
     host = CONFIG['DEFAULT']['host']
     base_url = host + '/linshare/webservice/rest/admin'
     base_url_v4 = host + '/linshare/webservice/rest/admin/v4'
+    base_admin_v5_url = host + '/linshare/webservice/rest/admin/v5'
     email = CONFIG['DEFAULT']['email']
     password = CONFIG['DEFAULT']['password']
     verify = not NO_VERIFY
@@ -4865,6 +4866,37 @@ class TestUserApiEnums(UserTestCase):
             'base_url': self.base_url
             })
         self.request_head(query_url)
+
+class TestSharedSpaceAdminV5ApiEnums(AdminTestCase):
+    def test_find_all_shared_spaces(self):
+        """Test user find all sharedSpaces."""
+        nodeTypes = ['WORK_GROUP', 'DRIVE']
+        query_url = '{baseUrl}/shared_spaces'.format_map({
+            'baseUrl' : self.base_admin_v5_url
+        })
+        nodes = self.request_get(query_url)
+        for node in nodes:
+          self.assertTrue(node['nodeType'] in nodeTypes)
+
+    def test_find_all_drives(self):
+        """Test user find all Drives."""
+        encoded_url = urllib.parse.urlencode({'nodeType': "DRIVE"})
+        query_url = '{baseUrl}/shared_spaces?{encode}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'encode': encoded_url})
+        nodes = self.request_get(query_url)
+        for node in nodes:
+          self.assertEqual(node['nodeType'], "DRIVE")
+
+    def test_find_all_workgroups(self):
+        """Test user find all workgroups."""
+        encoded_url = urllib.parse.urlencode({'nodeType': "WORK_GROUP"})
+        query_url = '{baseUrl}/shared_spaces?{encode}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'encode': encoded_url})
+        nodes = self.request_get(query_url)
+        for node in nodes:
+          self.assertEqual(node['nodeType'], "WORK_GROUP")
 
 
 if __name__ == '__main__':
