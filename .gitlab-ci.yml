@@ -1,0 +1,104 @@
+stages:
+  - test
+  - package
+
+variables:
+    DOCKER_IMAGE_CORE: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-base-image"
+    DOCKER_IMAGE_CORE_TEST: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-test"
+    GIT_DEPTH: "1"
+
+.build-docker-tpl: &build-docker-tpl
+  image: docker-registry.linagora.com:5000/linshare-snapshots/linshare-dind:latest
+  tags:
+    - docker
+  services:
+      - name: docker-registry.linagora.com:5000/linshare-snapshots/linshare-dind:latest
+        alias: docker-dind
+
+check_author:
+  image: docker-registry.linagora.com:5000/lgs-releases/gitlab-integrity-checks:latest
+  stage: test
+  tags:
+    - ultralight
+  script:
+    - check_author.py check "$GITLAB_USER_EMAIL" "$GITLAB_USER_NAME" --no-accents
+  except:
+    refs:
+      - tags@linagora/lgs/linshare/products/linshare-core-tests
+      - /^release-.*/@linagora/lgs/linshare/products/linshare-core-tests
+
+lint:
+  stage: test
+  tags:
+    - docker
+  image: python:3.9-slim-buster
+  allow_failure: true
+  script:
+    - pip install pylint
+    - pylint ./tests_linshare.py
+
+pylint:
+  stage: test
+  image: python:3.7-slim
+  tags:
+    - docker
+  before_script:
+    - mkdir -p badges pylint-report
+    - echo undefined > badges/$CI_JOB_NAME.score
+    - pip install pylint-gitlab
+  script:
+    - pylint --exit-zero --output-format=text $(find -type f -name "*.py" ! -path "**/.venv/**") | tee /tmp/pylint.txt
+    - sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' /tmp/pylint.txt > badges/$CI_JOB_NAME.score
+    - pylint --exit-zero --output-format=pylint_gitlab.GitlabCodeClimateReporter $(find -type f -name "*.py" ! -path "**/.venv/**") > codeclimate.json
+    - pylint --exit-zero --output-format=pylint_gitlab.GitlabPagesHtmlReporter $(find -type f -name "*.py" ! -path "**/.venv/**") > pylint-report/index.html
+  after_script:
+    - anybadge --overwrite --label $CI_JOB_NAME --value=$(cat badges/$CI_JOB_NAME.score) --file=badges/$CI_JOB_NAME.svg 4=red 6=orange 8=yellow 10=green
+    - |
+      echo "Your score is: $(cat badges/$CI_JOB_NAME.score)"
+  artifacts:
+    paths:
+      - badges
+      - pylint-report
+    reports:
+      codequality: codeclimate.json
+    when: always
+
+see-reports:
+  stage: package
+  image: alpine:latest
+  tags:
+    - docker
+  script:
+    - "echo Once pyling job is complete, you will be able to see the result here: https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/browse?job=pylint"
+ 
+
+test:
+  stage: test
+  tags:
+    - docker
+  image: python:3.9-slim-buster
+  services:
+    - name: "${DOCKER_IMAGE_CORE}:${CI_COMMIT_REF_SLUG}"
+      alias: linshare
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
+      alias: ldap
+  variables:
+    CONFIG_FILE_ADMIN: linshare.admin.test.ini
+    CONFIG_FILE_USER: linshare.user.test.ini
+  script:
+    -  pip install -r requirements.txt
+    - ./tests_linshare.py -v TestUserApiContactList
+
+build:
+  <<: *build-docker-tpl
+  stage: package
+  tags:
+    - docker
+  variables:
+    DOCKER_HOST: "tcp://docker-dind"
+  script:
+    - docker login -u "${REGISTRY_USER}" -p "${REGISTRY_TOKEN}" docker-registry.linagora.com:5000
+    - docker build . -t "${DOCKER_IMAGE_CORE_TEST}:${CI_COMMIT_REF_SLUG}"
+    - docker push "${DOCKER_IMAGE_CORE_TEST}:${CI_COMMIT_REF_SLUG}"
+    - docker logout docker-registry.linagora.com:5000
+

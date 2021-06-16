@@ -1,5 +1,11 @@
+[![pylint](https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/master/raw/badges/pylint.svg?job=pylint)](https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/master/browse?job=pylint)
+
 
 # linshare-core-tests
+
+## Browse Gitlab artefacts
+
+* https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/master/browse?job=pylint
 
 # Install 
 

@@ -16,9 +16,16 @@ from requests_toolbelt.utils import dump
 from requests_toolbelt import (MultipartEncoder, MultipartEncoderMonitor)
 from clint.textui.progress import Bar as ProgressBar
 
+CONFIG_FILE_ADMIN = os.getenv('CONFIG_FILE_ADMIN', None)
+if not CONFIG_FILE_ADMIN:
+    CONFIG_FILE_ADMIN = 'linshare.admin.ini'
+CONFIG_FILE_USER = os.getenv('CONFIG_FILE_USER', None)
+if not CONFIG_FILE_USER:
+    CONFIG_FILE_USER = 'linshare.user.ini'
+
 # Import the global configuration
 CONFIG = configparser.ConfigParser()
-CONFIG.read('linshare.admin.ini')
+CONFIG.read(CONFIG_FILE_ADMIN)
 DEBUG = False
 NO_VERIFY = False
 
@@ -33,9 +40,9 @@ else:
     logging.basicConfig()
 LOGGER = logging.getLogger()
 
-# Import the configuration related to LinShare user API 
+# Import the configuration related to LinShare user API
 CONFIG_USER = configparser.ConfigParser()
-CONFIG_USER.read('linshare.user.ini')
+CONFIG_USER.read(CONFIG_FILE_USER)
 
 def create_callback(encoder):
     """TODO"""
