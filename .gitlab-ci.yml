@@ -72,8 +72,26 @@ see-reports:
     - "echo Once pyling job is complete, you will be able to see the result here: https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/browse?job=pylint"
  
 
-test:
+test-master:
   stage: test
+  tags:
+    - docker
+  image: python:3.9-slim-buster
+  services:
+    - name: "${DOCKER_IMAGE_CORE}:master"
+      alias: linshare
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
+      alias: ldap
+  variables:
+    CONFIG_FILE_ADMIN: linshare.admin.test.ini
+    CONFIG_FILE_USER: linshare.user.test.ini
+  script:
+    -  pip install -r requirements.txt
+    - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5ApiEnums" | tr '\n' ' ')
+
+test-same-core-branch:
+  stage: test
+  allow_failure: true
   tags:
     - docker
   image: python:3.9-slim-buster
