@@ -5014,8 +5014,9 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
             'baseUrl' : self.base_admin_v5_url
         })
         nodes = self.request_get(query_url)
-        for node in nodes:
-          self.assertTrue(node['nodeType'] in nodeTypes)
+        if len(nodes) != 0:
+            for node in nodes:
+                self.assertTrue(node['nodeType'] in nodeTypes)
 
     def test_find_all_drives(self):
         """Test user find all Drives."""
@@ -5024,8 +5025,9 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
             'baseUrl' : self.base_admin_v5_url,
             'encode': encoded_url})
         nodes = self.request_get(query_url)
-        for node in nodes:
-          self.assertEqual(node['nodeType'], "DRIVE")
+        if len(nodes) != 0:
+            for node in nodes:
+                self.assertEqual(node['nodeType'], "DRIVE")
 
     def test_find_all_workgroups(self):
         """Test user find all workgroups."""
@@ -5034,8 +5036,9 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
             'baseUrl' : self.base_admin_v5_url,
             'encode': encoded_url})
         nodes = self.request_get(query_url)
-        for node in nodes:
-          self.assertEqual(node['nodeType'], "WORK_GROUP")
+        if len(nodes) != 0:
+            for node in nodes:
+                self.assertEqual(node['nodeType'], "WORK_GROUP")
 
 
 if __name__ == '__main__':
