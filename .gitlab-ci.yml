@@ -87,7 +87,7 @@ test-master:
     CONFIG_FILE_USER: linshare.user.test.ini
   script:
     -  pip install -r requirements.txt
-    - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5ApiEnums" | tr '\n' ' ')
+    - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5Api" | tr '\n' ' ')
 
 test-same-core-branch:
   stage: test
@@ -105,7 +105,7 @@ test-same-core-branch:
     CONFIG_FILE_USER: linshare.user.test.ini
   script:
     -  pip install -r requirements.txt
-    - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5ApiEnums" | tr '\n' ' ')
+    - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5Api" | tr '\n' ' ')
 
 build:
   <<: *build-docker-tpl

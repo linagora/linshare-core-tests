@@ -4,8 +4,8 @@
 
 [DEFAULT]
 host=https://user.linshare.local
-email=user1@linshare.org
-password=password1
+email=peter.wilson@linshare.org
+password=secret
 # For some tests of upload request we will use an external users to test the external api
 email_external1=external1@linshare.org
 password_external1=password1
