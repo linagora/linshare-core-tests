@@ -5008,7 +5008,7 @@ class TestUserApiEnums(UserTestCase):
 
 class TestSharedSpaceAdminV5Api(AdminTestCase):
     def test_find_all_shared_spaces(self):
-        """Test user find all sharedSpaces."""
+        """Test admin find all sharedSpaces."""
         nodeTypes = ['WORK_GROUP', 'DRIVE']
         query_url = '{baseUrl}/shared_spaces'.format_map({
             'baseUrl' : self.base_admin_v5_url
@@ -5019,7 +5019,7 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
                 self.assertTrue(node['nodeType'] in nodeTypes)
 
     def test_find_all_drives(self):
-        """Test user find all Drives."""
+        """Test admin find all Drives."""
         encoded_url = urllib.parse.urlencode({'nodeType': "DRIVE"})
         query_url = '{baseUrl}/shared_spaces?{encode}'.format_map({
             'baseUrl' : self.base_admin_v5_url,
@@ -5030,7 +5030,7 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
                 self.assertEqual(node['nodeType'], "DRIVE")
 
     def test_find_all_workgroups(self):
-        """Test user find all workgroups."""
+        """Test admin find all workgroups."""
         encoded_url = urllib.parse.urlencode({'nodeType': "WORK_GROUP"})
         query_url = '{baseUrl}/shared_spaces?{encode}'.format_map({
             'baseUrl' : self.base_admin_v5_url,
@@ -5039,6 +5039,94 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
         if len(nodes) != 0:
             for node in nodes:
                 self.assertEqual(node['nodeType'], "WORK_GROUP")
+
+    def test_filter_shared_space_by_role_and_name(self):
+        # Create 3 Drives
+        query_url = self.user_base_url + '/shared_spaces'
+        payload = {
+            "name": "First Drive test",
+            "nodeType": "DRIVE"
+        }
+        drive = self.request_post(query_url, payload)
+        payload = {
+            "name": "Second  Drive test",
+            "nodeType": "DRIVE"
+        }
+        drive2 = self.request_post(query_url, payload)
+        payload = {
+            "name": "Third  Drive test",
+            "nodeType": "DRIVE"
+        }
+        drive3 = self.request_post(query_url, payload)
+        # Add member to first Drive with DRIVE_WRITER role
+        user1 = self.get_user1()
+        parameters = {
+            'base_url': self.user_base_url,
+            'name':'ADMIN' 
+            }
+        url = '{base_url}/shared_space_roles/role/{name}'.format_map(parameters)
+        nestedRole = self.request_get(url)
+        parameters = {
+            'base_url': self.user_base_url,
+            'name':'DRIVE_WRITER'
+            }
+        url = '{base_url}/shared_space_roles/role/{name}'.format_map(parameters)
+        role = self.request_get(url)
+        query_url = '{baseUrl}//shared_spaces/{driveUuid}/members'.format_map({
+            'baseUrl' : self.user_base_url,
+            'driveUuid': drive["uuid"]})
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                "firstName" : user1['firstName'],
+                "lastName" : user1['lastName'],
+                "mail" : user1['mail'],
+                },
+            "role" : {
+                "uuid" : role['uuid'],
+                },
+            "nestedRole": {
+                "uuid": nestedRole['uuid'],
+            },
+            "node" : {
+                "uuid" : drive['uuid'],
+                "name" : drive['name'],
+                "nodeType" : drive['nodeType']
+                },
+            "type" : "DRIVE"
+        }
+        members = self.request_post(query_url, payload)
+        members = self.request_get(query_url)
+        self.assertEqual(2, len(members))
+        # Test admin find all sharedSpaces by role DRIVE_WRITER
+        encoded_url = urllib.parse.urlencode({'role': "DRIVE_WRITER"})
+        query_url = '{baseUrl}/shared_spaces?{encode}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'encode': encoded_url})
+        nodes = self.request_get(query_url)
+        self.assertEqual(1, len(nodes))
+        for node in nodes:
+            self.assertEqual(node['nodeType'], "DRIVE")
+        # Test admin find all sharedSpaces by name
+        encoded_url = urllib.parse.urlencode({'name': "First"})
+        query_url = '{baseUrl}/shared_spaces?{encode}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'encode': encoded_url})
+        nodes = self.request_get(query_url)
+        self.assertEqual(nodes[0]["name"], "First Drive test")
+        # Delete drives
+        query_url = '{baseUrl}/shared_spaces/{driveUuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'driveUuid': drive["uuid"]})
+        self.request_delete(query_url)
+        query_url = '{baseUrl}/shared_spaces/{driveUuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'driveUuid': drive2["uuid"]})
+        self.request_delete(query_url)
+        query_url = '{baseUrl}/shared_spaces/{driveUuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'driveUuid': drive3["uuid"]})
+        self.request_delete(query_url)
 
 
 if __name__ == '__main__':
