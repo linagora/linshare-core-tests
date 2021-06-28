@@ -35,6 +35,7 @@ lint:
   allow_failure: true
   script:
     - pip install pylint
+    - pip install -r requirements.txt
     - pylint ./tests_linshare.py
 
 pylint:
