@@ -1184,7 +1184,7 @@ class TestUserApiJwtPermanentToken(AdminTestCase):
 
     def test_head_jwt_permanent_token(self):
         """"Test Head JWT permanent token by uuid """
-        token = self.create_jwt_permanent_token();
+        token = self.create_jwt_permanent_token()
         query_url = self.base_url + '/' + token['uuid']
         req = requests.get(
             query_url,
@@ -1197,7 +1197,7 @@ class TestUserApiJwtPermanentToken(AdminTestCase):
 
     def test_find_jwt_permanent_token(self):
         """"Test find JWT permanent token by uuid """
-        token = self.create_jwt_permanent_token();
+        token = self.create_jwt_permanent_token()
         query_url = self.base_url + '/' + token['uuid']
         req = requests.get(
             query_url,
@@ -1362,7 +1362,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
 
     def test_find_shared_space_node(self):
         """"Test user API find a shared space node"""
-        folder = self.create_shared_space_node();
+        folder = self.create_shared_space_node()
         query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes/' + folder['uuid']
         req = requests.get(
             query_url,
@@ -1398,7 +1398,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
 
     def test_update_shared_space_node_with_nodeuuid_path(self):
         """Test create and update a shared space node."""
-        folder = self.create_shared_space_node();
+        folder = self.create_shared_space_node()
         query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes/' + folder['uuid']
         payload = {
             "name": "Update_Node_Name",
@@ -1410,7 +1410,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
 
     def test_update_shared_space_node_without_nodeuuid_path(self):
         """Test create and update a shared space node."""
-        folder = self.create_shared_space_node();
+        folder = self.create_shared_space_node()
         query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes/'
         payload = {
             "name": "Update_Node_Name",
@@ -1423,7 +1423,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
 
     def test_shared_space_node_delete(self):
         """Trying to create and delete a shared_space_node"""
-        folder = self.create_shared_space_node();
+        folder = self.create_shared_space_node()
         query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes/'
         payload = {
             "name": "FOLDER_test",
@@ -1444,7 +1444,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
 
     def test_shared_space_node_delete_no_payload(self):
         """Trying to create and delete a shared_space_node with no payload"""
-        folder = self.create_shared_space_node();
+        folder = self.create_shared_space_node()
         query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes/' + folder['uuid']
         req = requests.delete(
             query_url,
@@ -1459,7 +1459,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
 
     def test_find_all_shared_space_nodes(self):
         """Test user find all shared space node."""
-        folder = self.create_shared_space_node();
+        folder = self.create_shared_space_node()
         query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes'
         req = requests.get(
             query_url,
@@ -1473,7 +1473,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
 
     def test_patch_shared_space_node(self):
         """Test create and update a shared space node."""
-        folder = self.create_shared_space_node();
+        folder = self.create_shared_space_node()
         query_url = self.base_url + '/shared_spaces/' + folder['workGroup']
         payload = {
             "name": "name",
@@ -1485,7 +1485,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
 
     def test_find_specific_shared_spaces_audit(self):
         """Test user find all shared space."""
-        folder = self.create_shared_space_node();
+        folder = self.create_shared_space_node()
         query_url = self.base_url + '/shared_spaces/'+ folder['workGroup'] +'/nodes/'+ folder['uuid'] + '/audit'
         req = requests.get(
             query_url,
@@ -1519,7 +1519,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_find_shared_space_Wg(self):
         """"Test user find a shared space WORKGROUP"""
-        workgroup = self.test_create_shared_space_Wg();
+        workgroup = self.test_create_shared_space_Wg()
         query_url = self.base_url + '/shared_spaces/' + workgroup['uuid']
         req = requests.get(
             query_url,
@@ -1536,7 +1536,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_find_shared_space_quota(self):
         """"Test user find shared space WORKGROUP quota"""
-        workgroup = self.test_create_shared_space_Wg();
+        workgroup = self.test_create_shared_space_Wg()
         query_url = self.base_url + '/quota/' + workgroup['quotaUuid']
         req = requests.get(
             query_url,
@@ -1550,7 +1550,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_update_shared_space_with_uuid_path(self):
         """Test create and update a shared space."""
-        shared_space = self.test_create_shared_space_Wg();
+        shared_space = self.test_create_shared_space_Wg()
         query_url = self.base_url + '/shared_spaces/' + shared_space['uuid']
         payload = {
             "name": "Update_shared_space_Name",
@@ -1573,7 +1573,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_update_shared_space_without_uuid_path(self):
         """Test create and update a shared space."""
-        shared_space = self.test_create_shared_space_Wg();
+        shared_space = self.test_create_shared_space_Wg()
         query_url = self.base_url + '/shared_spaces'
         payload = {
             "name": "Update_shared_space_Name",
@@ -1596,7 +1596,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_shared_space_delete(self):
         """Trying to create and delete a shared_space WORKGROUP"""
-        shared_space = self.test_create_shared_space_Wg();
+        shared_space = self.test_create_shared_space_Wg()
         query_url = self.base_url + '/shared_spaces'
         payload = {
             "name": "workgroup_test",
@@ -1619,7 +1619,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_shared_space_delete_no_payload(self):
         """Trying to create and delete a shared_space WORKGROUP with no payload"""
-        shared_space = self.test_create_shared_space_Wg();
+        shared_space = self.test_create_shared_space_Wg()
         query_url = self.base_url +'/shared_spaces/'+ shared_space['uuid']
         req = requests.delete(
             query_url,
@@ -1657,7 +1657,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_find_all_shared_spaces_audit(self):
         """Test user find all shared space audit."""
-        shared_space = self.test_create_shared_space_Wg();
+        shared_space = self.test_create_shared_space_Wg()
         query_url = self.base_url + '/shared_spaces/' + shared_space['uuid'] + "/audit"
         audits = self.request_get(query_url)
         self.assertTrue(audits)
@@ -2367,7 +2367,7 @@ class TestUserApiSharedSpace(UserTestCase):
     def test_create_shared_space_member(self):
         """Test user API create a shared space member."""
         user1 = self.get_user1()
-        shared_space = self.test_create_shared_space_Wg();
+        shared_space = self.test_create_shared_space_Wg()
         base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
         query_url = base_url + shared_space['uuid'] + "/members"
         payload = {
@@ -2393,7 +2393,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_delete_shared_space_member(self):
         """Test user API delete a shared space member from a WORKGROUP."""
-        shared_space_member = self.test_create_shared_space_member();
+        shared_space_member = self.test_create_shared_space_member()
         query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
             'base_url': self.base_url,
             'nodeUuid' : shared_space_member['node']['uuid'],
@@ -2420,7 +2420,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_delete_shared_space_member_no_payload(self):
         """Test user API create a shared space member."""
-        shared_space_member = self.test_create_shared_space_member();
+        shared_space_member = self.test_create_shared_space_member()
         #query_url = self.base_url + '/' + shared_space_member['node']['uuid'] + "/members/" +
         query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
             'base_url': self.base_url,
@@ -2438,7 +2438,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_find_shared_space_member(self):
         """"Test user API find a shared space member"""
-        shared_space_member = self.test_create_shared_space_member();
+        shared_space_member = self.test_create_shared_space_member()
         base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
         query_url = base_url + shared_space_member['node']['uuid'] + "/members/" +shared_space_member['uuid']
         req = requests.get(
@@ -2456,7 +2456,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_find_all_shared_spaces_members(self):
         """Test user find all shared spaces members."""
-        shared_space = self.test_create_shared_space_Wg();
+        shared_space = self.test_create_shared_space_Wg()
         base_url = self.host + '/linshare/webservice/rest/user/v2/shared_spaces/'
         query_url = base_url + shared_space['uuid'] + "/members"
         req = requests.get(
@@ -2471,7 +2471,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_update_shared_space_member(self):
         """Test user API create a shared space member."""
-        shared_space_member = self.test_create_shared_space_member();
+        shared_space_member = self.test_create_shared_space_member()
         query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
             'base_url': self.base_url,
             'nodeUuid' : shared_space_member['node']['uuid'],
@@ -2491,7 +2491,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_update_shared_space_member_drive(self):
         """Test user API update shared space member drive"""
-        shared_space_member = self.test_create_shared_space_member_drive();
+        shared_space_member = self.test_create_shared_space_member_drive()
         role = self.getRole('DRIVE_READER')
         nestedRole = self.getRole('READER')
         query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
@@ -2514,7 +2514,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_update_shared_space_member_work_group_wrong_role(self):
         """Test user API update shared space member work group with wrong role."""
-        shared_space_member = self.test_create_shared_space_member();
+        shared_space_member = self.test_create_shared_space_member()
         role = self.getRole('DRIVE_ADMIN')
         query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
             'base_url': self.base_url,
@@ -2532,7 +2532,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_update_shared_space_member_drive_wrong_role(self):
         """Test user API update shared space member drive with wrong role."""
-        shared_space_member = self.test_create_shared_space_member_drive();
+        shared_space_member = self.test_create_shared_space_member_drive()
         nestedRole = self.getRole('ADMIN')
         query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
             'base_url': self.base_url,
@@ -3003,7 +3003,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
 
     def test_find_upload_request_group(self):
         """"Test find upload request group"""
-        upload_request_group = self.test_create_upload_request_group();
+        upload_request_group = self.test_create_upload_request_group()
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -3042,7 +3042,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
 
     def test_find_all_upload_requests_of_URG(self):
         """"Test findAll upload requests of an upload request group"""
-        upload_request_group = self.test_create_upload_request_group();
+        upload_request_group = self.test_create_upload_request_group()
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -3065,7 +3065,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
 
     def test_find_all_closed_upload_requests_of_URG(self):
         """"Test findAll closed upload requests of an upload request group"""
-        upload_request_group = self.test_create_upload_request_group();
+        upload_request_group = self.test_create_upload_request_group()
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests?status = {status}'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : upload_request_group['uuid'],
@@ -3105,7 +3105,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
 
     def test_find_all_audits_of_URG(self):
         """"Test findAll audits of an upload request group"""
-        upload_request_group = self.test_create_upload_request_group();
+        upload_request_group = self.test_create_upload_request_group()
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/audit'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -3125,7 +3125,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
 
     def test_update_status_URG(self):
         """Test create and update status of an upload request group."""
-        upload_request_group = self.test_create_upload_request_group();
+        upload_request_group = self.test_create_upload_request_group()
         self.assertEqual(upload_request_group['status'], 'ENABLED')
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/status/{status}'.format_map({
             'base_url': self.base_url,
@@ -3147,7 +3147,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
 
     def test_update_upload_request_group(self):
         """Test create and update a upload request group."""
-        upload_request_group = self.test_create_upload_request_group();
+        upload_request_group = self.test_create_upload_request_group()
         self.assertEqual(upload_request_group['enableNotification'], True)
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}'.format_map({
             'base_url': self.base_url,
@@ -3253,7 +3253,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
 
     def test_add_recipient_upload_request_group_collective_mode_false(self):
         """Test create upload request group and add a new recipient the collective mode is false by default."""
-        upload_request_group = self.test_create_upload_request_group();
+        upload_request_group = self.test_create_upload_request_group()
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/recipients'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -4579,7 +4579,7 @@ class TestUserApiUploadRequest(UserTestCase):
 
     def test_update_status_upload_request(self):
         """Test update status of an upload request."""
-        upload_request = self.test_find_upload_request();
+        upload_request = self.test_find_upload_request()
         self.assertEqual(upload_request['status'], 'ENABLED')
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/status/{status}'.format_map({
             'base_url': self.base_url,
@@ -4712,7 +4712,7 @@ class TestUserApiUploadRequest(UserTestCase):
 
     def test_update_upload_request(self):
         """Test update an upload request."""
-        upload_request = self.test_find_upload_request();
+        upload_request = self.test_find_upload_request()
         # Use the method test_create_upload_request returned data
         self.assertEqual(upload_request['enableNotification'], True)
         query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
@@ -4741,7 +4741,7 @@ class TestUserApiUploadRequest(UserTestCase):
 
     def test_find_all_upload_request_entries(self):
         """"Test find all upload request entries"""
-        upload_request = self.test_find_upload_request();
+        upload_request = self.test_find_upload_request()
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : upload_request['uuid']
