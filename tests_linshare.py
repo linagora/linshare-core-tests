@@ -64,7 +64,7 @@ class AbstractTestCase(unittest.TestCase):
         'Accept': 'application/json',
         'Content-Type': 'application/json'
     }
-    
+
     def request_get(self, query_url):
         """GET request"""
         req = requests.get(
@@ -94,7 +94,7 @@ class AbstractTestCase(unittest.TestCase):
     def _assertJsonPayload(self, expected, payloadResponse):
         """Method that allows to assert information returned on the responses
         Parameters:
-        expected: list of expected fields in the source object. 
+        expected: list of expected fields in the source object.
         payloadResponse : returned object to be tested.
          """
         allFieldsExists = True
@@ -102,7 +102,7 @@ class AbstractTestCase(unittest.TestCase):
             if item not in expected:
                 allFieldsExists = False
                 LOGGER.error(" %s does not exists in the expected payload", item)
-                
+
         self.assertTrue(allFieldsExists, " List of expected fields is different with response field's")
         self.assertEqual(len(expected), len(payloadResponse.keys()))
 
@@ -125,7 +125,7 @@ class AbstractTestCase(unittest.TestCase):
         self.assertEqual(req.status_code, expected_status)
         data = req.json()
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
-        if busines_err_code: 
+        if busines_err_code:
             self.assertEqual (data['errCode'], busines_err_code)
         return data
 
@@ -260,7 +260,7 @@ class UserTestCase(AbstractTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
         return req.json()
-  
+
     def get_user1(self):
         """Return user info for user1"""
         parameters = {
@@ -311,7 +311,7 @@ class UserTestCase(AbstractTestCase):
         """Return user info for the current user"""
         parameters = {
             'base_url': self.base_url,
-            'name':roleName 
+            'name':roleName
             }
         url = '{base_url}/shared_space_roles/role/{name}'.format_map(parameters)
         req = requests.get(
@@ -514,7 +514,7 @@ class TestAdminApiFunctionalites(AdminTestCase):
         # Expected to not expose the field `maxString` and `maxInteger` on the old API
         self._assertJsonPayload(['integer', 'string', 'bool', 'type', 'select'], data['parameters'][0])
         return data
-        
+
     def test_update_functionality_integer_type(self):
         """ Test update a functionality Integer type in admin V4 """
         recovered_func = self.test_find_functionality_integer_type()
@@ -532,7 +532,7 @@ class TestAdminApiFunctionalites(AdminTestCase):
         query_url = '{baseUrl}/functionalities'.format_map({'baseUrl' : self.base_url })
         data = self.request_put(query_url, recovered_func )
         self.assertEqual(20, data['parameters'][0]['integer'], 'Updating integer parameter of functionality Integer type has failed | expected integer = {}'.format(20))
-    
+
     def test_update_functionality_unit_type(self):
         """"Test update functionality Unit type on Admin V4"""
         recovered_func = self.test_find_functionality_unit_type()
@@ -546,7 +546,7 @@ class TestAdminApiFunctionalites(AdminTestCase):
         self.assertEqual(2, data['parameters'][0]['maxInteger'], 'Updating maxInteger parameter of functionality unit type has failed | expected maxInteger = {} but was {}'.format(2, data['parameters'][0]['maxInteger']))
         self.assertEqual('DAY', data['parameters'][0]['string'], 'Updating string parameter of functionality unit type has failed | expected string = {} but was {}'.format('DAY', data['parameters'][0]['string']))
         self.assertEqual('WEEK', data['parameters'][0]['maxString'], 'Updating maxString parameter of functionality unit type has failed | expected maxString = {} but was {}'.format('WEEK', data['parameters'][0]['maxString']))
-    
+
     def test_update_functionality_unit_type_admin_v1(self):
         """"Test update functionality Unit type on Admin V1"""
         recovered_func = self.test_find_functionality_unit_type_admin_v1()
@@ -557,7 +557,7 @@ class TestAdminApiFunctionalites(AdminTestCase):
         self.assertEqual(3, data['parameters'][0]['integer'], 'Updating integer parameter of functionality unit type has failed | expected integer = {} but was {}'.format(3, data['parameters'][0]['integer']))
         self.assertEqual('MONTH', data['parameters'][0]['string'], 'Updating string parameter of functionality unit type has failed | expected string = {} but was {}'.format('MONTH', data['parameters'][0]['string']))
 
-        
+
 class TestUserApiDocuments(AdminTestCase):
     """Test user api"""
 
@@ -630,7 +630,7 @@ class TestUserApiDocuments(AdminTestCase):
 
 
 class TestMailAttachment(AdminTestCase):
-    
+
     EXPECTED_FIELD_LIST = ['uuid', 'enable', 'enableForAll', 'language', 'description', 'name', 'cid']
 
     def test_mail_attachments_create(self):
@@ -886,7 +886,7 @@ class TestMailAttachment(AdminTestCase):
         query_url = self.base_url + '/mail_attachments?configUuid=946b190d-4c95-485f-bfe6-d288a2de1edd'
         mail_attachments = self.request_get(query_url)
         return mail_attachments
-        
+
     def test_findAll_without_configUuid(self):
         """Test find all mail attachments without set configUuid."""
         query_url = '{baseUrl}/mail_attachments'.format_map({'baseUrl': self.base_url})
@@ -895,7 +895,7 @@ class TestMailAttachment(AdminTestCase):
             self._assertJsonPayload(['uuid', 'enable', 'enableForAll', 'language', 'description', 'name', 'cid', 'mailConfig'], mail_attachments[0])
 
     def test_findAll_wrong_mail_config(self):
-        """Test findaAll mail attachments returns not found http status 
+        """Test findaAll mail attachments returns not found http status
         with a wrong configuration uuid."""
         query_url = self.base_url + '/mail_attachments?configUuid=946b190d-4c95-485f-bfe6-d288a2de1ede'
         req = requests.get(
@@ -918,9 +918,9 @@ class TestMailAttachment(AdminTestCase):
         mail_attachments_audit = self.request_get(query_url)
         self._assertJsonPayload(self.EXPECTED_FIELD_LIST, mail_attachments_audit[0].get('resource'))
         return mail_attachments_audit
-    
+
     def test_find_all_audits_mail_attachment_filtred_by_actions(self):
-        """"Test findAll audits of a mail attachment filtered by  
+        """"Test findAll audits of a mail attachment filtered by
         list of actions [CREATE, UPDATE, DELETE]"""
         mail_attachment = self.test_mail_attachments_create()
         encode = urllib.parse.urlencode({'actions' : ['create', 'update']}, doseq=True)
@@ -1347,7 +1347,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
         data = self.request_post(query_url, payload)
         self.assertEqual(data['name'], 'workgroup_test')
         return data
-    
+
     def create_shared_space_node(self):
         """Test user API create a shared space node."""
         workgroup = self.create_shared_space()
@@ -1470,7 +1470,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
-        
+
     def test_patch_shared_space_node(self):
         """Test create and update a shared space node."""
         folder = self.create_shared_space_node();
@@ -1482,7 +1482,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
         data = self.request_patch(query_url, payload)
         self.assertEqual(data['name'], "renamed_node")
         return data
-    
+
     def test_find_specific_shared_spaces_audit(self):
         """Test user find all shared space."""
         folder = self.create_shared_space_node();
@@ -1495,7 +1495,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
-        LOGGER.debug("data : %s", req.json())        
+        LOGGER.debug("data : %s", req.json())
 
 
 class TestUserApiSharedSpace(UserTestCase):
@@ -1770,7 +1770,7 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual(request.status_code, 200, "FAILED")
 
     def test_create_shared_space_member_workgroup_wrong_with_role_type(self):
-        """ Test user API add a member FORBIDDEN to a WORKGROUP 
+        """ Test user API add a member FORBIDDEN to a WORKGROUP
         by give a DRIVE role type to a WORKGROUP member """
         user1 = self.get_user1()
         workgroup = self.test_create_shared_space_Wg()
@@ -1823,7 +1823,7 @@ class TestUserApiSharedSpace(UserTestCase):
             headers=self.headers,
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
-        self.assertEqual(request.status_code, 200, "FAILED")          
+        self.assertEqual(request.status_code, 200, "FAILED")
 
     def test_create_shared_space_member_drive(self):
         """Test user API add a shared space member into a DRIVE """
@@ -1857,7 +1857,7 @@ class TestUserApiSharedSpace(UserTestCase):
         return data
 
     def test_create_shared_space_member_drive_fails_with_wrong_role(self):
-        """Test user API add a shared space member FORBIDDEN into a DRIVE 
+        """Test user API add a shared space member FORBIDDEN into a DRIVE
         by give Work_GROUP role type to DRIVE member"""
         nestedRole = self.getRole('ADMIN')
         role = self.getRole('DRIVE_ADMIN')
@@ -1893,25 +1893,25 @@ class TestUserApiSharedSpace(UserTestCase):
         """Test user API add a shared space member into a DRIVE and its nested workgroups"""
         nestedRole = self.getRole('ADMIN')
         role = self.getRole('DRIVE_ADMIN')
-        
+
         """Create the Shared space DRIVE (parent)"""
         drive = self.test_create_shared_space_drive()
-        
+
         """Get an LS internal user to add in Shared space"""
         user1 = self.get_user1()
-        
+
         wg_create_query_url = '{baseUrl}/shared_spaces'.format_map({
             'baseUrl' : self.base_url
             })
-        
+
         """Payload to create the first nested workgroup"""
-        
+
         wg_payload_1 = {
             "name": "Nested_workgroup_1",
             "nodeType": "WORK_GROUP",
             "parentUuid":drive["uuid"]
         }
-        
+
         """Payload to create the second nested workgroup"""
         wg_payload_2 = {
             "name": "Nested_workgroup_2",
@@ -1931,23 +1931,23 @@ class TestUserApiSharedSpace(UserTestCase):
             headers=self.headers,
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify).json()
-            
-        """Add nested WG 2"""    
+
+        """Add nested WG 2"""
         nested_wg_2 = requests.post(
             wg_create_query_url,
             data=json.dumps(wg_payload_2),
             headers=self.headers,
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify).json()
-            
-        """Add nested WG 3"""    
+
+        """Add nested WG 3"""
         nested_wg_3 = requests.post(
             wg_create_query_url,
             data=json.dumps(wg_payload_3),
             headers=self.headers,
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify).json()
-            
+
         """Add a member to the Drive (parent)"""
         add_membr_query_url = '{baseUrl}/shared_spaces/{driveUuid}/members'.format_map({
             "baseUrl":self.base_url ,
@@ -1976,33 +1976,33 @@ class TestUserApiSharedSpace(UserTestCase):
         get_members_of_wg1_query_url = '{baseUrl}/shared_spaces/{nodeUuid}/members'.format_map({
             "baseUrl" : self.base_url ,
             "nodeUuid" : nested_wg_1['uuid']})
-        
+
         get_members_of_wg2_query_url = '{baseUrl}/shared_spaces/{nodeUuid}/members'.format_map({
             "baseUrl" : self.base_url ,
             "nodeUuid" : nested_wg_2['uuid']})
-        
+
         get_members_of_wg3_query_url = '{baseUrl}/shared_spaces/{nodeUuid}/members'.format_map({
             "baseUrl" : self.base_url ,
             "nodeUuid" : nested_wg_3['uuid']})
-        
+
         member_1 = requests.get(
             get_members_of_wg1_query_url,
             headers={'Accept': 'application/json'},
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify).json()
-        
+
         member_2 = requests.get(
             get_members_of_wg2_query_url,
             headers={'Accept': 'application/json'},
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify).json()
-            
+
         member_3 = requests.get(
             get_members_of_wg3_query_url,
             headers={'Accept': 'application/json'},
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify).json()
-        
+
         request = requests.post(
             add_membr_query_url,
             json.dumps(member_payload),
@@ -2073,9 +2073,9 @@ class TestUserApiSharedSpace(UserTestCase):
         nestedRole = self.getRole('ADMIN')
         nestedRoleContributor = self.getRole('CONTRIBUTOR')
         role = self.getRole('DRIVE_ADMIN')
-        
+
         """Create a workGroup into the drive."""
-        
+
         query_url = self.base_url + '/shared_spaces/'
         payload = {
             "name": "Workgroup_test",
@@ -2092,10 +2092,10 @@ class TestUserApiSharedSpace(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         data_workgroup = req.json()
-        
+
         """Add  a member into the drive."""
-        
-        query_url = '{base_url}/shared_spaces/{driveUuid}/members'.format_map({  
+
+        query_url = '{base_url}/shared_spaces/{driveUuid}/members'.format_map({
             'driveUuid' : drive['uuid'],
             'base_url': self.base_url
         })
@@ -2154,7 +2154,7 @@ class TestUserApiSharedSpace(UserTestCase):
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         data_member = request.json()
-        self.assertEqual(request.status_code, 200, 'FAILED')    
+        self.assertEqual(request.status_code, 200, 'FAILED')
         self.assertEqual (data_member['account']['firstName'],user1['firstName'])
         self.assertEqual (data_member['nestedRole']['name'],'CONTRIBUTOR')
         """Check the new created member into the nested workgroup."""
@@ -2269,7 +2269,7 @@ class TestUserApiSharedSpace(UserTestCase):
         drive = self.test_create_shared_space_drive()
         nestedRole = self.getRole('ADMIN')
         role = self.getRole('DRIVE_ADMIN')
-        
+
         """Create new member into a drive."""
         query_url = self.base_url + '/shared_spaces/' + drive['uuid'] + '/members'
         payload = {
@@ -2421,7 +2421,7 @@ class TestUserApiSharedSpace(UserTestCase):
     def test_delete_shared_space_member_no_payload(self):
         """Test user API create a shared space member."""
         shared_space_member = self.test_create_shared_space_member();
-        #query_url = self.base_url + '/' + shared_space_member['node']['uuid'] + "/members/" + 
+        #query_url = self.base_url + '/' + shared_space_member['node']['uuid'] + "/members/" +
         query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
             'base_url': self.base_url,
             'nodeUuid' : shared_space_member['node']['uuid'],
@@ -2487,7 +2487,7 @@ class TestUserApiSharedSpace(UserTestCase):
         }
         data = self.request_put(query_url, payload)
         self.assertEqual (data['role']['name'],'READER')
-        return data    
+        return data
 
     def test_update_shared_space_member_drive(self):
         """Test user API update shared space member drive"""
@@ -3686,7 +3686,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         upload_request = self.request_get(query_url)
         self.assertEqual(upload_request['nbrUploadedFiles'], 0)
         self.assertEqual(upload_request['usedSpace'], 0)
-        
+
 
     def test_download_upload_request_entry(self):
         """"Test user API delete an upload request entry """
@@ -3953,9 +3953,9 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         data_upload_request = self.request_get(query_url)
         self.assertEqual(data_upload_request[0]['status'], 'CLOSED')
         return data
-    
+
     def test_update_upload_group_request_by_issuer(self):
-        # Test update upload request group by issuer 
+        # Test update upload request group by issuer
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
         self.assertEqual(upload_request_group['status'], 'ENABLED')
         self.assertEqual(upload_request_group['label'], 'upload request group')
@@ -3980,7 +3980,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             "enableNotification":True
        }
         data_upload_request_group_updated_by_issuer = self.request_put(query_url, payload)
-        # Check updates from groups endpoint  
+        # Check updates from groups endpoint
         data_upload_request = self.request_get(query_url_get_ur)
         self.assertEqual(data_upload_request[0]['label'], data_upload_request_group_updated_by_issuer['label'], "Update fails")
         self.assertEqual(data_upload_request[0]['enableNotification'], True)
@@ -3997,7 +3997,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         ).json()
         self.assertEqual(data_upload_request_from_ext['subject'], data_upload_request_group_updated_by_issuer['label'], "The recipient didn't receive the updates")
 
-    
+
     def test_delete_upload_request_entry_by_external_no_payload(self):
         """"Test delete an upload request entry by an external user"""
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
@@ -4550,9 +4550,9 @@ class TestUserApiUploadRequest(UserTestCase):
     upload_request_group = TestUserApiUploadRequestGroup()
     def test_find_upload_request(self):
         expected = ['activationDate', 'body','canClose','canDeleteDocument', 'creationDate',
-                     'modificationDate','closed','collective', 'enableNotification', 
+                     'modificationDate','closed','collective', 'enableNotification',
                     'expiryDate', 'label', 'pristine','locale', 'protectedByPassword',
-                    'maxFileCount', 'maxDepositSize','maxFileSize','notificationDate', 'owner', 
+                    'maxFileCount', 'maxDepositSize','maxFileSize','notificationDate', 'owner',
                     'recipients', 'status', 'usedSpace', 'nbrUploadedFiles','uuid']
         """"Test find an upload request"""
         upload_request = self.upload_request_group.test_find_all_upload_requests_of_URG()
@@ -4710,7 +4710,7 @@ class TestUserApiUploadRequest(UserTestCase):
     def test_update_upload_request(self):
         """Test update an upload request."""
         upload_request = self.test_find_upload_request();
-        # Use the method test_create_upload_request returned data 
+        # Use the method test_create_upload_request returned data
         self.assertEqual(upload_request['enableNotification'], True)
         query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
             'base_url': self.base_url,
@@ -4918,7 +4918,7 @@ class TestUserApiFunctionalties(UserTestCase):
             })
         data = self.request_get(query_url)
         self._assertJsonPayload(['type', 'identifier', 'enable' ,'canOverride', 'value'], data)
-        
+
     def test_find_functionality_boolean_type(self):
         """Test find a functionality Boolean type for a giving user API V4"""
         identifier = 'ANONYMOUS_URL__NOTIFICATION'
@@ -4968,7 +4968,7 @@ class TestUserApiFunctionalties(UserTestCase):
             })
         data = self.request_get(query_url)
         self._assertJsonPayload(['type', 'identifier', 'enable' ,'canOverride', 'value'], data)
-        
+
     def test_find_functionality_boolean_type_api_v2(self):
         """Test find a functionality Boolean type for a giving user API V2"""
         identifier = 'ANONYMOUS_URL__NOTIFICATION'
@@ -5062,7 +5062,7 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
         user1 = self.get_user1()
         parameters = {
             'base_url': self.user_base_url,
-            'name':'ADMIN' 
+            'name':'ADMIN'
             }
         url = '{base_url}/shared_space_roles/role/{name}'.format_map(parameters)
         nestedRole = self.request_get(url)
@@ -5072,7 +5072,7 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
             }
         url = '{base_url}/shared_space_roles/role/{name}'.format_map(parameters)
         role = self.request_get(url)
-        query_url = '{baseUrl}//shared_spaces/{driveUuid}/members'.format_map({
+        query_url = '{baseUrl}/shared_spaces/{driveUuid}/members'.format_map({
             'baseUrl' : self.user_base_url,
             'driveUuid': drive["uuid"]})
         payload = {
