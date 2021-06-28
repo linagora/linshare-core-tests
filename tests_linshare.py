@@ -940,7 +940,7 @@ class TestMailAttachment(AdminTestCase):
             'Domain' : 'LinShareRootDomain'
             })
         domain = self.request_get(query_url)
-        """Create an abstract domain"""
+        # Create an abstract domain
         query_url = '{base_url}/domains'.format_map({
             'base_url': self.base_url,
             })
@@ -970,7 +970,7 @@ class TestMailAttachment(AdminTestCase):
             'default_mail_config' : domain['mailConfigUuid']
             })
         default_mail_config = self.request_get(query_url)
-        """Create an mail configuration"""
+        # Create an mail configuration
         query_url = '{base_url}/mail_configs'.format_map({
             'base_url': self.base_url,
             })
@@ -990,7 +990,7 @@ class TestMailAttachment(AdminTestCase):
     def test_find_all_audits_mail_attachment_by_domain(self):
         """"Create mail configuration"""
         mail_configuration = self.create_mail_configuration()
-        """Create a mail attachment as an admin"""
+        # Create a mail attachment as an admin
         query_url = '{base_url}/mail_attachments'.format_map({
             'base_url': self.base_url,
             })
@@ -1015,7 +1015,7 @@ class TestMailAttachment(AdminTestCase):
                 'Content-Type': monitor.content_type
             }
             mail_attachment = self.request_post(query_url, monitor, headers)
-        """"Test findAll audits of mail attachments of a choosen domain"""
+        # Test findAll audits of mail attachments of a choosen domain
         encode = urllib.parse.urlencode({'domainUuid' : mail_configuration['domain']})
         query_url = '{base_url}/mail_attachments/audits?{encode}'.format_map({
             'base_url' : self.base_url,
@@ -1094,7 +1094,7 @@ class TestUserApiDocumentRevision(UserTestCase):
     def test_create_workgroup_document_revision(self):
         """Test user create a workgroup document revision."""
         workgroup_uuid = self.test_create_ss_node()['uuid']
-        """Upload the same file twice"""
+        # Upload the same file twice
         first_upload = self.create_workgroup_document(workgroup_uuid)
         self.create_workgroup_document(workgroup_uuid)
         encode = urllib.parse.urlencode({'parent' : first_upload['uuid']})
@@ -1107,10 +1107,10 @@ class TestUserApiDocumentRevision(UserTestCase):
     def test_copy_workgroup_document_revision(self):
         """Test copy a workgroup document revision."""
         workgroup_uuid = self.test_create_ss_node()['uuid']
-        """Upload the same file twice"""
+        # Upload the same file twice
         workgroup_document = self.create_workgroup_document(workgroup_uuid)
         workgroup_document_revision = self.create_workgroup_document(workgroup_uuid)
-        """Copy the workGroup document"""
+        # Copy the workGroup document
         query_url = '{baseUrl}/documents/copy'.format_map({
             'baseUrl' : self.base_url})
         payload = {
@@ -1125,9 +1125,9 @@ class TestUserApiDocumentRevision(UserTestCase):
         """Test copy a workgroup document."""
         workgroup_uuid = self.test_create_ss_node()['uuid']
         workgroup_document = self.create_workgroup_document(workgroup_uuid)
-        """Create revision: create the workgroup document twice"""
+        # Create revision: create the workgroup document twice
         workgroup_document_revision = self.create_workgroup_document(workgroup_uuid)
-        """Update workgroup document name"""
+        # Update workgroup document name
         payload = {
             'uuid': workgroup_document['uuid'],
             'name': 'renamed_document',
@@ -1139,7 +1139,7 @@ class TestUserApiDocumentRevision(UserTestCase):
             'workgroup_node_uuid' : workgroup_document['uuid']})
         workgroup_document_updated = self.request_put(query_url, payload)
         self.assertNotEqual(workgroup_document_updated['name'], workgroup_document_revision['name'])
-        """Copy the workGroup document"""
+        # Copy the workGroup document
         query_url = '{baseUrl}/documents/copy'.format_map({
             'baseUrl' : self.base_url})
         payload = {
@@ -1153,7 +1153,7 @@ class TestUserApiDocumentRevision(UserTestCase):
     def test_find_all_audit_document(self):
         """Test user create a workgroup document revision."""
         workgroup_uuid = self.test_create_ss_node()['uuid']
-        """Upload the same file twice"""
+        # Upload the same file twice
         document = self.create_workgroup_document(workgroup_uuid)
         self.create_workgroup_document(workgroup_uuid)
         # update the name of document
@@ -1661,7 +1661,7 @@ class TestUserApiSharedSpace(UserTestCase):
         query_url = self.base_url + '/shared_spaces/' + shared_space['uuid'] + "/audit"
         audits = self.request_get(query_url)
         self.assertTrue(audits)
-        """Create shared space node (folder)"""
+        # Create shared space node (folder)
         query_url = '{baseUrl}/shared_spaces/{shared_space_uuid}/nodes'.format_map({
             "baseUrl" : self.base_url,
             "shared_space_uuid" : shared_space['uuid'
@@ -1671,7 +1671,7 @@ class TestUserApiSharedSpace(UserTestCase):
             "type": "FOLDER"
         }
         created_node = self.request_post(query_url, payload)
-        """Delete shared space node (folder)"""
+        # Delete shared space node (folder)
         query_url = '{baseUrl}/shared_spaces/{shared_space_uuid}/nodes'.format_map({
             "baseUrl" : self.base_url,
             "shared_space_uuid" : shared_space['uuid'
@@ -1682,7 +1682,7 @@ class TestUserApiSharedSpace(UserTestCase):
             "uuid":created_node['uuid']
         }
         deleted_node = self.request_delete(query_url, payload)
-        """Find audit traces related to the folder"""
+        # Find audit traces related to the folder
         encode = urllib.parse.urlencode({
             'nodeUuid': deleted_node['uuid']})
         query_url = '{baseUrl}/shared_spaces/{shared_space_uuid}/audit?{encode}'.format_map({
@@ -1894,17 +1894,17 @@ class TestUserApiSharedSpace(UserTestCase):
         nestedRole = self.getRole('ADMIN')
         role = self.getRole('DRIVE_ADMIN')
 
-        """Create the Shared space DRIVE (parent)"""
+        # Create the Shared space DRIVE (parent)
         drive = self.test_create_shared_space_drive()
 
-        """Get an LS internal user to add in Shared space"""
+        # Get an LS internal user to add in Shared space
         user1 = self.get_user1()
 
         wg_create_query_url = '{baseUrl}/shared_spaces'.format_map({
             'baseUrl' : self.base_url
             })
 
-        """Payload to create the first nested workgroup"""
+        # Payload to create the first nested workgroup
 
         wg_payload_1 = {
             "name": "Nested_workgroup_1",
@@ -1912,19 +1912,19 @@ class TestUserApiSharedSpace(UserTestCase):
             "parentUuid":drive["uuid"]
         }
 
-        """Payload to create the second nested workgroup"""
+        # Payload to create the second nested workgroup
         wg_payload_2 = {
             "name": "Nested_workgroup_2",
             "nodeType": "WORK_GROUP",
             "parentUuid":drive["uuid"]
         }
-        """Payload to create the third nested workgroup"""
+        # Payload to create the third nested workgroup
         wg_payload_3 = {
             "name": "Nested_workgroup_3",
             "nodeType": "WORK_GROUP",
             "parentUuid":drive["uuid"]
         }
-        """Add nested WG 1"""
+        # Add nested WG 1
         nested_wg_1 = requests.post(
             wg_create_query_url,
             data=json.dumps(wg_payload_1),
@@ -1932,7 +1932,7 @@ class TestUserApiSharedSpace(UserTestCase):
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify).json()
 
-        """Add nested WG 2"""
+        # Add nested WG 2
         nested_wg_2 = requests.post(
             wg_create_query_url,
             data=json.dumps(wg_payload_2),
@@ -1940,7 +1940,7 @@ class TestUserApiSharedSpace(UserTestCase):
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify).json()
 
-        """Add nested WG 3"""
+        # Add nested WG 3
         nested_wg_3 = requests.post(
             wg_create_query_url,
             data=json.dumps(wg_payload_3),
@@ -1948,7 +1948,7 @@ class TestUserApiSharedSpace(UserTestCase):
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify).json()
 
-        """Add a member to the Drive (parent)"""
+        # Add a member to the Drive (parent)
         add_membr_query_url = '{baseUrl}/shared_spaces/{driveUuid}/members'.format_map({
             "baseUrl":self.base_url ,
             "driveUuid": drive['uuid']})
@@ -1972,7 +1972,7 @@ class TestUserApiSharedSpace(UserTestCase):
                 },
             "type" : "DRIVE"
         }
-        """Get all the members of the node"""
+        # Get all the members of the node
         get_members_of_wg1_query_url = '{baseUrl}/shared_spaces/{nodeUuid}/members'.format_map({
             "baseUrl" : self.base_url ,
             "nodeUuid" : nested_wg_1['uuid']})
@@ -2010,7 +2010,7 @@ class TestUserApiSharedSpace(UserTestCase):
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         member_drive = request.json()
-        """Assertions"""
+        # Assertions
         self.assertEqual(request.status_code, 200)
         self.assertEqual (member_drive['account']['firstName'], user1['firstName'])
         self.assertEqual(member_1[0]['nested'], True, "FAILED, created member is not nested")
@@ -2020,7 +2020,7 @@ class TestUserApiSharedSpace(UserTestCase):
 
     def test_add_shared_space_member_in_nested_wg(self):
         """Test user API add a shared space member into a nested WORKGROUP"""
-        """The role that's given to the member in the nested node"""
+        # The role that's given to the member in the nested node
         role = self.getRole('ADMIN')
         workgroup = self.test_create_nested_wg_in_drive()
         user1 = self.get_user1()
@@ -2074,7 +2074,7 @@ class TestUserApiSharedSpace(UserTestCase):
         nestedRoleContributor = self.getRole('CONTRIBUTOR')
         role = self.getRole('DRIVE_ADMIN')
 
-        """Create a workGroup into the drive."""
+        # Create a workGroup into the drive.
 
         query_url = self.base_url + '/shared_spaces/'
         payload = {
@@ -2093,7 +2093,7 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual(req.status_code, 200)
         data_workgroup = req.json()
 
-        """Add  a member into the drive."""
+        # Add  a member into the drive.
 
         query_url = '{base_url}/shared_spaces/{driveUuid}/members'.format_map({
             'driveUuid' : drive['uuid'],
@@ -2124,7 +2124,7 @@ class TestUserApiSharedSpace(UserTestCase):
             verify=self.verify).json()
         self.assertEqual (data_member['account']['firstName'], user1['firstName'])
 
-        """Soft update of a member into the drive."""
+        # Soft update of a member into the drive.
         query_url = '{base_url}/shared_spaces/{driveUuid}/members/{memberUuid}/?force=false'.format_map({
             'base_url': self.base_url,
             'driveUuid': drive['uuid'],
@@ -2157,7 +2157,7 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual(request.status_code, 200, 'FAILED')
         self.assertEqual (data_member['account']['firstName'],user1['firstName'])
         self.assertEqual (data_member['nestedRole']['name'],'CONTRIBUTOR')
-        """Check the new created member into the nested workgroup."""
+        # Check the new created member into the nested workgroup.
         query_url = self.base_url + '/shared_spaces?withRole=TRUE'
         req = requests.get(
             query_url,
@@ -2180,7 +2180,7 @@ class TestUserApiSharedSpace(UserTestCase):
         nestedRole = self.getRole('ADMIN')
         nestedRoleContributor = self.getRole('CONTRIBUTOR')
         role = self.getRole('DRIVE_ADMIN')
-        """Create a workGroup into the drive."""
+        # Create a workGroup into the drive.
         query_url = self.base_url + '/shared_spaces/'
         payload = {
             "name": "Workgroup_test",
@@ -2197,7 +2197,7 @@ class TestUserApiSharedSpace(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         data_workgroup = req.json()
-        """Create a a member into the drive."""
+        # Create a a member into the drive.
         query_url = self.base_url + '/shared_spaces/' + drive['uuid'] + '/members'
         payload = {
             "account" : {
@@ -2222,7 +2222,7 @@ class TestUserApiSharedSpace(UserTestCase):
         data_member = self.request_post(query_url, payload)
         self.assertEqual (data_member['account']['firstName'],user1['firstName'])
         self.assertEqual (data_member['nestedRole']['name'],'ADMIN')
-        """Soft update of a member into the drive."""
+        # Soft update of a member into the drive.
         query_url = self.base_url + '/shared_spaces/' + drive['uuid'] + '/members/' + data_member['uuid'] + '?force=true'
         payload = {
             "account" : {
@@ -2247,7 +2247,7 @@ class TestUserApiSharedSpace(UserTestCase):
         data_member = self.request_put(query_url, payload)
         self.assertEqual (data_member['account']['firstName'],user1['firstName'])
         self.assertEqual (data_member['nestedRole']['name'],'CONTRIBUTOR')
-        """Check the new created member into the nested workgroup."""
+        # Check the new created member into the nested workgroup.
         query_url = self.base_url + '/shared_spaces?withRole=TRUE'
         req = requests.get(
             query_url,
@@ -2270,7 +2270,7 @@ class TestUserApiSharedSpace(UserTestCase):
         nestedRole = self.getRole('ADMIN')
         role = self.getRole('DRIVE_ADMIN')
 
-        """Create new member into a drive."""
+        # Create new member into a drive.
         query_url = self.base_url + '/shared_spaces/' + drive['uuid'] + '/members'
         payload = {
             "account" : {
@@ -2286,7 +2286,7 @@ class TestUserApiSharedSpace(UserTestCase):
         data_member_drive = self.request_post(query_url, payload)
         self.assertEqual (data_member_drive['account']['uuid'], user1['uuid'])
 
-        """Create a workGroup into the drive."""
+        # Create a workGroup into the drive.
         query_url = self.base_url + '/shared_spaces/'
         payload = {
             "name": "Workgroup_test",
@@ -2304,7 +2304,7 @@ class TestUserApiSharedSpace(UserTestCase):
         self.assertEqual(req.status_code, 200)
         data_nested_workgroup = req.json()
 
-        """Check the new created member is into the nested workgroup."""
+        # Check the new created member is into the nested workgroup.
         accountUuid = data_member_drive['account']['uuid']
         encode = urllib.parse.urlencode({
             'accountUuid': data_member_drive['account']['uuid']})
@@ -2860,7 +2860,7 @@ class TestAdminWorkGroupPattern (AdminTestCase):
 
 class TestUserApiUploadRequestGroup(UserTestCase):
     """NOTE: Tests of this class need that delay before expiration , notification and activation functionalities should be enabled"""
-    """"Test user API upload request group """
+    # Test user API upload request group
     def test_create_upload_request_group(self):
         """"Test create upload request group with one recipient"""
         query_url = '{base_url}/upload_request_groups'.format_map({
@@ -3275,7 +3275,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         data = req.json()
-        """"Test findAll upload requests of an upload request group"""
+        # Test findAll upload requests of an upload request group
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -3319,7 +3319,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         data = req.json()
         self.assertEqual (data['label'],"upload request group")
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
-        """Add new recipient to the collective upload request group """
+        # Add new recipient to the collective upload request group
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/recipients'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : data['uuid']
@@ -3341,7 +3341,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         data = req.json()
-        """"Test findAll upload requests of an upload request group"""
+        # Test findAll upload requests of an upload request group
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : data['uuid']
@@ -3381,18 +3381,18 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             })
         upload_request = self.request_get(query_url)
         self.assertEqual(len(upload_request), 1)
-        """Upload first upload request entry"""
+        # Upload first upload request entry
         self.upload_upload_request_entry(self.email_external1, self.password_external1, upload_request[0]['uploadRequestURLs'][0]['uuid'])
-        """Upload a second upload request entry"""
+        # Upload a second upload request entry
         self.upload_upload_request_entry(self.email_external1, self.password_external1, upload_request[0]['uploadRequestURLs'][0]['uuid'])
-        """Find the list of the uploaded upload request entries"""
+        # Find the list of the uploaded upload request entries
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : upload_request[0]['uuid']
             })
         entries = self.request_get(query_url)
         self.assertEqual(len(entries), 2)
-        """Archive Download an upload request entry"""
+        # Archive Download an upload request entry
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/download'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -3427,16 +3427,16 @@ class TestUserApiUploadRequestGroup(UserTestCase):
             })
         upload_requests = self.request_get(query_url)
         self.assertEqual(len(upload_requests), 3)
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         self.upload_upload_request_entry(self.email_external1, self.password_external1, upload_requests[0]['uploadRequestURLs'][0]['uuid'])
-        """Find the list of the uploaded upload request entries"""
+        # Find the list of the uploaded upload request entries
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : upload_requests[0]['uuid']
             })
         entries = self.request_get(query_url)
         self.assertEqual(len(entries), 1)
-        """Archive Download an upload request entry"""
+        # Archive Download an upload request entry
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/download?requestUuid={requestUuid}'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : upload_request_group['uuid'],
@@ -3460,15 +3460,16 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         upload_requests = self.request_get(query_url)
         self.assertEqual(len(upload_requests[0]['uploadRequestURLs']), 1)
         LOGGER.debug("The upload requests of the upload request group are well recovered")
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         self.upload_upload_request_entry(self.email_external1, self.password_external1, upload_requests[0]['uploadRequestURLs'][0]['uuid'])
-        """Find upload request's entries"""
+        # Find upload request's entries
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : upload_requests[0]['uuid']
             })
         upload_requets_entries = self.request_get(query_url)
-        """Check the returned nbr of uploaded files and used space of the uploadRequestGroup"""
+        # Check the returned nbr of uploaded files and used space of the
+        # uploadRequestGroup
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -3480,7 +3481,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
 
 class TestUserApiUploadRequestEntry(UserTestCase):
     """NOTE: Tests of this class need that delay before expiration , notification and activation functionalities should be enabled"""
-    """"Test user API upload request entry """
+    # Test user API upload request entry
     upload_request_group_class = TestUserApiUploadRequestGroup()
     def test_create_upload_request_entry(self):
         """"Test user API create an upload request entry """
@@ -3492,7 +3493,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         upload_requests = self.request_get(query_url)
         self.assertEqual(len(upload_requests[0]['uploadRequestURLs']), 1)
         LOGGER.debug("The upload requests of the upload request group are well recovered")
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
@@ -3526,7 +3527,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        """Check the returned nbr of uploaded files of the uploadRequest"""
+        # Check the returned nbr of uploaded files of the uploadRequest
         query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : upload_requests[0]['uuid']
@@ -3553,7 +3554,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data_upload_request = req.json()
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
@@ -3587,7 +3588,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        """Find upload request entry"""
+        # Find upload request entry
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : data_upload_request[0]['uuid']
@@ -3603,7 +3604,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data = req.json()
         self.assertEqual(len(data), 1)
-        """Check the returned nbr of uploaded files of the uploadRequest"""
+        # Check the returned nbr of uploaded files of the uploadRequest
         query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : data_upload_request[0]['uuid']
@@ -3614,7 +3615,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         return data
 
     def test_delete_upload_request_entry(self):
-        """"Test user API delete an upload request entry """
+        # Test user API delete an upload request entry
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
         query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
@@ -3631,7 +3632,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data_upload_request = req.json()
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
@@ -3665,20 +3666,20 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        """Find upload request entry"""
+        # Find upload request entry
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : data_upload_request[0]['uuid']
             })
         data_entry = self.request_get(query_url)
         self.assertEqual(data_upload_request[0]['status'], 'ENABLED')
-        """Delete an upload request entry"""
+        # Delete an upload request entry
         query_url = '{base_url}/upload_request_entries/{upload_req_entry_uuid}'.format_map({
             'base_url': self.base_url,
             'upload_req_entry_uuid' : data_entry[0]['uuid'],
             })
         self.request_delete(query_url)
-        """Check the returned nbr of uploaded files of the uploadRequest"""
+        # Check the returned nbr of uploaded files of the uploadRequest
         query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : data_upload_request[0]['uuid']
@@ -3706,7 +3707,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data_upload_request = req.json()
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
@@ -3740,7 +3741,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
-        """Find upload request entry"""
+        # Find upload request entry
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : data_upload_request[0]['uuid']
@@ -3755,7 +3756,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         data_entry = req.json()
-        """Download an upload request entry"""
+        # Download an upload request entry
         query_url = '{base_url}/upload_request_entries/{upload_req_entry_uuid}/download'.format_map({
             'base_url': self.base_url,
             'upload_req_entry_uuid' : data_entry[0]['uuid']
@@ -3771,7 +3772,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         self.assertEqual(req.status_code, 200)
 
     def test_copy_upload_request_entry(self):
-        """"Test user API copy an upload request entry """
+        # Test user API copy an upload request entry
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
         query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
@@ -3788,7 +3789,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data_upload_request = req.json()
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
@@ -3822,7 +3823,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
-        """Find upload request entry"""
+        # Find upload request entry
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : data_upload_request[0]['uuid']
@@ -3837,7 +3838,8 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         data_entry = req.json()
-        """Before copying an upload request entry we need to close the upload request"""
+        # Before copying an upload request entry we need to close the upload
+        # request
         self.assertEqual(data_upload_request[0]['status'], 'ENABLED')
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/status/{status}'.format_map({
             'base_url': self.base_url,
@@ -3855,7 +3857,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         self.assertEqual(req.status_code, 200)
         data = req.json()
         self.assertEqual(data['status'], 'CLOSED')
-        """Copy an upload request entry"""
+        # Copy an upload request entry
         query_url = '{base_url}/upload_request_entries/{upload_req_entry_uuid}/copy'.format_map({
             'base_url': self.base_url,
             'upload_req_entry_uuid' : data_entry[0]['uuid']
@@ -3880,7 +3882,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         data = self.request_get(query_url)
         self.assertEqual(len(data[0]['uploadRequestURLs']), 1)
         LOGGER.debug("The upload requests of the upload request group are well recovered")
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
@@ -3914,7 +3916,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        """"Test findAll audits of an upload request Entry"""
+        # Test findAll audits of an upload request Entry
         query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/audit?entriesLogsOnly=true'.format_map({
             'base_url': self.base_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -3925,7 +3927,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
 
 class TestUserApiUploadRequestExternal(UserTestCase):
     """NOTE: Tests of this class need that delay before expiration , notification and activation functionalities should be enabled"""
-    """Test user API upload request for externals """
+    # Test user API upload request for externals
     upload_request_group_class = TestUserApiUploadRequestGroup()
     def test_close_upload_request_by_external(self):
         """"Test close an upload request by an external user"""
@@ -3937,15 +3939,16 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         data_upload_request = self.request_get(query_url)
         self.assertEqual(data_upload_request[0]['status'], 'ENABLED')
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
-        """Upload upload request entry"""
+        # Upload upload request entry
         self.upload_upload_request_entry(self.email_external1, self.password_external1, data_upload_request[0]['uploadRequestURLs'][0]['uuid'])
-        """Close an uploadRequest by an external"""
+        # Close an uploadRequest by an external
         query_url = '{base_external_url}/requests/{upload_url_uuid}'.format_map({
             'base_external_url': self.base_external_url,
             'upload_url_uuid' : data_upload_request[0]['uploadRequestURLs'][0]['uuid']
             })
         data = self.request_put(query_url)
-        """Check the updated status to CLOSED after the update by the external user"""
+        # Check the updated status to CLOSED after the update by the external
+        # user
         query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -4016,7 +4019,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data_upload_request = req.json()
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
@@ -4050,7 +4053,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        """Find upload request entry"""
+        # Find upload request entry
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : data_upload_request[0]['uuid']
@@ -4065,7 +4068,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         data_entry = req.json()
-        """Delete an upload request entry by an external"""
+        # Delete an upload request entry by an external
         query_url = '{base_external_url}/requests/{upload_req_url}/entries/{upload_req_entry_uuid}'.format_map({
             'base_external_url': self.base_external_url,
             'upload_req_url' : data_upload_request[0]['uploadRequestURLs'][0]['uuid'],
@@ -4099,7 +4102,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data_upload_request = req.json()
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
@@ -4133,7 +4136,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        """Find upload request entry"""
+        # Find upload request entry
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : data_upload_request[0]['uuid']
@@ -4148,7 +4151,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         data_entry = req.json()
-        """Delete an upload request entry by an external"""
+        # Delete an upload request entry by an external
         query_url = '{base_external_url}/requests/{upload_req_url}/entries/{upload_req_entry_uuid}'.format_map({
             'base_external_url': self.base_external_url,
             'upload_req_url' : data_upload_request[0]['uploadRequestURLs'][0]['uuid'],
@@ -4181,7 +4184,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data_upload_request = req.json()
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
@@ -4215,7 +4218,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        """Find upload request entry"""
+        # Find upload request entry
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : data_upload_request[0]['uuid']
@@ -4230,7 +4233,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         data_entry = req.json()
-        """Delete an upload request entry by an external"""
+        # Delete an upload request entry by an external
         query_url = '{base_external_url}/requests/{upload_req_url}/entries/'.format_map({
             'base_external_url': self.base_external_url,
             'upload_req_url' : data_upload_request[0]['uploadRequestURLs'][0]['uuid']
@@ -4266,7 +4269,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
-        """Test get all uploadRequests of an individual uploadRequest group"""
+        # Test get all uploadRequests of an individual uploadRequest group
         query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -4282,7 +4285,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         data_upload_request = req.json()
         self.assertEqual(len(data_upload_request), 3)
-        """Test create an uploadRequestEntry by ecternal1"""
+        # Test create an uploadRequestEntry by ecternal1
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
@@ -4316,7 +4319,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        """Test create an uploadRequestEntry by ecternal2"""
+        # Test create an uploadRequestEntry by ecternal2
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
@@ -4350,7 +4353,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        """Test findAll uploadRequestEntries"""
+        # Test findAll uploadRequestEntries
         query_url = '{base_external_url}/requests/{upload_req_url_uuid}/entries'.format_map({
             'base_external_url': self.base_external_url,
             'upload_req_url_uuid' : data_upload_request[0]['uploadRequestURLs'][0]['uuid']
@@ -4384,17 +4387,17 @@ class TestUserApiUploadRequestExternal(UserTestCase):
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
-        """Test get all uploadRequests of a collective uploadRequest"""
+        # Test get all uploadRequests of a collective uploadRequest
         query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
         data_upload_request = self.request_get(query_url)
         self.assertEqual(len(data_upload_request), 1)
-        """Test create an uploadRequestEntry by ecternal1"""
+        # Test create an uploadRequestEntry by ecternal1
         self.upload_upload_request_entry(self.email_external1, self.password_external1, data_upload_request[0]['uploadRequestURLs'][0]['uuid'])
         self.upload_upload_request_entry(self.email_external1, self.password_external1, data_upload_request[0]['uploadRequestURLs'][1]['uuid'])
-        """Test findAll uploadRequestEntries"""
+        # Test findAll uploadRequestEntries
         query_url = '{base_external_url}/requests/{upload_req_url_uuid}/entries'.format_map({
             'base_external_url': self.base_external_url,
             'upload_req_url_uuid' : data_upload_request[0]['uploadRequestURLs'][0]['uuid']
@@ -4421,7 +4424,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             })
         data_upload_request = self.request_get(query_url)
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         query_url = self.base_test_upload_request_url
         file_path = 'Linagora-logo.png'
         filesize = os.path.getsize(file_path)
@@ -4456,13 +4459,13 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        """Find upload request entry"""
+        # Find upload request entry
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : data_upload_request[0]['uuid']
             })
         data_entry = self.request_get(query_url)
-        """Download an upload request entry by an external"""
+        # Download an upload request entry by an external
         query_url = '{base_external_url}/requests/{upload_req_url}/entries/{upload_req_entry_uuid}/download'.format_map({
             'base_external_url': self.base_external_url,
             'upload_req_url' : data_upload_request[0]['uploadRequestURLs'][0]['uuid'],
@@ -4487,7 +4490,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
             })
         data_upload_request = self.request_get(query_url)
         self.assertEqual(len(data_upload_request[0]['uploadRequestURLs']), 1)
-        """Upload an upload request entry"""
+        # Upload an upload request entry"""
         query_url = self.base_test_upload_request_url
         file_path = 'Linagora-logo.png'
         filesize = os.path.getsize(file_path)
@@ -4522,13 +4525,13 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-        """Find upload request entry"""
+        # Find upload request entry
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/entries'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : data_upload_request[0]['uuid']
             })
         data_entry = self.request_get(query_url)
-        """Get thumbnail of an upload request entry by an external"""
+        # Get thumbnail of an upload request entry by an external
         query_url = '{base_external_url}/requests/{upload_req_url}/entries/{upload_req_entry_uuid}/thumbnail'.format_map({
             'base_external_url': self.base_external_url,
             'upload_req_url' : data_upload_request[0]['uploadRequestURLs'][0]['uuid'],
@@ -4554,7 +4557,7 @@ class TestUserApiUploadRequest(UserTestCase):
                     'expiryDate', 'label', 'pristine','locale', 'protectedByPassword',
                     'maxFileCount', 'maxDepositSize','maxFileSize','notificationDate', 'owner',
                     'recipients', 'status', 'usedSpace', 'nbrUploadedFiles','uuid']
-        """"Test find an upload request"""
+        # Test find an upload request
         upload_request = self.upload_request_group.test_find_all_upload_requests_of_URG()
         query_url = '{base_url}/upload_requests/{upload_req_uuid}'.format_map({
             'base_url': self.base_url,
@@ -4622,7 +4625,7 @@ class TestUserApiUploadRequest(UserTestCase):
         self.assertEqual(req.status_code, 200)
         upload_request_group = req.json()
         self.assertEqual (upload_request_group['label'],"upload request group")
-        """find upoadRequest all uploadRequests of an URG"""
+        # find upoadRequest all uploadRequests of an URG
         query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
@@ -4638,7 +4641,7 @@ class TestUserApiUploadRequest(UserTestCase):
         LOGGER.debug("result : %s", req.text)
         upload_requests = req.json()
         self.assertEqual(len(upload_requests[0]['uploadRequestURLs']), 1)
-        """Upload an upload request entry"""
+        # Upload an upload request entry
         query_url = self.base_test_upload_request_url
         file_path = 'file10M'
         filesize = os.path.getsize(file_path)
@@ -4670,7 +4673,7 @@ class TestUserApiUploadRequest(UserTestCase):
                 auth=HTTPBasicAuth(self.email, self.password),
                 verify=self.verify)
         self.assertEqual(req.status_code, 200)
-        """Test close an upload request."""
+        # Test close an upload request.
         self.assertEqual(upload_requests[0]['status'], 'ENABLED')
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/status/{status}'.format_map({
             'base_url': self.base_url,
@@ -4688,7 +4691,7 @@ class TestUserApiUploadRequest(UserTestCase):
         self.assertEqual(req.status_code, 200)
         data = req.json()
         self.assertEqual(data['status'], 'CLOSED')
-        """Before copying an entries we need to update status to PURGED"""
+        # Before copying an entries we need to update status to PURGED
         query_url = '{base_url}/upload_requests/{upload_req_uuid}/status/{status}?copy=true'.format_map({
             'base_url': self.base_url,
             'upload_req_uuid' : upload_requests[0]['uuid'],
@@ -4809,7 +4812,7 @@ class TestAdminApiDriveProvider(AdminTestCase):
             'Domain' : 'LinShareRootDomain'
             })
         domain = self.request_get(query_url)
-        """Create an abstract domain"""
+        # Create an abstract domain
         query_url = '{base_url}/domains'.format_map({
             'base_url': self.base_url,
             })
