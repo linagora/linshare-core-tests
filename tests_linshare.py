@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""TODO"""
+# pylint: disable=too-many-lines
 
 
 import configparser
 import json
 import logging
 import os
-import requests
 import sys
 import unittest
 import urllib
+import requests
 
 from requests.auth import HTTPBasicAuth
 from requests_toolbelt.utils import dump
@@ -31,6 +33,9 @@ NO_VERIFY = False
 
 if int(CONFIG['DEFAULT']['debug']) == 1:
     DEBUG = True
+if os.getenv('LS_TEST_DEBUG', None):
+    DEBUG=True
+
 if int(CONFIG['DEFAULT']['no_verify']) == 1:
     NO_VERIFY = True
 
