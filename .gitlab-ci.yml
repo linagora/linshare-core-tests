@@ -81,7 +81,7 @@ test-master:
   services:
     - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:master"
       alias: linshare
-    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
       alias: ldap
   variables:
     CONFIG_FILE_ADMIN: linshare.admin.test.ini
@@ -99,7 +99,7 @@ test-same-core-branch:
   services:
     - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
       alias: linshare
-    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
       alias: ldap
   variables:
     CONFIG_FILE_ADMIN: linshare.admin.test.ini
