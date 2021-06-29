@@ -86,6 +86,7 @@ test-master:
   variables:
     CONFIG_FILE_ADMIN: linshare.admin.test.ini
     CONFIG_FILE_USER: linshare.user.test.ini
+    LS_TEST_DEBUG: 1
   script:
     -  pip install -r requirements.txt
     - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5Api" | tr '\n' ' ')
