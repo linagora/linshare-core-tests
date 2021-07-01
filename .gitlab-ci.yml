@@ -5,6 +5,8 @@ stages:
 variables:
     DOCKER_IMAGE_CORE_EMBEDDED: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-embedded-for-tests"
     DOCKER_IMAGE_CORE_TEST: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-test"
+    ADMIN_TESTS: "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider"
+    USER_TESTS: "TestUserApiDocumentRevision|TestUserApiGuest|TestUserApiUploadRequestGroup|TestUserApiUploadRequestEntry|TestUserApiUploadRequestExternal|TestUserApiUploadRequest|TestUserApiFunctionalties"
     GIT_DEPTH: "1"
 
 .build-docker-tpl: &build-docker-tpl
@@ -90,7 +92,8 @@ test-api-branch-master:
   script:
     -  pip install -r requirements.txt
     - ./patch_gitlab.py
-    - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5Api" | tr '\n' ' ')
+    - export ENABLED_TESTS=$(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE  ${ADMIN_TESTS} | tr '\n' ' ' && grep "(UserTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE ${USER_TESTS} | tr '\n' ' ')
+    - ./tests_linshare.py -v $ENABLED_TESTS
 
 test-api-same-core-branch:
   stage: test
@@ -110,7 +113,8 @@ test-api-same-core-branch:
   script:
     -  pip install -r requirements.txt
     - ./patch_gitlab.py
-    - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5Api" | tr '\n' ' ')
+    - export ENABLED_TESTS=$(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE  ${ADMIN_TESTS} | tr '\n' ' ' && grep "(UserTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE ${USER_TESTS} | tr '\n' ' ')
+    - ./tests_linshare.py -v $ENABLED_TESTS
 
 build:
   <<: *build-docker-tpl
