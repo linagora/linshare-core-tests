@@ -2605,6 +2605,88 @@ class TestUserApiSharedSpace(UserTestCase):
         }
         self.request_put(query_url, payload,expected_status=403 , busines_err_code=60005)
 
+    def test_delete_drive_by_invited_shared_space_member(self):
+        # Test user API delete a DRIVE by an invited member
+        nested_role = self.getRole('READER')
+        role = self.getRole('DRIVE_ADMIN')
+        drive = self.create_drive_by_peter()
+        user1 = self.get_user("amy")
+        # Add a member to the Drive
+        query_url = self.base_url + '/shared_spaces/{driveUuid}/members'.format(driveUuid=drive['uuid'])
+        payload = {
+            "account" : {
+                "uuid" : user1['uuid'],
+                "firstName" : user1['firstName'],
+                "lastName" : user1['lastName'],
+                "mail" : user1['mail'],
+                },
+            "role" : {
+                "uuid" : role['uuid'],
+                },
+            "nestedRole": {
+                "uuid": nested_role['uuid'],
+            },
+            "node" : {
+                "uuid" : drive['uuid'],
+                "name" : drive['name'],
+                "nodeType" : drive['nodeType']
+                },
+            "type" : "DRIVE"
+        }
+        member = self.request_post(query_url, payload)
+        self.assertEqual (member['account']['firstName'], user1['firstName'])
+        self.assertEqual(member['role']['name'], role['name'])
+        self.assertEqual(member['nestedRole']['name'], nested_role['name'])
+        # Create a nested workGroup into the created Drive
+        query_url = '{baseUrl}/shared_spaces'.format_map({
+            'baseUrl' : self.base_url
+            })
+        payload = {
+            "name": "Nested_workgroup",
+            "nodeType": self.WORK_GROUP,
+            "parentUuid":drive["uuid"]
+        }
+        nested_wg = self.request_post(query_url, payload)
+        self.assertEqual(nested_wg['parentUuid'], drive['uuid'])
+        # Create a workGroupNode into the nested created workGroup
+        query_url = '{baseUrl}/shared_spaces/{workgroup_uuid}/nodes'.format_map({
+            'baseUrl' : self.base_url,
+            'workgroup_uuid' : nested_wg['uuid']})
+        file_path = 'file10M'
+        filesize = os.path.getsize(file_path)
+        with open(file_path, 'rb') as file_stream:
+            encoder = MultipartEncoder(
+                fields={
+                    'filesize': str(filesize),
+                    'file': ('file10M.new', file_stream)
+                }
+            )
+            monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': monitor.content_type
+            }
+            req = requests.post(
+                query_url,
+                data=monitor,
+                headers=headers,
+                auth=HTTPBasicAuth(self.email, self.password),
+                verify=self.verify)
+        if DEBUG:
+            data = dump.dump_all(req)
+            LOGGER.debug("dump_all : %s", data.decode('utf-8'))
+        # get the list of workGroupNodes
+        query_url = '{baseUrl}/shared_spaces/{workgroup_uuid}/nodes'.format_map({
+            'baseUrl' : self.base_url,
+            'workgroup_uuid' : nested_wg['uuid']})
+        workgroup_nodes = self.request_get(query_url)
+        self.assertTrue(len(workgroup_nodes), "The list of workgroup nodes is empty")
+        # Delete the created Drive with all its nested resources
+        query_url = '{baseUrl}/shared_spaces/{drive_uuid}'.format_map({
+            'baseUrl' : self.base_url,
+            'drive_uuid' : drive["uuid"]})
+        self.request_delete(query_url)
+
 
 class TestUserApiSharedSpaceRoles(UserTestCase):
     """"Test user API SharedSpaceRoles """
