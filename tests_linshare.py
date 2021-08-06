@@ -1507,10 +1507,12 @@ class TestUserApiSharedSpaceNode(UserTestCase):
         query_url = self.base_url + '/shared_spaces/' + folder['workGroup'] + '/nodes/' + folder['uuid']
         payload = {
             "name": "Update_Node_Name",
+            "description": "Updated desc",
             "type": "FOLDER",
         }
         data = self.request_put(query_url, payload)
         self.assertEqual(data['name'], "Update_Node_Name")
+        self.assertEqual(data['description'], payload['description'])
         return data
 
     def test_update_shared_space_node_without_nodeuuid_path(self):
