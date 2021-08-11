@@ -94,6 +94,35 @@ test-api-branch-master:
     - ./patch_gitlab.py
     - export ENABLED_TESTS=$(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE  ${ADMIN_TESTS} | tr '\n' ' ' && grep "(UserTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE ${USER_TESTS} | tr '\n' ' ')
     - ./tests_linshare.py -v $ENABLED_TESTS
+  only:
+    refs:
+      - master@linagora/lgs/linshare/products/linshare-core-tests
+
+test-api-branch-master-allow-failure:
+  stage: test
+  allow_failure: true
+  tags:
+    - docker
+  image: python:3.9-slim-buster
+  services:
+    - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:master"
+      alias: linshare
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
+      alias: ldap
+  variables:
+    CONFIG_FILE_ADMIN: linshare.admin.test.ini
+    CONFIG_FILE_USER: linshare.user.test.ini
+    LS_TEST_DEBUG: 0
+  script:
+    -  pip install -r requirements.txt
+    - ./patch_gitlab.py
+    - export ENABLED_TESTS=$(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE  ${ADMIN_TESTS} | tr '\n' ' ' && grep "(UserTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE ${USER_TESTS} | tr '\n' ' ')
+    - ./tests_linshare.py -v $ENABLED_TESTS
+  except:
+    refs:
+      - master@linagora/lgs/linshare/products/linshare-core-tests
+      - tags@linagora/lgs/linshare/products/linshare-core-tests
+      - /^release-.*/@linagora/lgs/linshare/products/linshare-core-tests
 
 test-api-same-core-branch:
   stage: test
