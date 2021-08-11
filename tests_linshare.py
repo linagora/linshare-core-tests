@@ -5273,5 +5273,114 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
         self.request_delete(query_url)
 
 
+class Test_domain_user_filter_adminv5_api(AdminTestCase):
+
+    def test_find_all_default_models_domain_user_filters(self):
+        #Test admin find all default domain user filters models
+        encoded_url = urllib.parse.urlencode({'model': "true"})
+        query_url = '{baseUrl}/user_filters?{encode}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'encode': encoded_url})
+        user_filters = self.request_get(query_url)
+        self.assertEqual(len(user_filters),4)
+
+    def test_find_all_created_domain_user_filters(self):
+        #Test admin find all domain user filters
+        query_url = '{baseUrl}/user_filters'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        self.request_get(query_url)
+
+    def test_create_domain_user_filter(self):
+        #Test admin create domain user filter.
+        payload ={
+            "name": "local_domain_user_filter",
+            "description": "This is domain user filter pattern for the OpenLdap structure.",
+            "type": "LDAP",
+            "authenticationQuery": "ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(mail=\"+login+\")(uid=\"+login+\")))\");",
+            "searchUserQuery": "ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=\"+mail+\")(givenName=\"+first_name+\")(sn=\"+last_name+\"))\");",
+            "autoCompleteCommandOnAllAttributes": "ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(mail=\" + pattern + \")(sn=\" + pattern + \")(givenName=\" + pattern + \")))\");",
+            "autoCompleteCommandOnFirstAndLastName": "ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(&(sn=\" + first_name + \")(givenName=\" + last_name + \"))(&(sn=\" + last_name + \")(givenName=\" + first_name + \"))))\");",
+            "searchPageSize": 100,
+            "searchSizeLimit": 100,
+            "completionPageSize": 10,
+            "completionSizeLimit": 10,
+            "attributes": {
+                "user_mail": {
+                    "field": "user_mail",
+                    "attribute": "mail"
+                },
+                "user_firstname": {
+                    "field": "user_firstname",
+                    "attribute": "givenname"
+                },
+                "user_lastname": {
+                    "field": "user_lastname",
+                    "attribute": "sn"
+                },
+                "user_uid": {
+                    "field": "user_uid",
+                    "attribute": "uid"
+                }
+            }
+        }
+        query_url = '{baseUrl}/user_filters'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        user_filter = self.request_post(query_url, payload)
+        self.assertEqual(user_filter['name'], payload['name'])
+        return user_filter
+
+    def test_find_domain_user_filter(self):
+        #Test admin find domain user filter.
+        user_filter = self.test_create_domain_user_filter()
+        query_url = '{baseUrl}/user_filters/{user_filter_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'user_filter_uuid' : user_filter['uuid']})
+        self.request_get(query_url)
+
+    def test_update_domain_user_filter(self):
+        #Test admin update domain user filter.
+        user_filter = self.test_create_domain_user_filter()
+        query_url = '{baseUrl}/user_filters/{user_filter_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'user_filter_uuid' : user_filter['uuid']})
+        payload ={
+            "name": "updated domain user filter name",
+            "description": user_filter['description'],
+            "type": user_filter['type'],
+            "authenticationQuery": user_filter['authenticationQuery'],
+            "searchUserQuery": user_filter['searchUserQuery'],
+            "autoCompleteCommandOnAllAttributes": user_filter['autoCompleteCommandOnAllAttributes'],
+            "autoCompleteCommandOnFirstAndLastName": user_filter['autoCompleteCommandOnFirstAndLastName'],
+            "searchPageSize": user_filter['searchPageSize'],
+            "searchSizeLimit": user_filter['searchSizeLimit'],
+            "completionPageSize": user_filter['completionPageSize'],
+            "completionSizeLimit": user_filter['completionSizeLimit'],
+            "attributes": user_filter['attributes']
+        }
+        user_filter = self.request_put(query_url, payload)
+        self.assertEqual(user_filter['name'], payload['name'])
+
+    def test_delete_domain_user_filter_with_payload(self):
+        #Test admin delete domain user filter.
+        user_filter = self.test_create_domain_user_filter()
+        query_url = '{baseUrl}/user_filters/{user_filter_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'user_filter_uuid' : user_filter['uuid']})
+        payload ={
+            "name": user_filter['name'],
+            "description": user_filter['description'],
+            "type": user_filter['type']
+        }
+        self.request_delete(query_url, payload)
+
+    def test_delete_domain_user_filter_no_payload(self):
+        #Test admin delete domain user filter.
+        user_filter = self.test_create_domain_user_filter()
+        query_url = '{baseUrl}/user_filters/{user_filter_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'user_filter_uuid' : user_filter['uuid']})
+        self.request_delete(query_url)
+
+
 if __name__ == '__main__':
     unittest.main()
