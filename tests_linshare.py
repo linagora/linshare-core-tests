@@ -135,7 +135,7 @@ class AbstractTestCase(unittest.TestCase):
         return data
 
     def request_delete(self, query_url, payload=None):
-        """Do POST request"""
+        """Do DELETE request"""
         data = None
         if payload:
             data = json.dumps(payload)
@@ -5380,6 +5380,100 @@ class Test_domain_user_filter_adminv5_api(AdminTestCase):
             'baseUrl' : self.base_admin_v5_url,
             'user_filter_uuid' : user_filter['uuid']})
         self.request_delete(query_url)
+
+
+class Test_remote_server_adminv5_api(AdminTestCase):
+
+    def test_find_all_remote_servers(self):
+        #Test admin find all remote servers.
+        query_url = '{baseUrl}/remote_servers'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        servers = self.request_get(query_url)
+
+    def test_create_remote_server(self):
+        #Test admin create remote server.
+        payload = {
+            "name": "new connection",
+            "bindDn": self.local_ldap_user_dn,
+            "url": self.local_ldap_url,
+            "bindPassword":self.local_ldap_password
+        }
+        query_url = '{baseUrl}/remote_servers'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        server = self.request_post(query_url, payload)
+        self.assertEqual(server['name'], payload['name'])
+        return server
+
+    def test_create_remote_server_without_binddn_and_pwd(self):
+        #Test admin create remote server.
+        payload = {
+            "name": "new connection",
+            "url": self.local_ldap_url,
+        }
+        query_url = '{baseUrl}/remote_servers'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        server = self.request_post(query_url, payload)
+        self.assertEqual(server['name'], payload['name'])
+        return server
+
+    def test_find_remote_servers(self):
+        #Test admin find remote server.
+        remote_server = self.test_create_remote_server()
+        query_url = '{baseUrl}/remote_servers/{remote_server_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'remote_server_uuid' : remote_server['uuid']})
+        self.request_get(query_url)
+
+    def test_delete_remote_server_with_payload(self):
+        #Test admin delete remote server.
+        remote_server = self.test_create_remote_server()
+        query_url = '{baseUrl}/remote_servers/{remote_server_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'remote_server_uuid' : remote_server['uuid']})
+        payload = {
+            "name": "new connection",
+            "bindDn": remote_server['bindDn'],
+            "url": remote_server['url'],
+        }
+        self.request_delete(query_url, payload)
+
+    def test_delete_remote_server_no_payload(self):
+        #Test admin delete remote server no payload.
+        remote_server = self.test_create_remote_server()
+        query_url = '{baseUrl}/remote_servers/{remote_server_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'remote_server_uuid' : remote_server['uuid']})
+        self.request_delete(query_url)
+
+    def test_update_remote_servers(self):
+        #Test admin update remote server.
+        remote_server = self.test_create_remote_server()
+        query_url = '{baseUrl}/remote_servers/{remote_server_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'remote_server_uuid' : remote_server['uuid']})
+        payload = {
+            "name": "updated connection name",
+            "bindDn": remote_server['bindDn'],
+            "url": remote_server['url'],
+            "bindPassword":'test'
+        }
+        server = self.request_put(query_url, payload)
+        self.assertEqual(server['name'], payload['name'])
+        self.assertEqual(server['bindPassword'], payload['bindPassword'])
+
+    def test_update_remote_servers_without_binddn_and_pwd(self):
+        #Test admin update remote server.
+        remote_server = self.test_create_remote_server()
+        query_url = '{baseUrl}/remote_servers/{remote_server_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'remote_server_uuid' : remote_server['uuid']})
+        payload = {
+            "name": "updated connection name",
+            "url": remote_server['url'],
+        }
+        server = self.request_put(query_url, payload)
+        self.assertEqual(server['name'], payload['name'])
+        self.assertFalse(hasattr(server, "bindPassword"))
 
 
 if __name__ == '__main__':
