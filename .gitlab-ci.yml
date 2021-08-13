@@ -75,7 +75,7 @@ see-reports:
     - "echo Once pyling job is complete, you will be able to see the result here: https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/browse?job=pylint"
  
 
-test-api-branch-master:
+test-api-branch-core-master:
   stage: test
   tags:
     - docker
