@@ -98,7 +98,30 @@ test-api-branch-master:
     refs:
       - master@linagora/lgs/linshare/products/linshare-core-tests
 
-test-api-branch-master-allow-failure:
+test-api-branch-maintenance-x:
+  stage: test
+  tags:
+    - docker
+  image: python:3.9-slim-buster
+  services:
+    - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
+      alias: linshare
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
+      alias: ldap
+  variables:
+    CONFIG_FILE_ADMIN: linshare.admin.test.ini
+    CONFIG_FILE_USER: linshare.user.test.ini
+    LS_TEST_DEBUG: 0
+  script:
+    -  pip install -r requirements.txt
+    - ./patch_gitlab.py
+    - export ENABLED_TESTS=$(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE  ${ADMIN_TESTS} | tr '\n' ' ' && grep "(UserTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE ${USER_TESTS} | tr '\n' ' ')
+    - ./tests_linshare.py -v $ENABLED_TESTS
+  only:
+    refs:
+      - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
+
+test-api-branch-core-master-allow-failure:
   stage: test
   allow_failure: true
   tags:
@@ -122,7 +145,6 @@ test-api-branch-master-allow-failure:
     refs:
       - master@linagora/lgs/linshare/products/linshare-core-tests
       - tags@linagora/lgs/linshare/products/linshare-core-tests
-      - /^release-.*/@linagora/lgs/linshare/products/linshare-core-tests
 
 test-api-same-core-branch:
   stage: test
@@ -144,6 +166,11 @@ test-api-same-core-branch:
     - ./patch_gitlab.py
     - export ENABLED_TESTS=$(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE  ${ADMIN_TESTS} | tr '\n' ' ' && grep "(UserTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE ${USER_TESTS} | tr '\n' ' ')
     - ./tests_linshare.py -v $ENABLED_TESTS
+  except:
+    refs:
+      - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
+      - master@linagora/lgs/linshare/products/linshare-core-tests
+      - tags@linagora/lgs/linshare/products/linshare-core-tests
 
 build:
   <<: *build-docker-tpl
