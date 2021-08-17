@@ -2866,16 +2866,7 @@ class TestFindQuota(AdminTestCase):
             "name": "workgroup_test",
             "nodeType": "WORK_GROUP"
         }
-        req = requests.post(
-            query_url,
-            data=json.dumps(payload),
-            headers=self.headers,
-            auth=HTTPBasicAuth(self.user1_email, self.password),
-            verify=self.verify)
-        data = req.json()
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
+        data = self.request_post(query_url, payload)
         self.assertEqual(data['name'], 'workgroup_test')
         return data
 
@@ -2890,11 +2881,7 @@ class TestFindQuota(AdminTestCase):
             auth=HTTPBasicAuth(self.user1_email, self.password),
             verify=self.verify
         )
-        data = req.json()
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        data = self.request_get(query_url)
 
 
 class TestAdminWorkGroupPattern (AdminTestCase):
