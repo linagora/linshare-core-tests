@@ -580,7 +580,7 @@ class TestAdminApiFunctionalites(AdminTestCase):
             'encode' : self.encoded_url
             })
         data = self.request_get(query_url)
-        self._assertJsonPayload(['integer', 'maxInteger', 'string', 'bool', 'type', 'select'], data['parameters'][0])
+        self._assertJsonPayload(['integer', 'maxInteger', 'string', 'bool', 'defaultValueUsed','maxValueUsed','type', 'select'], data['parameters'][0])
         return data
 
     def test_find_functionality_integer_type_admin_v1(self):
@@ -604,7 +604,7 @@ class TestAdminApiFunctionalites(AdminTestCase):
             'encode' : self.encoded_url
             })
         data = self.request_get(query_url)
-        self._assertJsonPayload(['integer', 'maxInteger', 'maxString','string', 'bool', 'type', 'select'], data['parameters'][0])
+        self._assertJsonPayload(['integer', 'maxInteger','maxString','string', 'defaultValueUsed','maxValueUsed','bool', 'type', 'select'], data['parameters'][0])
         return data
 
     def test_find_functionality_unit_type_admin_v1(self):
@@ -5038,7 +5038,7 @@ class TestUserApiFunctionalties(UserTestCase):
             'identifier' : identifier
             })
         data = self.request_get(query_url)
-        self._assertJsonPayload(['type', 'identifier', 'enable' ,'canOverride', 'value', 'maxValue', 'maxUnit','unit', 'units'], data)
+        self._assertJsonPayload(['type', 'identifier', 'enable' ,'canOverride', 'value', 'maxUnit','unit', 'units'], data)
 
     def test_find_functionality_string_type(self):
         """Test find a functionality String type for a giving user API V4"""
