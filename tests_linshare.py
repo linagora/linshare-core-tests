@@ -5270,24 +5270,10 @@ class TestDomainUserFilterAdminv5Api(AdminTestCase):
             "searchSizeLimit": 100,
             "completionPageSize": 10,
             "completionSizeLimit": 10,
-            "attributes": {
-                "user_mail": {
-                    "field": "user_mail",
-                    "attribute": "mail"
-                },
-                "user_firstname": {
-                    "field": "user_firstname",
-                    "attribute": "givenname"
-                },
-                "user_lastname": {
-                    "field": "user_lastname",
-                    "attribute": "sn"
-                },
-                "user_uid": {
-                    "field": "user_uid",
-                    "attribute": "uid"
-                }
-            }
+            "userFirstNameAttribute": "givenname",
+            "userLastNameAttribute": "sn",
+            "userMailAttribute": "mail",
+            "userUidAttribute": "uid"
         }
         query_url = '{baseUrl}/user_filters'.format_map({
             'baseUrl' : self.base_admin_v5_url})
@@ -5321,7 +5307,10 @@ class TestDomainUserFilterAdminv5Api(AdminTestCase):
             "searchSizeLimit": user_filter['searchSizeLimit'],
             "completionPageSize": user_filter['completionPageSize'],
             "completionSizeLimit": user_filter['completionSizeLimit'],
-            "attributes": user_filter['attributes']
+            "userFirstNameAttribute": user_filter['userFirstNameAttribute'],
+            "userLastNameAttribute": user_filter['userLastNameAttribute'],
+            "userMailAttribute": user_filter['userMailAttribute'],
+            "userUidAttribute": user_filter['userUidAttribute']
         }
         user_filter = self.request_put(query_url, payload)
         self.assertEqual(user_filter['name'], payload['name'])
