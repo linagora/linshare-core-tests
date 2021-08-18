@@ -761,21 +761,9 @@ class TestMailAttachment(AdminTestCase):
                 'Accept': 'application/json',
                 'Content-Type': monitor.content_type
             }
-            req = requests.post(
-                query_url,
-                data=monitor,
-                headers=headers,
-                auth=HTTPBasicAuth(self.email, self.password),
-                verify=self.verify)
-            if DEBUG:
-            # https://toolbelt.readthedocs.io/en/latest/dumputils.html
-                data = dump.dump_all(req)
-                LOGGER.debug("dump_all : %s", data.decode('utf-8'))
-        LOGGER.debug("status_code : %s", req.status_code)
-        LOGGER.debug("result : %s", req.text)
-        self.assertEqual(req.status_code, 200)
-        data = req.json()
-        LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+            data = self.request_post(query_url, monitor, headers)
+            self.assertEqual(True, data['enableForAll'])
+            self.assertEqual(True, data['enable'])
         return data
 
     def test_mail_attachments_fail_create(self):
@@ -915,30 +903,21 @@ class TestMailAttachment(AdminTestCase):
         LOGGER.debug("result : %s", req.text)
         self.assertEqual(req.status_code, 200)
         self.assertEqual(data['description'], 'Test mail attachment')
-        self.assertEqual(data['enableForAll'], False)
+        self.assertEqual(data['enableForAll'], True)
         self.assertEqual(data['enable'], True)
 
-    def test_mail_attachment_delete(self):
-        """Trying to create and delete a mail attachment as an admin"""
-        query_url = self.base_url + '/mail_attachments'
+    def test_mail_attachment_delete_with_payload(self):
+        """Test delete a mail attachment as an admin"""
         data = self.test_mail_attachments_create()
-        uuid = data['uuid']
         payload = {
-            'description': 'Test mail attachment',
-            'enableForAll': 'False',
-            'enable':'True',
-            'cid':'logo.mail.attachment.test'
+            'uuid': data['uuid']
         }
-        req = requests.delete(
-            query_url + '/' + uuid,
-            data=json.dumps(payload),
-            headers = self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
-            verify=self.verify)
-        self.assertEqual(req.status_code, 200)
-        data = req.json()
+        query_url = '{base_url}/mail_attachments'.format_map({
+            'base_url': self.base_url,
+            })
+        data = self.request_delete(query_url, payload)
         self.assertEqual(data['description'], 'Test mail attachment')
-        self.assertEqual(data['enableForAll'], False)
+        self.assertEqual(data['enableForAll'], True)
         self.assertEqual(data['enable'], True)
         return data
 
@@ -955,7 +934,7 @@ class TestMailAttachment(AdminTestCase):
         self.assertEqual(req.status_code, 200)
         data = req.json()
         self.assertEqual(data['description'], 'Test mail attachment')
-        self.assertEqual(data['enableForAll'], False)
+        self.assertEqual(data['enableForAll'], True)
         self.assertEqual(data['enable'], True)
         return data
 
