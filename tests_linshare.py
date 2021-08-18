@@ -5273,7 +5273,7 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
         self.request_delete(query_url)
 
 
-class Test_domain_user_filter_adminv5_api(AdminTestCase):
+class TestDomainUserFilterAdminv5Api(AdminTestCase):
 
     def test_find_all_default_models_domain_user_filters(self):
         #Test admin find all default domain user filters models
@@ -5382,7 +5382,7 @@ class Test_domain_user_filter_adminv5_api(AdminTestCase):
         self.request_delete(query_url)
 
 
-class Test_remote_server_adminv5_api(AdminTestCase):
+class TestRemoteServerAdminv5Api(AdminTestCase):
 
     def test_find_all_remote_servers(self):
         #Test admin find all remote servers.
@@ -5474,6 +5474,96 @@ class Test_remote_server_adminv5_api(AdminTestCase):
         server = self.request_put(query_url, payload)
         self.assertEqual(server['name'], payload['name'])
         self.assertFalse(hasattr(server, "bindPassword"))
+
+
+class TestDomainGroupFilterAdminv5Api(AdminTestCase):
+
+    def test_find_all_default_models_domain_group_filters(self):
+        """Test admin find all default domain group filters models"""
+        encoded_url = urllib.parse.urlencode({'model': "true"})
+        query_url = '{baseUrl}/group_filters?{encode}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'encode': encoded_url})
+        group_filters = self.request_get(query_url)
+        self.assertEqual(len(group_filters),1)
+
+    def test_find_all_created_domain_created_group_filters(self):
+        """Test admin find all domain group filters"""
+        query_url = '{baseUrl}/group_filters'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        self.request_get(query_url)
+
+    def test_create_domain_group_filter(self):
+        """Test admin create domain group filter."""
+        payload = {
+            "description": "Test domain workgroup filter",
+            "name": "Group filter name",
+            "searchAllGroupsQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workgroup-*))\");",
+            "searchGroupQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workgroup-\" + pattern + \"))\");",
+            "searchPageSize": 100,
+            "groupMemberAttribute": "member",
+            "groupNameAttribute": "cn",
+            "groupPrefixToRemove": "workgroup-",
+            "memberFirstNameAttribute": "givenname",
+            "memberLastNameAttribute": "sn",
+            "memberMailAttribute": "mail"
+        }
+        query_url = '{baseUrl}/group_filters'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        group_filter = self.request_post(query_url, payload)
+        self.assertEqual(group_filter['name'], payload['name'])
+        return group_filter
+
+    def test_find_domain_group_filter(self):
+        """Test admin find domain group filter."""
+        group_filter = self.test_create_domain_group_filter()
+        query_url = '{baseUrl}/group_filters/{group_filter_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'group_filter_uuid' : group_filter['uuid']})
+        self.request_get(query_url)
+
+    def test_update_domain_group_filter(self):
+        """Test admin update domain group filter."""
+        group_filter = self.test_create_domain_group_filter()
+        query_url = '{baseUrl}/group_filters/{group_filter_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'group_filter_uuid' : group_filter['uuid']})
+        payload = {
+            "description": group_filter["description"],
+            "name": "Updated group filter name",
+            "searchAllGroupsQuery": group_filter["searchAllGroupsQuery"],
+            "searchGroupQuery": group_filter["searchGroupQuery"],
+            "searchPageSize": group_filter["searchPageSize"],
+            "groupMemberAttribute": group_filter["groupMemberAttribute"],
+            "groupNameAttribute": group_filter["groupNameAttribute"],
+            "groupPrefixToRemove": group_filter["groupPrefixToRemove"],
+            "memberFirstNameAttribute": group_filter["memberFirstNameAttribute"],
+            "memberLastNameAttribute": group_filter["memberLastNameAttribute"],
+            "memberMailAttribute": group_filter["memberMailAttribute"]
+          }
+        group_filter = self.request_put(query_url, payload)
+        self.assertEqual(group_filter['name'], payload['name'])
+
+    def test_delete_domain_group_filter_with_payload(self):
+        """Test admin delete domain group filter."""
+        group_filter = self.test_create_domain_group_filter()
+        query_url = '{baseUrl}/group_filters/{group_filter_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'group_filter_uuid' : group_filter['uuid']})
+        payload ={
+            "name": group_filter['name'],
+            "description": group_filter['description'],
+            "type": group_filter['type']
+        }
+        self.request_delete(query_url, payload)
+
+    def test_delete_domain_group_filter_no_payload(self):
+        """Test admin delete domain group filter."""
+        group_filter = self.test_create_domain_group_filter()
+        query_url = '{baseUrl}/group_filters/{group_filter_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'group_filter_uuid' : group_filter['uuid']})
+        self.request_delete(query_url)
 
 
 if __name__ == '__main__':
