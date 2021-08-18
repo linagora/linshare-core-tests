@@ -1297,9 +1297,9 @@ class TestUserApiJwtPermanentToken(AdminTestCase):
         LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
 
 
-class TestUpdateCanCreateGuest(AdminTestCase):
+class TestAdminApiUpdateCanCreateGuestField(AdminTestCase):
     def test_update_can_create_guest(self):
-        """Test update canCreateGuest for user"""
+        """Test update canCreateGuest field for user"""
         data = self.get_user1()
         query_url = self.base_url + '/users'
         uuid = data['uuid']
