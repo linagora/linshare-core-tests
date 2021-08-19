@@ -415,7 +415,7 @@ class UserTestCase(AbstractTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
-
+@unittest.skip
 class TestAdminApiJwt(AdminTestCase):
     """Test admin api"""
 
@@ -1115,7 +1115,7 @@ class TestMailAttachment(AdminTestCase):
         mail_attachments_audit = self.request_get(query_url)
         self._assertJsonPayload(self.EXPECTED_FIELD_LIST, mail_attachments_audit[0].get('resource'))
 
-
+@unittest.skip
 class TestUserApiDocumentRevision(UserTestCase):
     """Test User api workgroup documents and workgroup document revisions"""
     def test_create_ss_node(self):
@@ -1248,7 +1248,7 @@ class TestUserApiDocumentRevision(UserTestCase):
             'document_uuid' : document['uuid']})
         self.request_get(query_url)
 
-
+@unittest.skip
 class TestUserApiJwtPermanentToken(AdminTestCase):
     """Test User api"""
 
@@ -2693,7 +2693,7 @@ class TestUserApiSharedSpaceRoles(UserTestCase):
             for role in roles:
                 self.assertEqual(role['type'], "DRIVE")
 
-
+@unittest.skip
 class TestUserApiGuest (UserTestCase):
     """"Test user API guests """
     def test_create_guest(self):
@@ -2965,6 +2965,7 @@ class TestAdminWorkGroupPattern (AdminTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("data : %s", req.json())
 
+@unittest.skip
 class TestUserApiUploadRequestGroup(UserTestCase):
     """NOTE: Tests of this class need that delay before expiration , notification and activation functionalities should be enabled"""
     # Test user API upload request group
@@ -3585,11 +3586,11 @@ class TestUserApiUploadRequestGroup(UserTestCase):
         self.assertEqual(upload_request['nbrUploadedFiles'], 1)
         self.assertEqual(upload_request['usedSpace'], upload_requets_entries[0]['size'])
 
-
+@unittest.skip
 class TestUserApiUploadRequestEntry(UserTestCase):
     """NOTE: Tests of this class need that delay before expiration , notification and activation functionalities should be enabled"""
     # Test user API upload request entry
-    upload_request_group_class = TestUserApiUploadRequestGroup()
+    #upload_request_group_class = TestUserApiUploadRequestGroup()
     def test_create_upload_request_entry(self):
         """"Test user API create an upload request entry """
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
@@ -4031,11 +4032,11 @@ class TestUserApiUploadRequestEntry(UserTestCase):
         data = self.request_get(query_url)
         self.assertGreater(len(data),0)
 
-
+@unittest.skip
 class TestUserApiUploadRequestExternal(UserTestCase):
     """NOTE: Tests of this class need that delay before expiration , notification and activation functionalities should be enabled"""
     # Test user API upload request for externals
-    upload_request_group_class = TestUserApiUploadRequestGroup()
+    #upload_request_group_class = TestUserApiUploadRequestGroup()
     def test_close_upload_request_by_external(self):
         """"Test close an upload request by an external user"""
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
@@ -4654,10 +4655,10 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
 
-
+@unittest.skip
 class TestUserApiUploadRequest(UserTestCase):
     """"Test user API upload request """
-    upload_request_group = TestUserApiUploadRequestGroup()
+    #upload_request_group = TestUserApiUploadRequestGroup()
     def test_find_upload_request(self):
         expected = ['activationDate', 'body','canClose','canDeleteDocument', 'creationDate',
                      'modificationDate','closed','collective', 'enableNotification',

@@ -5,8 +5,6 @@ stages:
 variables:
     DOCKER_IMAGE_CORE_EMBEDDED: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-embedded-for-tests"
     DOCKER_IMAGE_CORE_TEST: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-test"
-    ADMIN_TESTS: "TestAdminApiJwt|TestUserApiJwtPermanentToken"
-    USER_TESTS: "TestUserApiDocumentRevision|TestUserApiGuest|TestUserApiUploadRequestGroup|TestUserApiUploadRequestEntry|TestUserApiUploadRequestExternal|TestUserApiUploadRequest"
     GIT_DEPTH: "1"
 
 .build-docker-tpl: &build-docker-tpl
@@ -90,10 +88,9 @@ test-api-branch-core-master:
     CONFIG_FILE_USER: linshare.user.test.ini
     LS_TEST_DEBUG: 0
   script:
-    -  pip install -r requirements.txt
+    - pip install -r requirements.txt
     - ./patch_gitlab.py
-    - export ENABLED_TESTS=$(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE  ${ADMIN_TESTS} | tr '\n' ' ' && grep "(UserTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE ${USER_TESTS} | tr '\n' ' ')
-    - ./tests_linshare.py -v $ENABLED_TESTS
+    - ./tests_linshare.py
   only:
     refs:
       - master@linagora/lgs/linshare/products/linshare-core-tests
@@ -113,10 +110,9 @@ test-api-branch-maintenance-x:
     CONFIG_FILE_USER: linshare.user.test.ini
     LS_TEST_DEBUG: 0
   script:
-    -  pip install -r requirements.txt
+    - pip install -r requirements.txt
     - ./patch_gitlab.py
-    - export ENABLED_TESTS=$(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE  ${ADMIN_TESTS} | tr '\n' ' ' && grep "(UserTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE ${USER_TESTS} | tr '\n' ' ')
-    - ./tests_linshare.py -v $ENABLED_TESTS
+    - ./tests_linshare.py
   only:
     refs:
       - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
@@ -139,8 +135,7 @@ test-api-branch-core-master-allow-failure:
   script:
     -  pip install -r requirements.txt
     - ./patch_gitlab.py
-    - export ENABLED_TESTS=$(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE  ${ADMIN_TESTS} | tr '\n' ' ' && grep "(UserTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE ${USER_TESTS} | tr '\n' ' ')
-    - ./tests_linshare.py -v $ENABLED_TESTS
+    - ./tests_linshare.py
   except:
     refs:
       - master@linagora/lgs/linshare/products/linshare-core-tests
@@ -164,8 +159,7 @@ test-api-same-core-branch:
   script:
     -  pip install -r requirements.txt
     - ./patch_gitlab.py
-    - export ENABLED_TESTS=$(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE  ${ADMIN_TESTS} | tr '\n' ' ' && grep "(UserTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE ${USER_TESTS} | tr '\n' ' ')
-    - ./tests_linshare.py -v $ENABLED_TESTS
+    - ./tests_linshare.py
   except:
     refs:
       - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
