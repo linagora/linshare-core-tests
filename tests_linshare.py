@@ -4862,8 +4862,93 @@ class TestUserApiUploadRequest(UserTestCase):
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
         data = req.json()
-        LOGGER.debug("data : %s", json.dumps(req.json(), sort_keys=True, indent=2))
+        LOGGER.debug("data : %s", json.dumps(req.json(),
+                     sort_keys=True, indent=2))
         return data
+
+
+class TestAdminApiUserProvider(AdminTestCase):
+
+    def create_test_domain(self):
+        query_url = '{base_url}/domains'.format_map({
+            'base_url': self.base_admin_v5_url,
+            })
+        payload = {
+            "parent": {"uuid": "LinShareRootDomain"},
+            "type": "TOPDOMAIN",
+            "name": "TopDomainUserProvider",
+            "description": "Description of top domain 'test user provider'"
+        }
+        domain = self.request_post(query_url, payload)
+        self.assertIsNotNone(domain)
+        self.assertIsNotNone(domain['uuid'])
+        return domain
+
+    def create_test_user_provider(self, domain):
+        query_url = '{base_url}/domains/{uuid}/user_providers'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': domain['uuid']
+            })
+        payload = {
+            "type": "OIDC_PROVIDER",
+            "domainDiscriminator": "DOM_TO_1",
+            "checkExternalUserID": True
+        }
+        provider = self.request_post(query_url, payload)
+        LOGGER.debug("provider : %s", json.dumps(provider, sort_keys=True,
+                     indent=2))
+        return provider
+
+    def test_create_oidc_user_provide(self):
+        domain = self.create_test_domain()
+        provider = self.create_test_user_provider(domain)
+        self.assertIsNotNone(provider)
+        self.assertIsNotNone(provider['uuid'])
+        self.assertEqual(provider['type'], "OIDC_PROVIDER")
+        self.assertEqual(provider['checkExternalUserID'], True)
+        self.assertEqual(provider['useAccessClaim'], False)
+        self.assertEqual(provider['useRoleClaim'], False)
+        self.assertEqual(provider['useEmailLocaleClaim'], False)
+        self.assertEqual(provider['domainDiscriminator'], "DOM_TO_1")
+
+    def test_update_oidc_user_provide(self):
+        domain = self.create_test_domain()
+        provider = self.create_test_user_provider(domain)
+        query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': domain['uuid'],
+            'up_uuid': provider['uuid']
+            })
+        provider['checkExternalUserID'] = True
+        provider['useAccessClaim'] = True
+        provider['useRoleClaim'] = True
+        provider['useEmailLocaleClaim'] = True
+        provider['domainDiscriminator'] = "DOM_TO_2"
+        provider = self.request_put(query_url, provider)
+        LOGGER.debug("provider : %s", json.dumps(provider, sort_keys=True,
+                     indent=2))
+        self.assertEqual(provider['checkExternalUserID'], True)
+        self.assertEqual(provider['useAccessClaim'], True)
+        self.assertEqual(provider['useRoleClaim'], True)
+        self.assertEqual(provider['useEmailLocaleClaim'], True)
+        self.assertEqual(provider['domainDiscriminator'], "DOM_TO_2")
+
+    def test_delete_oidc_user_provide(self):
+        domain = self.create_test_domain()
+        provider = self.create_test_user_provider(domain)
+        query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': domain['uuid'],
+            'up_uuid': provider['uuid']
+            })
+        provider = self.request_delete(query_url, provider)
+        LOGGER.debug("provider : %s", json.dumps(provider, sort_keys=True,
+                     indent=2))
+        self.assertEqual(provider['checkExternalUserID'], True)
+        self.assertEqual(provider['useAccessClaim'], False)
+        self.assertEqual(provider['useRoleClaim'], False)
+        self.assertEqual(provider['useEmailLocaleClaim'], False)
+        self.assertEqual(provider['domainDiscriminator'], "DOM_TO_1")
 
 
 class TestAdminApiDriveProvider(AdminTestCase):
