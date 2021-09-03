@@ -4936,10 +4936,9 @@ class TestAdminApiUserProvider(AdminTestCase):
     def test_delete_oidc_user_provide(self):
         domain = self.create_test_domain()
         provider = self.create_test_user_provider(domain)
-        query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'.format_map({
+        query_url = '{base_url}/domains/{uuid}/user_providers'.format_map({
             'base_url': self.base_admin_v5_url,
-            'uuid': domain['uuid'],
-            'up_uuid': provider['uuid']
+            'uuid': domain['uuid']
             })
         provider = self.request_delete(query_url, provider)
         LOGGER.debug("provider : %s", json.dumps(provider, sort_keys=True,
@@ -4949,6 +4948,17 @@ class TestAdminApiUserProvider(AdminTestCase):
         self.assertEqual(provider['useRoleClaim'], False)
         self.assertEqual(provider['useEmailLocaleClaim'], False)
         self.assertEqual(provider['domainDiscriminator'], "DOM_TO_1")
+
+
+    def test_delete_oidc_user_provide2(self):
+        domain = self.create_test_domain()
+        provider = self.create_test_user_provider(domain)
+        query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': domain['uuid'],
+            'up_uuid': provider['uuid']
+            })
+        self.request_delete(query_url)
 
 
 class TestAdminApiDriveProvider(AdminTestCase):
