@@ -4960,7 +4960,7 @@ class TestAdminApiUserProvider(AdminTestCase):
             })
         self.request_delete(query_url)
 
-
+@unittest.skip
 class TestAdminApiDriveProvider(AdminTestCase):
 
     def create_ldap_connection(self):
@@ -5612,6 +5612,98 @@ class TestDomainGroupFilterAdminv5Api(AdminTestCase):
         query_url = '{baseUrl}/group_filters/{group_filter_uuid}'.format_map({
             'baseUrl' : self.base_admin_v5_url,
             'group_filter_uuid' : group_filter['uuid']})
+        self.request_delete(query_url)
+
+
+class TestDomainDriveFilterAdminv5Api(AdminTestCase):
+
+    def test_find_all_default_models_domain_drive_filters(self):
+        """Test admin find all default domain drive filters models"""
+        encoded_url = urllib.parse.urlencode({'model': "true"})
+        query_url = '{baseUrl}/drive_filters?{encode}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'encode': encoded_url})
+        drive_filters = self.request_get(query_url)
+        self.assertEqual(len(drive_filters),1)
+
+    def test_find_all_created_domain_created_group_filters(self):
+        """Test admin find all domain drive filters"""
+        query_url = '{baseUrl}/drive_filters'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        self.request_get(query_url)
+
+    def test_create_domain_drive_filter(self):
+        """Test admin create domain drive filter."""
+        payload = {
+            "description": "Test domain drive filter",
+            "name": "Drive filter name",
+            "searchAllGroupsQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-*))\");",
+            "searchGroupQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-\" + pattern + \"))\");",
+            "searchPageSize": 100,
+            "groupMemberAttribute": "member",
+            "groupNameAttribute": "cn",
+            "groupPrefixToRemove": "drive-",
+            "memberFirstNameAttribute": "givenname",
+            "memberLastNameAttribute": "sn",
+            "memberMailAttribute": "mail",
+            "type":"LDAP"
+        }
+        query_url = '{baseUrl}/drive_filters'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        drive_filter = self.request_post(query_url, payload)
+        self.assertEqual(drive_filter['name'], payload['name'])
+        return drive_filter
+
+    def test_find_domain_drive_filter(self):
+        """Test admin find domain drive filter."""
+        drive_filter = self.test_create_domain_drive_filter()
+        query_url = '{baseUrl}/drive_filters/{drive_filter_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'drive_filter_uuid' : drive_filter['uuid']})
+        self.request_get(query_url)
+
+    def test_update_domain_drive_filter(self):
+        """Test admin update domain drive filter."""
+        drive_filter = self.test_create_domain_drive_filter()
+        query_url = '{baseUrl}/drive_filters/{drive_filter_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'drive_filter_uuid' : drive_filter['uuid']})
+        payload = {
+            "description": drive_filter["description"],
+            "name": "Updated drive filter name",
+            "searchAllGroupsQuery": drive_filter["searchAllGroupsQuery"],
+            "searchGroupQuery": drive_filter["searchGroupQuery"],
+            "searchPageSize": drive_filter["searchPageSize"],
+            "groupMemberAttribute": drive_filter["groupMemberAttribute"],
+            "groupNameAttribute": drive_filter["groupNameAttribute"],
+            "groupPrefixToRemove": drive_filter["groupPrefixToRemove"],
+            "memberFirstNameAttribute": drive_filter["memberFirstNameAttribute"],
+            "memberLastNameAttribute": drive_filter["memberLastNameAttribute"],
+            "memberMailAttribute": drive_filter["memberMailAttribute"],
+            "type":"LDAP"
+          }
+        drive_filter = self.request_put(query_url, payload)
+        self.assertEqual(drive_filter['name'], payload['name'])
+
+    def test_delete_domain_drive_filter_with_payload(self):
+        """Test admin delete domain drive filter."""
+        drive_filter = self.test_create_domain_drive_filter()
+        query_url = '{baseUrl}/drive_filters/{drive_filter_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'drive_filter_uuid' : drive_filter['uuid']})
+        payload ={
+            "name": drive_filter['name'],
+            "description": drive_filter['description'],
+            "type": drive_filter['type']
+        }
+        self.request_delete(query_url, payload)
+
+    def test_delete_domain_drive_filter_no_payload(self):
+        """Test admin delete domain drive filter."""
+        drive_filter = self.test_create_domain_drive_filter()
+        query_url = '{baseUrl}/drive_filters/{drive_filter_uuid}'.format_map({
+            'baseUrl' : self.base_admin_v5_url,
+            'drive_filter_uuid' : drive_filter['uuid']})
         self.request_delete(query_url)
 
 
