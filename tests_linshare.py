@@ -4869,14 +4869,14 @@ class TestUserApiUploadRequest(UserTestCase):
 
 class TestAdminApiUserProvider(AdminTestCase):
 
-    def create_test_domain(self):
+    def create_test_domain(self, name="TopDomainUserProvider"):
         query_url = '{base_url}/domains'.format_map({
             'base_url': self.base_admin_v5_url,
             })
         payload = {
             "parent": {"uuid": "LinShareRootDomain"},
             "type": "TOPDOMAIN",
-            "name": "TopDomainUserProvider",
+            "name": name,
             "description": "Description of top domain 'test user provider'"
         }
         domain = self.request_post(query_url, payload)
@@ -4884,14 +4884,14 @@ class TestAdminApiUserProvider(AdminTestCase):
         self.assertIsNotNone(domain['uuid'])
         return domain
 
-    def create_test_user_provider(self, domain):
+    def create_test_user_provider(self, domain, domainDiscriminator):
         query_url = '{base_url}/domains/{uuid}/user_providers'.format_map({
             'base_url': self.base_admin_v5_url,
             'uuid': domain['uuid']
             })
         payload = {
             "type": "OIDC_PROVIDER",
-            "domainDiscriminator": "DOM_TO_1",
+            "domainDiscriminator": domainDiscriminator,
             "checkExternalUserID": True
         }
         provider = self.request_post(query_url, payload)
@@ -4899,9 +4899,9 @@ class TestAdminApiUserProvider(AdminTestCase):
                      indent=2))
         return provider
 
-    def test_create_oidc_user_provide(self):
+    def test_create_oidc_user_provider(self):
         domain = self.create_test_domain()
-        provider = self.create_test_user_provider(domain)
+        provider = self.create_test_user_provider(domain, "DOM_TO_1")
         self.assertIsNotNone(provider)
         self.assertIsNotNone(provider['uuid'])
         self.assertEqual(provider['type'], "OIDC_PROVIDER")
@@ -4911,9 +4911,25 @@ class TestAdminApiUserProvider(AdminTestCase):
         self.assertEqual(provider['useEmailLocaleClaim'], False)
         self.assertEqual(provider['domainDiscriminator'], "DOM_TO_1")
 
-    def test_update_oidc_user_provide(self):
+    def test_creating_two_oidc_user_providers_with_same_domain_discriminator_should_fail(self):
         domain = self.create_test_domain()
-        provider = self.create_test_user_provider(domain)
+        self.create_test_user_provider(domain, "DOM_TO_2")
+
+        otherDomain = self.create_test_domain(name="OtherDomain")
+        query_url = '{base_url}/domains/{uuid}/user_providers'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': otherDomain['uuid']
+            })
+        payload = {
+            "type": "OIDC_PROVIDER",
+            "domainDiscriminator": "DOM_TO_2",
+            "checkExternalUserID": True
+        }
+        self.request_post(query_url, payload, expected_status=400, busines_err_code=38100)
+
+    def test_update_oidc_user_provider(self):
+        domain = self.create_test_domain()
+        provider = self.create_test_user_provider(domain, "DOM_TO_3")
         query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'.format_map({
             'base_url': self.base_admin_v5_url,
             'uuid': domain['uuid'],
@@ -4933,9 +4949,9 @@ class TestAdminApiUserProvider(AdminTestCase):
         self.assertEqual(provider['useEmailLocaleClaim'], True)
         self.assertEqual(provider['domainDiscriminator'], "DOM_TO_2")
 
-    def test_delete_oidc_user_provide(self):
+    def test_delete_oidc_user_provider(self):
         domain = self.create_test_domain()
-        provider = self.create_test_user_provider(domain)
+        provider = self.create_test_user_provider(domain, "DOM_TO_4")
         query_url = '{base_url}/domains/{uuid}/user_providers'.format_map({
             'base_url': self.base_admin_v5_url,
             'uuid': domain['uuid']
@@ -4947,12 +4963,12 @@ class TestAdminApiUserProvider(AdminTestCase):
         self.assertEqual(provider['useAccessClaim'], False)
         self.assertEqual(provider['useRoleClaim'], False)
         self.assertEqual(provider['useEmailLocaleClaim'], False)
-        self.assertEqual(provider['domainDiscriminator'], "DOM_TO_1")
+        self.assertEqual(provider['domainDiscriminator'], "DOM_TO_4")
 
 
     def test_delete_oidc_user_provide2(self):
         domain = self.create_test_domain()
-        provider = self.create_test_user_provider(domain)
+        provider = self.create_test_user_provider(domain, "DOM_TO_5")
         query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'.format_map({
             'base_url': self.base_admin_v5_url,
             'uuid': domain['uuid'],
