@@ -4939,7 +4939,7 @@ class TestAdminApiUserProvider(AdminTestCase):
         provider['useAccessClaim'] = True
         provider['useRoleClaim'] = True
         provider['useEmailLocaleClaim'] = True
-        provider['domainDiscriminator'] = "DOM_TO_2"
+        provider['domainDiscriminator'] = "DOM_TO_3_UPDATE"
         provider = self.request_put(query_url, provider)
         LOGGER.debug("provider : %s", json.dumps(provider, sort_keys=True,
                      indent=2))
@@ -4947,7 +4947,37 @@ class TestAdminApiUserProvider(AdminTestCase):
         self.assertEqual(provider['useAccessClaim'], True)
         self.assertEqual(provider['useRoleClaim'], True)
         self.assertEqual(provider['useEmailLocaleClaim'], True)
-        self.assertEqual(provider['domainDiscriminator'], "DOM_TO_2")
+        self.assertEqual(provider['domainDiscriminator'], "DOM_TO_3_UPDATE")
+
+    def test_update_oidc_user_provider_should_succeed_when_same_domain_discriminator(self):
+        domain = self.create_test_domain()
+        provider = self.create_test_user_provider(domain, "DOM_TO_31")
+
+        query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': domain['uuid'],
+            'up_uuid': provider['uuid']
+            })
+        provider['domainDiscriminator'] = "DOM_TO_31"
+        provider = self.request_put(query_url, provider)
+        LOGGER.debug("provider : %s", json.dumps(provider, sort_keys=True,
+                     indent=2))
+        self.assertEqual(provider['domainDiscriminator'], "DOM_TO_31")
+
+    def test_update_oidc_user_provider_should_fail_when_domain_discriminator_already_used(self):
+        otherDomain = self.create_test_domain(name="OtherDomain")
+        self.create_test_user_provider(otherDomain, "OtherDomainDiscriminator")
+
+        domain = self.create_test_domain()
+        provider = self.create_test_user_provider(domain, "DOM_TO_32")
+
+        query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': domain['uuid'],
+            'up_uuid': provider['uuid']
+            })
+        provider['domainDiscriminator'] = "OtherDomainDiscriminator"
+        self.request_put(query_url, provider, expected_status=400, busines_err_code=38100)
 
     def test_delete_oidc_user_provider(self):
         domain = self.create_test_domain()
