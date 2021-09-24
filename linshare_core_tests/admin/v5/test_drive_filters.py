@@ -37,7 +37,7 @@ def test_find(request_helper, base_url):
     # using default model uuid.
     query_url = '{baseUrl}/drive_filters/{uuid}'.format_map({
         'baseUrl': base_url,
-        'uuid': 'ca8a6c06-e16b-4804-a96e-1e29b3751ae1'
+        'uuid': 'c59078f1-2366-4360-baa0-6c089202e9a6'
     })
     data = request_helper.get(query_url)
     log = logging.getLogger('tests.funcs.test_find_all')
