@@ -12,6 +12,8 @@ $ pytest linshare_core_tests/  --collect-only
 
 # display captured logs
 
+Just add some "print" statement and then use -s flag to see the result.
+
 $ pytest -vv --color=yes linshare_core_tests/  -k test_config -s 
 
 # Run tests manually
