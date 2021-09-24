@@ -164,7 +164,8 @@ def test_find_all_functionalites(request_helper, base_url):
         'encode': encoded_url}
     )
     data = request_helper.get(query_url)
-    self.log.debug("functionalities: %s", data)
+    log = logging.getLogger('tests.funcs.test_find_all_functionalites')
+    log.debug("functionalities: %s", data)
     assert data
     assert len([a['identifier'] for a in data]) == 17
 
@@ -184,6 +185,7 @@ def test_find_all_functionalites_and_subs(request_helper, base_url):
         'encode': encoded_url}
     )
     data = request_helper.get(query_url)
-    self.log.debug("functionalities: %s", data)
+    log = logging.getLogger('tests.funcs.test_find_all_functionalites_and_subs')
+    log.debug("functionalities: %s", data)
     assert data
     assert len([a['identifier'] for a in data]) == 45
