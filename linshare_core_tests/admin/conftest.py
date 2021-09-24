@@ -99,7 +99,7 @@ class RequestHelper:
             assert data['errCode'] == busines_err_code
         return data
 
-    def request_delete(self, query_url, payload=None):
+    def delete(self, query_url, payload=None):
         """DELETE HTTP method"""
         data = None
         if payload:
@@ -117,8 +117,8 @@ class RequestHelper:
         self.log.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
 
-    def request_put(self, query_url, payload=None, expected_status=200,
-                    busines_err_code=None):
+    def put(self, query_url, payload=None, expected_status=200,
+            busines_err_code=None):
         """PUT HTTP method"""
         req = requests.put(
             query_url,
@@ -135,7 +135,7 @@ class RequestHelper:
             assert data['errCode'] == busines_err_code
         return data
 
-    def request_patch(self, query_url, payload):
+    def patch(self, query_url, payload):
         """PATCH HTTP method"""
         req = requests.patch(
             query_url,
