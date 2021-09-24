@@ -1,3 +1,4 @@
+linshare_core_tests.egg-info
 linshare.admin.ini
 linshare.user.ini
 *.pyc
@@ -6,4 +7,4 @@ linshare.user.ini
 .pydevproject
 .settings/
 .vscode/
-
+.tox

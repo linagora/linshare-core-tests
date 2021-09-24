@@ -95,7 +95,7 @@ test-api-branch-core-master:
     refs:
       - master@linagora/lgs/linshare/products/linshare-core-tests
 
-test-api-branch-maintenance-x:
+test-api-branch-maintenance-x-legacy:
   stage: test
   tags:
     - docker
@@ -117,7 +117,28 @@ test-api-branch-maintenance-x:
     refs:
       - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
 
-test-api-branch-core-master-allow-failure:
+test-api-branch-maintenance-x:
+  stage: test
+  tags:
+    - docker
+  image: python:3.9-slim-buster
+  services:
+    - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
+      alias: linshare
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
+      alias: ldap
+  variables:
+    CONFIG_FILE_ADMIN: linshare.admin.test.ini
+    CONFIG_FILE_USER: linshare.user.test.ini
+  script:
+    - pip install -r requirements.txt
+    - ./patch_gitlab.py
+    - tox
+  only:
+    refs:
+      - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
+
+test-api-branch-core-master-allow-failure-legacy:
   stage: test
   allow_failure: true
   tags:
@@ -141,7 +162,30 @@ test-api-branch-core-master-allow-failure:
       - master@linagora/lgs/linshare/products/linshare-core-tests
       - tags@linagora/lgs/linshare/products/linshare-core-tests
 
-test-api-same-core-branch:
+test-api-branch-core-master-allow-failure:
+  stage: test
+  allow_failure: true
+  tags:
+    - docker
+  image: python:3.9-slim-buster
+  services:
+    - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:master"
+      alias: linshare
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
+      alias: ldap
+  variables:
+    CONFIG_FILE_ADMIN: linshare.admin.test.ini
+    CONFIG_FILE_USER: linshare.user.test.ini
+  script:
+    -  pip install -r requirements.txt
+    - ./patch_gitlab.py
+    - tox
+  except:
+    refs:
+      - master@linagora/lgs/linshare/products/linshare-core-tests
+      - tags@linagora/lgs/linshare/products/linshare-core-tests
+
+test-api-same-core-branch-legacy:
   stage: test
   allow_failure: true
   tags:
@@ -160,6 +204,30 @@ test-api-same-core-branch:
     -  pip install -r requirements.txt
     - ./patch_gitlab.py
     - ./tests_linshare.py
+  except:
+    refs:
+      - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
+      - master@linagora/lgs/linshare/products/linshare-core-tests
+      - tags@linagora/lgs/linshare/products/linshare-core-tests
+
+test-api-same-core-branch:
+  stage: test
+  allow_failure: true
+  tags:
+    - docker
+  image: python:3.9-slim-buster
+  services:
+    - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
+      alias: linshare
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
+      alias: ldap
+  variables:
+    CONFIG_FILE_ADMIN: linshare.admin.test.ini
+    CONFIG_FILE_USER: linshare.user.test.ini
+  script:
+    -  pip install -r requirements.txt
+    - ./patch_gitlab.py
+    - tox
   except:
     refs:
       - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
