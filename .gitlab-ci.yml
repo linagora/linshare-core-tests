@@ -40,7 +40,7 @@ lint:
 
 pylint:
   stage: test
-  image: python:3.7-slim
+  image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
   tags:
     - docker
   before_script:
