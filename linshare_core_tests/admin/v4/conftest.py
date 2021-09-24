@@ -10,5 +10,5 @@ import pytest
 def fixture_base_url(admin_cfg):
     """Return base URL for all tests"""
     host = admin_cfg['DEFAULT']['host']
-    base_url = host + '/linshare/webservice/rest/admin/v5'
+    base_url = host + '/linshare/webservice/rest/admin/v4'
     return base_url
