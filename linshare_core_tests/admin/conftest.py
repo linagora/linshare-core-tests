@@ -48,7 +48,8 @@ class RequestHelper:
         self.headers = headers
         self.log = logging.getLogger('tests.funcs.requesthelper')
 
-    def get(self, query_url, expected_status=200):
+    def get(self, query_url, expected_status=200,
+            busines_err_code=None):
         """GET HTTP method"""
         req = requests.get(
             query_url,
@@ -59,6 +60,8 @@ class RequestHelper:
         self.log.debug("status_code : %s", req.status_code)
         assert req.status_code == expected_status
         data = req.json()
+        if busines_err_code:
+            assert data['errCode'] == busines_err_code
         self.log.debug("data : %s", json.dumps(req.json(), sort_keys=True,
                        indent=2))
         return data
@@ -164,3 +167,34 @@ def fixture_request_helper(admin_cfg):
         }
     )
     return helper
+
+
+# Scope should be class in order to access to the custom marker
+@pytest.fixture(scope="class", name="domain")
+def domain(request, request_helper, base_url):
+    marker = request.node.get_closest_marker("domain_data")
+    if marker is None:
+        name = "TopDomainUserProvider"
+    else:
+        name = marker.args[0]
+
+    query_url = '{baseUrl}/domains'.format_map({
+        'baseUrl': base_url,
+    })
+    payload = {
+        "parent": {"uuid": "LinShareRootDomain"},
+        "type": "TOPDOMAIN",
+        "name": name,
+        "description": "Description of top domain 'test user provider'"
+    }
+    domain = request_helper.post(query_url, payload)
+    assert domain
+    assert domain['uuid']
+
+    yield domain
+
+    query_url = '{baseUrl}/domains/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid']
+    })
+    request_helper.delete(query_url)
