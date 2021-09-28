@@ -48,7 +48,7 @@ class RequestHelper:
         self.headers = headers
         self.log = logging.getLogger('tests.funcs.requesthelper')
 
-    def get(self, query_url):
+    def get(self, query_url, expected_status=200):
         """GET HTTP method"""
         req = requests.get(
             query_url,
@@ -57,7 +57,7 @@ class RequestHelper:
             verify=self.verify
         )
         self.log.debug("status_code : %s", req.status_code)
-        assert req.status_code == 200
+        assert req.status_code == expected_status
         data = req.json()
         self.log.debug("data : %s", json.dumps(req.json(), sort_keys=True,
                        indent=2))

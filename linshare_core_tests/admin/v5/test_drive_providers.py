@@ -9,18 +9,8 @@ import pytest
 # import json
 
 
-def test_config(admin_cfg, base_url):
-    """Just display current config."""
-    print()
-    print(admin_cfg['DEFAULT']['host'])
-    print(admin_cfg['DEFAULT']['email'])
-    print(admin_cfg['DEFAULT']['password'])
-    print(base_url)
-
-
-def test_create(request_helper, base_url):
-    """Test admin create drive provider."""
-    log = logging.getLogger('tests.drive.providers.test_create')
+def create_remote_server(request_helper, base_url):
+    """Helper to create remote server."""
     payload = {
             "name": "new connection",
             "bindDn":  "cn=linshare,dc=linshare,dc=org",
@@ -29,8 +19,15 @@ def test_create(request_helper, base_url):
         }
     query_url = '{baseUrl}/remote_servers'.format_map({
             'baseUrl' : base_url})
-    ldap_server = request_helper.post(query_url, payload)
-    assert ldap_server
+    remote_server = request_helper.post(query_url, payload)
+    assert remote_server
+    assert remote_server['url'] == "ldap://172.17.0.1:1389"
+    assert remote_server['bindDn'] == "cn=linshare,dc=linshare,dc=org"
+    return remote_server
+
+
+def create_drive_filter(request_helper, base_url):
+    """Helper to create drive filter."""
     payload = {
         "description": "Test domain drive filter",
         "name": "drive filter name",
@@ -48,8 +45,13 @@ def test_create(request_helper, base_url):
     query_url = '{baseUrl}/drive_filters'.format_map({
             'baseUrl' : base_url})
     drive_filter = request_helper.post(query_url, payload)
-    assert drive_filter
-    """Create domain"""
+    assert drive_filter['type'] == "LDAP"
+    assert drive_filter['groupPrefixToRemove'] == "drive-"
+    return drive_filter
+
+
+def create_domain(request_helper, base_url):
+    """Helper to create domain."""
     query_url = '{base_url}/domains'.format_map({
             'base_url': base_url,
             })
@@ -60,7 +62,16 @@ def test_create(request_helper, base_url):
         "description": "Description of top domain 'test group provider'"
     }
     domain = request_helper.post(query_url, payload)
-    assert domain
+    assert domain['type'] == "TOPDOMAIN"
+    assert domain['name'] == "TopDomainDriveProvider"
+    return domain
+
+
+def create_drive_provider(request_helper, base_url):
+    """helper to create drive provider."""
+    ldap_server = create_remote_server(request_helper, base_url)
+    drive_filter = create_drive_filter(request_helper, base_url)
+    domain = create_domain(request_helper, base_url)
     query_url = '{base_url}/domains/{uuid}/drive_providers'.format_map({
         'base_url': base_url,
         'uuid': domain['uuid']
@@ -82,29 +93,43 @@ def test_create(request_helper, base_url):
         "type": "LDAP_PROVIDER"
     }
     drive_provider = request_helper.post(query_url, payload)
+    assert drive_provider
+    return drive_provider
+
+
+def test_create(request_helper, base_url):
+    """Test admin create drive provider."""
+    log = logging.getLogger('tests.drive.providers.test_create')
+    ldap_server = create_remote_server(request_helper, base_url)
+    drive_filter = create_drive_filter(request_helper, base_url)
+    domain = create_domain(request_helper, base_url)
+    drive_provider = create_drive_provider(request_helper, base_url)
     log.debug("drive provider created: %s", drive_provider)
     assert drive_provider
     assert drive_provider['baseDn'] == "ou=Groups,dc=linshare,dc=org"
     assert drive_provider['type'] == "LDAP_PROVIDER"
-    return drive_provider
 
 
 def test_find_all(request_helper, base_url):
-        """Test admin find all created drive providers"""
-        entity = test_create(request_helper, base_url)
-        query_url = '{baseUrl}/domains/{uuid}/drive_providers'.format_map({
-            'baseUrl': base_url,
-            'uuid': entity['domain']['uuid']
-            })
-        data = request_helper.get(query_url)
-        log = logging.getLogger('tests.funcs.test_find_all')
-        log.debug("drive providers: %s", data)
-        assert data
+    """Test admin find all created drive providers"""
+    entity = create_drive_provider(request_helper, base_url)
+    query_url = '{baseUrl}/domains/{uuid}/drive_providers'.format_map({
+        'baseUrl': base_url,
+        'uuid': entity['domain']['uuid']
+        })
+    drive_providers = request_helper.get(query_url)
+    log = logging.getLogger('tests.drive.providers.test_find_all')
+    log.debug("drive providers: %s", drive_providers)
+    if(len(drive_providers) != 0):
+        assert drive_providers
+        for drive_provider in drive_providers:
+            assert drive_provider['baseDn'] == "ou=Groups,dc=linshare,dc=org"
+            assert drive_provider['type'] == "LDAP_PROVIDER"
 
 
 def test_find(request_helper, base_url):
     """Test find existing driver provider on API v5"""
-    entity = test_create(request_helper, base_url)
+    entity = create_drive_provider(request_helper, base_url)
     query_url = '{baseUrl}/domains/{uuid}/drive_providers/{drive_provider_uuid}'.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid'],
@@ -112,26 +137,34 @@ def test_find(request_helper, base_url):
     })
     data = request_helper.get(query_url)
     assert data
+    assert data['baseDn'] == entity['baseDn']
+    assert data['type'] == entity['type']
 
 
 def test_delete(request_helper, base_url):
     """Test admin delete domain drive provider."""
     log = logging.getLogger('tests.drive.providers.test_delete')
-    entity = test_create(request_helper, base_url)
+    entity = create_drive_provider(request_helper, base_url)
     query_url = '{baseUrl}/domains/{uuid}/drive_providers/{drive_provider_uuid}'.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid'],
         'drive_provider_uuid': entity['uuid']
     })
     data = request_helper.delete(query_url)
-    log.debug("drive provider deleted: %s", data)
     assert data
+    log.debug("drive provider deleted: %s", data)
+    query_url = '{baseUrl}/domains/{uuid}/drive_providers/{drive_provider_uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': entity['domain']['uuid'],
+        'drive_provider_uuid': entity['uuid']
+    })
+    request_helper.get(query_url, expected_status=404)
 
 
 def test_delete_payload(request_helper, base_url):
     """Test admin delete domain drive provider."""
     log = logging.getLogger('tests.drive.providers.test_delete')
-    entity = test_create(request_helper, base_url)
+    entity = create_drive_provider(request_helper, base_url)
     query_url = '{baseUrl}/domains/{uuid}/drive_providers'.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid'],
@@ -139,12 +172,18 @@ def test_delete_payload(request_helper, base_url):
     data = request_helper.delete(query_url, entity)
     log.debug("drive provider deleted: %s", data)
     assert data
+    query_url = '{baseUrl}/domains/{uuid}/drive_providers/{drive_provider_uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': entity['domain']['uuid'],
+        'drive_provider_uuid': entity['uuid']
+    })
+    request_helper.get(query_url, expected_status=404)
 
 
 def test_update(request_helper, base_url):
     """Test admin update domain drive provider."""
     log = logging.getLogger('tests.drive.providers.test_update')
-    entity = test_create(request_helper, base_url)
+    entity = create_drive_provider(request_helper, base_url)
     query_url = '{baseUrl}/domains/{uuid}/drive_providers'.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid']

@@ -44,8 +44,8 @@ def test_find(request_helper, base_url):
     log.debug("drive filters: %s", data)
     # print("data: ", json.dumps(data, sort_keys=True, indent=2))
     assert data
-    # 13 fields
-    assert len(data) == 13
+    # 15 fields
+    assert len(data) == 15
 
 
 def test_create(request_helper, base_url):
@@ -84,8 +84,8 @@ def test_create(request_helper, base_url):
     assert data
     assert data['name'] == payload['name']
     # assert data['creationDate']
-    # 13 fields
-    assert len(data) == 13
+    # 15 fields
+    assert len(data) == 15
     return data
 
 
@@ -102,8 +102,8 @@ def test_delete(request_helper, base_url):
     data = request_helper.delete(query_url)
     log.debug("drive filter deleted: %s", data)
     assert data
-    # 13 fields
-    assert len(data) == 13
+    # 15 fields
+    assert len(data) == 15
 
 
 def test_delete_payload(request_helper, base_url):
@@ -118,8 +118,8 @@ def test_delete_payload(request_helper, base_url):
     data = request_helper.delete(query_url, entity)
     log.debug("drive filter deleted: %s", data)
     assert data
-    # 13 fields
-    assert len(data) == 13
+    # 15 fields
+    assert len(data) == 15
 
 
 def test_update(request_helper, base_url):
@@ -137,8 +137,8 @@ def test_update(request_helper, base_url):
     data = request_helper.put(query_url, entity)
     log.debug("drive filter update: %s", data)
     assert data
-    # 13 fields
-    assert len(data) == 13
+    # 15 fields
+    assert len(data) == 15
     assert data['name'] == entity['name']
 
 
@@ -157,7 +157,7 @@ def test_update_empty_description(request_helper, base_url):
     data = request_helper.put(query_url, entity)
     log.debug("drive filter update: %s", data)
     assert data
-    # 13 fields
-    assert len(data) == 13
+    # 15 fields
+    assert len(data) == 15
     assert data['name'] == entity['name']
     assert data['description'] == ""
