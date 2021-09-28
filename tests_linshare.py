@@ -5661,5 +5661,342 @@ class TestDomainGroupFilterAdminv5Api(AdminTestCase):
         self.request_delete(query_url)
 
 
+class TestAdminApiDriveProvider(AdminTestCase):
+
+    def test_create_drive_provider(self):
+        """Test admin create drive provider."""
+        payload = {
+            "name": "new connection",
+            "bindDn": self.local_ldap_user_dn,
+            "url": self.local_ldap_url,
+            "bindPassword":self.local_ldap_password
+        }
+        query_url = '{baseUrl}/remote_servers'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        ldap_server = self.request_post(query_url, payload)
+        self.assertEqual(ldap_server['name'], payload['name'])
+        payload = {
+            "description": "Test domain drive filter",
+            "name": "drive filter name",
+            "searchAllGroupsQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-*))\");",
+            "searchGroupQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-\" + pattern + \"))\");",
+            "searchPageSize": 100,
+            "groupMemberAttribute": "member",
+            "groupNameAttribute": "cn",
+            "groupPrefixToRemove": "drive-",
+            "memberFirstNameAttribute": "givenname",
+            "memberLastNameAttribute": "sn",
+            "memberMailAttribute": "mail",
+            "type": "LDAP"
+        }
+        query_url = '{baseUrl}/drive_filters'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        drive_filter = self.request_post(query_url, payload)
+        self.assertEqual(drive_filter['name'], payload['name'])
+        """Create domain"""
+        query_url = '{base_url}/domains'.format_map({
+            'base_url': self.base_admin_v5_url,
+            })
+        payload = {
+            "parent": {"uuid": "LinShareRootDomain"},
+            "type": "TOPDOMAIN",
+            "name": "TopDomainDriveProvider",
+            "description": "Description of top domain 'test group provider'"
+        }
+        domain = self.request_post(query_url, payload)
+        self.assertIsNotNone(domain)
+        self.assertIsNotNone(domain['uuid'])
+        query_url = '{base_url}/domains/{uuid}/drive_providers'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': domain['uuid']
+            })
+        payload = {
+            "domain": {
+                "uuid": domain['uuid'],
+                "name": domain['name']
+            },
+            "ldapServer": {
+                "uuid": ldap_server['uuid'],
+                "name": ldap_server['name']
+            },
+            "driveFilter": {
+                "uuid": drive_filter['uuid'],
+                "name": drive_filter['name']
+            },
+            "baseDn": self.local_ldap_group_base_dn,
+            "type": "LDAP_PROVIDER"
+        }
+        drive_provider = self.request_post(query_url, payload)
+        self.assertIsNotNone(drive_provider)
+        self.assertEqual(drive_provider['baseDn'], payload['baseDn'])
+        self.assertEqual(drive_provider['type'], payload['type'])
+        self.assertEqual(drive_provider['ldapServer']['uuid'], payload['ldapServer']['uuid'])
+
+
+    def test_find_all_drive_providers(self):
+        """Test admin find all created drive providers"""
+        query_url = '{base_url}/domains'.format_map({
+            'base_url': self.base_admin_v5_url,
+            })
+        payload = {
+            "parent": {"uuid": "LinShareRootDomain"},
+            "type": "TOPDOMAIN",
+            "name": "TopDomainDriveProvider",
+            "description": "Description of top domain 'test group provider'"
+        }
+        domain = self.request_post(query_url, payload)
+        query_url = '{base_url}/domains/{uuid}/drive_providers'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': domain['uuid']
+            })
+        self.request_get(query_url)
+
+    def test_find_drive_provider(self):
+        """Test admin find drive provider."""
+        payload = {
+            "name": "new connection",
+            "bindDn": self.local_ldap_user_dn,
+            "url": self.local_ldap_url,
+            "bindPassword":self.local_ldap_password
+        }
+        query_url = '{baseUrl}/remote_servers'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        ldap_server = self.request_post(query_url, payload)
+        self.assertEqual(ldap_server['name'], payload['name'])
+        payload = {
+            "description": "Test domain drive filter",
+            "name": "drive filter name",
+            "searchAllGroupsQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-*))\");",
+            "searchGroupQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-\" + pattern + \"))\");",
+            "searchPageSize": 100,
+            "groupMemberAttribute": "member",
+            "groupNameAttribute": "cn",
+            "groupPrefixToRemove": "drive-",
+            "memberFirstNameAttribute": "givenname",
+            "memberLastNameAttribute": "sn",
+            "memberMailAttribute": "mail",
+            "type": "LDAP"
+        }
+        query_url = '{baseUrl}/drive_filters'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        drive_filter = self.request_post(query_url, payload)
+        self.assertEqual(drive_filter['name'], payload['name'])
+        """Create domain"""
+        query_url = '{base_url}/domains'.format_map({
+            'base_url': self.base_admin_v5_url,
+            })
+        payload = {
+            "parent": {"uuid": "LinShareRootDomain"},
+            "type": "TOPDOMAIN",
+            "name": "TopDomainDriveProvider",
+            "description": "Description of top domain 'test group provider'"
+        }
+        domain = self.request_post(query_url, payload)
+        self.assertIsNotNone(domain)
+        self.assertIsNotNone(domain['uuid'])
+        query_url = '{base_url}/domains/{uuid}/drive_providers'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': domain['uuid']
+            })
+        payload = {
+            "domain": {
+                "uuid": domain['uuid'],
+                "name": domain['name']
+            },
+            "ldapServer": {
+                "uuid": ldap_server['uuid'],
+                "name": ldap_server['name']
+            },
+            "driveFilter": {
+                "uuid": drive_filter['uuid'],
+                "name": drive_filter['name']
+            },
+            "baseDn": self.local_ldap_group_base_dn,
+            "type": "LDAP_PROVIDER"
+        }
+        drive_provider = self.request_post(query_url, payload)
+        self.assertIsNotNone(drive_provider)
+        self.assertEqual(drive_provider['baseDn'], payload['baseDn'])
+        query_url = '{base_url}/domains/{uuid}/drive_providers/{drive_provider_uuid}'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': drive_provider['domain']['uuid'],
+            'drive_provider_uuid': drive_provider['uuid']
+            })
+        recovered_drive_provider = self.request_get(query_url)
+        self.assertEqual(drive_provider['uuid'], recovered_drive_provider['uuid'])
+
+    def test_update_drive_provider(self):
+        """Test admin update drive provider."""
+        payload = {
+            "name": "new connection",
+            "bindDn": self.local_ldap_user_dn,
+            "url": self.local_ldap_url,
+            "bindPassword":self.local_ldap_password
+        }
+        query_url = '{baseUrl}/remote_servers'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        ldap_server = self.request_post(query_url, payload)
+        self.assertEqual(ldap_server['name'], payload['name'])
+        payload = {
+            "description": "Test domain drive filter",
+            "name": "drive filter name",
+            "searchAllGroupsQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-*))\");",
+            "searchGroupQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-\" + pattern + \"))\");",
+            "searchPageSize": 100,
+            "groupMemberAttribute": "member",
+            "groupNameAttribute": "cn",
+            "groupPrefixToRemove": "drive-",
+            "memberFirstNameAttribute": "givenname",
+            "memberLastNameAttribute": "sn",
+            "memberMailAttribute": "mail",
+            "type": "LDAP"
+        }
+        query_url = '{baseUrl}/drive_filters'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        drive_filter = self.request_post(query_url, payload)
+        self.assertEqual(drive_filter['name'], payload['name'])
+        """Create domain"""
+        query_url = '{base_url}/domains'.format_map({
+            'base_url': self.base_admin_v5_url,
+            })
+        payload = {
+            "parent": {"uuid": "LinShareRootDomain"},
+            "type": "TOPDOMAIN",
+            "name": "TopDomainDriveProvider",
+            "description": "Description of top domain 'test group provider'"
+        }
+        domain = self.request_post(query_url, payload)
+        self.assertIsNotNone(domain)
+        self.assertIsNotNone(domain['uuid'])
+        query_url = '{base_url}/domains/{uuid}/drive_providers'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': domain['uuid']
+            })
+        payload = {
+            "domain": {
+                "uuid": domain['uuid'],
+                "name": domain['name']
+            },
+            "ldapServer": {
+                "uuid": ldap_server['uuid'],
+                "name": ldap_server['name']
+            },
+            "driveFilter": {
+                "uuid": drive_filter['uuid'],
+                "name": drive_filter['name']
+            },
+            "baseDn": self.local_ldap_group_base_dn,
+            "type": "LDAP_PROVIDER"
+        }
+        drive_provider = self.request_post(query_url, payload)
+        self.assertIsNotNone(drive_provider)
+        self.assertEqual(drive_provider['baseDn'], payload['baseDn'])
+        """Create new ldap server"""
+        payload = {
+            "name": "new connection",
+            "bindDn": self.local_ldap_user_dn,
+            "url": self.local_ldap_url,
+            "bindPassword":self.local_ldap_password
+        }
+        query_url = '{baseUrl}/remote_servers'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        new_ldap_server = self.request_post(query_url, payload)
+        self.assertEqual(ldap_server['name'], payload['name'])
+        query_url = '{base_url}/domains/{uuid}/drive_providers'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': drive_provider['domain']['uuid']
+            })
+        payload = {
+            "uuid" : drive_provider['uuid'],
+            "ldapServer": {
+                "uuid": new_ldap_server['uuid'],
+                "name": new_ldap_server['name']
+            },
+            "driveFilter": {
+                "uuid": drive_provider['driveFilter']['uuid'],
+                "name": drive_provider['driveFilter']['name']
+            },
+            "baseDn": drive_provider['baseDn'],
+            "type": drive_provider['type']
+        }
+        updated_drive_provider = self.request_put(query_url, payload)
+        self.assertEqual(new_ldap_server['uuid'], updated_drive_provider['ldapServer']['uuid'], "The ldap server was not updated")
+
+    def test_delete_domain_drive_provider_no_payload(self):
+        """Test admin delete drive provider."""
+        payload = {
+            "name": "new connection",
+            "bindDn": self.local_ldap_user_dn,
+            "url": self.local_ldap_url,
+            "bindPassword":self.local_ldap_password
+        }
+        query_url = '{baseUrl}/remote_servers'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        ldap_server = self.request_post(query_url, payload)
+        self.assertEqual(ldap_server['name'], payload['name'])
+        payload = {
+            "description": "Test domain drive filter",
+            "name": "drive filter name",
+            "searchAllGroupsQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-*))\");",
+            "searchGroupQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-\" + pattern + \"))\");",
+            "searchPageSize": 100,
+            "groupMemberAttribute": "member",
+            "groupNameAttribute": "cn",
+            "groupPrefixToRemove": "drive-",
+            "memberFirstNameAttribute": "givenname",
+            "memberLastNameAttribute": "sn",
+            "memberMailAttribute": "mail",
+            "type": "LDAP"
+        }
+        query_url = '{baseUrl}/drive_filters'.format_map({
+            'baseUrl' : self.base_admin_v5_url})
+        drive_filter = self.request_post(query_url, payload)
+        self.assertEqual(drive_filter['name'], payload['name'])
+        """Create domain"""
+        query_url = '{base_url}/domains'.format_map({
+            'base_url': self.base_admin_v5_url,
+            })
+        payload = {
+            "parent": {"uuid": "LinShareRootDomain"},
+            "type": "TOPDOMAIN",
+            "name": "TopDomainDriveProvider",
+            "description": "Description of top domain 'test group provider'"
+        }
+        domain = self.request_post(query_url, payload)
+        self.assertIsNotNone(domain)
+        self.assertIsNotNone(domain['uuid'])
+        query_url = '{base_url}/domains/{uuid}/drive_providers'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': domain['uuid']
+            })
+        payload = {
+            "domain": {
+                "uuid": domain['uuid'],
+                "name": domain['name']
+            },
+            "ldapServer": {
+                "uuid": ldap_server['uuid'],
+                "name": ldap_server['name']
+            },
+            "driveFilter": {
+                "uuid": drive_filter['uuid'],
+                "name": drive_filter['name']
+            },
+            "baseDn": self.local_ldap_group_base_dn,
+            "type": "LDAP_PROVIDER"
+        }
+        drive_provider = self.request_post(query_url, payload)
+        self.assertIsNotNone(drive_provider)
+        self.assertEqual(drive_provider['baseDn'], payload['baseDn'])
+        """Delete drive provider"""
+        query_url = '{base_url}/domains/{uuid}/drive_providers/{drive_provider_uuid}'.format_map({
+            'base_url': self.base_admin_v5_url,
+            'uuid': drive_provider['domain']['uuid'],
+            'drive_provider_uuid': drive_provider['uuid']
+            })
+        deleted_drive_provider = self.request_delete(query_url)
+        self.assertEqual(deleted_drive_provider['uuid'], drive_provider['uuid'], "The drive provider is not deleted")
+
+
 if __name__ == '__main__':
     unittest.main()
