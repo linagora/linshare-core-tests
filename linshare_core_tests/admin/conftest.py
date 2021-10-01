@@ -114,7 +114,8 @@ class RequestHelper:
             assert data['errCode'] == busines_err_code
         return data
 
-    def delete(self, query_url, payload=None):
+    def delete(self, query_url, payload=None, expected_status=200,
+               busines_err_code=None):
         """DELETE HTTP method"""
         data = None
         if payload:
@@ -127,9 +128,11 @@ class RequestHelper:
             verify=self.verify)
         self.log.debug("status_code : %s", req.status_code)
         self.log.debug("result : %s", req.text)
-        assert req.status_code == 200
+        assert req.status_code == expected_status
         data = req.json()
         self.log.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        if busines_err_code:
+            assert data['errCode'] == busines_err_code
         return data
 
     def put(self, query_url, payload=None, expected_status=200,
