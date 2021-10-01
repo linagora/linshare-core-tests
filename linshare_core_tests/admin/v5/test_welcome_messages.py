@@ -20,6 +20,28 @@ def find_default_welcome_message(request_helper, base_url):
     return response[0]['uuid']
 
 
+def create_welcome_message(request_helper, base_url, domain):
+    log = logging.getLogger('tests.funcs.test_create_should_works')
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid']
+    })
+    payload = {
+        "uuid": find_default_welcome_message(request_helper, base_url),
+        "name": "MyWelcomeMessage",
+        "description": "Its description",
+        "entries": {
+            "ENGLISH": "WelcomeMessagesEntry",
+            "FRENCH": "WelcomeMessagesEntry"
+        }
+    }
+    response = request_helper.post(query_url, payload)
+    log.debug("response: %s", response)
+    assert response
+    return response
+
+
+
 @pytest.mark.domain_data("MyDomain")
 def test_find_all_should_work(request_helper, base_url, domain):
     """Finding all WelcomeMessages should return the list of messages"""
@@ -187,3 +209,137 @@ def test_create_should_works(request_helper, base_url, domain):
     assert response['creationDate']
     assert response['modificationDate']
     assert len(response['entries']) == 4
+
+
+@pytest.mark.domain_data("MyDomain")
+def test_update_should_fail_when_domain_doesnt_exists(request_helper, base_url, domain):
+    """Updating a welcome message should fail when domain doesn't exists"""
+    welcome_message = create_welcome_message(request_helper, base_url, domain)
+
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': 'wrong',
+        'welcomeMessageUuid': welcome_message['uuid']
+    })
+    payload = {
+        "uuid": find_default_welcome_message(request_helper, base_url),
+        "name": "MyWelcomeMessage",
+        "description": "Its description",
+        "entries": {
+            "ENGLISH": "WelcomeMessagesEntry",
+            "FRENCH": "WelcomeMessagesEntry"
+        }
+    }
+    request_helper.put(query_url, payload, expected_status=404)
+
+
+@pytest.mark.domain_data("MyDomain")
+def test_update_should_fail_when_welcome_message_doesnt_exists(request_helper, base_url, domain):
+    """Updating a welcome message should fail when welcome message doesn't exists"""
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid'],
+        'welcomeMessageUuid': 'wrong'
+    })
+    payload = {
+        "uuid": find_default_welcome_message(request_helper, base_url),
+        "name": "MyWelcomeMessage",
+        "description": "Its description",
+        "entries": {
+            "ENGLISH": "WelcomeMessagesEntry",
+            "FRENCH": "WelcomeMessagesEntry"
+        }
+    }
+    request_helper.put(query_url, payload, expected_status=404)
+
+
+@pytest.mark.domain_data("MyDomain")
+def test_update_should_fail_when_welcome_message_doesnt_belong_to_the_domain(request_helper, base_url, domain):
+    """Updating a WelcomeMessage should fail when domain doesn't match"""
+    # Given
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid']
+    })
+    payload = {
+        "uuid": find_default_welcome_message(request_helper, base_url),
+        "name": "MyWelcomeMessage",
+        "description": "Its description"
+    }
+    welcome_message = request_helper.post(query_url, payload)
+
+    query_url = '{baseUrl}/domains'.format_map({
+        'baseUrl': base_url,
+    })
+    payload = {
+        "parent": {"uuid": "LinShareRootDomain"},
+        "type": "TOPDOMAIN",
+        "name": "OtherDomain",
+        "description": "Description of top domain 'test user provider'"
+    }
+    other_domain = request_helper.post(query_url, payload)
+
+    # When
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': other_domain['uuid'],
+        'welcomeMessageUuid': welcome_message['uuid']
+    })
+    payload = {
+        "name": "MyWelcomeMessage new name",
+        "description": "Its description new description",
+        "entries": {
+            "ENGLISH": "WelcomeMessagesEntry new entry",
+            "FRENCH": "WelcomeMessagesEntry nouvelle entrée",
+            "RUSSIAN": "WelcomeMessagesEntry",
+            "VIETNAMESE": "WelcomeMessagesEntry"
+        }
+    }
+
+    # Then
+    request_helper.put(query_url, payload, expected_status=404, busines_err_code=36004)
+
+
+@pytest.mark.domain_data("MyDomain")
+def test_update_should_work(request_helper, base_url, domain):
+    """Updating a welcome message should work"""
+    # Given
+    welcome_message = create_welcome_message(request_helper, base_url, domain)
+
+    # When
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid'],
+        'welcomeMessageUuid': welcome_message['uuid']
+    })
+    payload = {
+        "name": "MyWelcomeMessage new name",
+        "description": "Its description new description",
+        "entries": {
+            "ENGLISH": "WelcomeMessagesEntry new entry",
+            "FRENCH": "WelcomeMessagesEntry nouvelle entrée",
+            "RUSSIAN": "WelcomeMessagesEntry",
+            "VIETNAMESE": "WelcomeMessagesEntry"
+        }
+    }
+    request_helper.put(query_url, payload)
+
+    # Then
+    query_get = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid'],
+        'welcomeMessageUuid': welcome_message['uuid']
+    })
+    response = request_helper.get(query_get)
+    assert response['uuid']
+    assert response['name'] == "MyWelcomeMessage new name"
+    assert response['description'] == "Its description new description"
+    assert response['assignedToCurentDomain'] == False
+    assert response['readOnly'] == False
+    assert response['creationDate'] == welcome_message['creationDate']
+    assert response['modificationDate'] != welcome_message['modificationDate']
+    assert len(response['entries']) == 4
+    assert response['entries']['ENGLISH'] == 'WelcomeMessagesEntry new entry'
+    assert response['entries']['FRENCH'] == 'WelcomeMessagesEntry nouvelle entrée'
+    assert response['entries']['RUSSIAN'] == 'WelcomeMessagesEntry'
+    assert response['entries']['VIETNAMESE'] == 'WelcomeMessagesEntry'
