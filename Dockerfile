@@ -1,4 +1,4 @@
-FROM docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
+FROM python:3.9-slim-buster
 WORKDIR /tmp
 COPY requirements.txt README.md patch_gitlab.py tests_linshare.py linshare.admin.test.ini  linshare.user.test.ini  file10M LinShare.jpg /tmp/
 ENV CONFIG_FILE_ADMIN=linshare.admin.test.ini

@@ -31,7 +31,7 @@ pylint:
   stage: test
   tags:
     - docker
-  image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
+  image: python:3.9-slim-buster
   allow_failure: true
   script:
     - pip install pylint pytest
@@ -42,7 +42,7 @@ flake:
   stage: test
   tags:
     - docker
-  image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
+  image: python:3.9-slim-buster
   script:
     - pip install flake8
     - pip install -r requirements.txt
@@ -50,7 +50,7 @@ flake:
 
 pylint_badge:
   stage: test
-  image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
+  image: python:3.9-slim-buster
   tags:
     - docker
   before_script:
@@ -87,7 +87,7 @@ test-api-branch-core-master:
   stage: test
   tags:
     - docker
-  image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
+  image: python:3.9-slim-buster
   services:
     - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:master"
       alias: linshare
@@ -109,7 +109,7 @@ test-api-branch-maintenance-x-legacy:
   stage: test
   tags:
     - docker
-  image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
+  image: python:3.9-slim-buster
   services:
     - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
       alias: linshare
@@ -131,7 +131,7 @@ test-api-branch-maintenance-x:
   stage: test
   tags:
     - docker
-  image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
+  image: python:3.9-slim-buster
   services:
     - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
       alias: linshare
@@ -156,7 +156,7 @@ test-api-branch-core-master-legacy:
   stage: test
   tags:
     - docker
-  image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
+  image: python:3.9-slim-buster
   services:
     - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:master"
       alias: linshare
@@ -179,7 +179,7 @@ test-api-branch-core-master:
   stage: test
   tags:
     - docker
-  image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
+  image: python:3.9-slim-buster
   services:
     - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:master"
       alias: linshare
@@ -206,7 +206,7 @@ test-api-same-core-branch-legacy:
   allow_failure: true
   tags:
     - docker
-  image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
+  image: python:3.9-slim-buster
   services:
     - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
       alias: linshare
@@ -231,7 +231,7 @@ test-api-same-core-branch:
   allow_failure: true
   tags:
     - docker
-  image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
+  image: python:3.9-slim-buster
   services:
     - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
       alias: linshare
