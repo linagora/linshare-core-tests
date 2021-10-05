@@ -24,11 +24,19 @@ def create_remote_server(request_helper, base_url):
 
 def create_group_filter(request_helper, base_url):
     """Helper to create group filter."""
+    search_gq = (
+            "ldap.search(baseDn, "
+            "\"(&(objectClass=groupOfNames)(cn=drive-*))\");"
+    )
+    search_q = (
+            "ldap.search(baseDn, "
+            "\"(&(objectClass=groupOfNames)(cn=drive-\" + pattern + \"))\");"
+    )
     payload = {
         "description": "Test domain workgroup filter",
         "name": "Group filter name",
-        "searchAllGroupsQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workgroup-*))\");",
-        "searchGroupQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workgroup-\" + pattern + \"))\");",
+        "searchAllGroupsQuery": search_gq,
+        "searchGroupQuery": search_q,
         "searchPageSize": 100,
         "groupMemberAttribute": "member",
         "groupNameAttribute": "cn",
@@ -111,7 +119,7 @@ def test_find_all(request_helper, base_url):
     group_providers = request_helper.get(query_url)
     log = logging.getLogger('tests.group.providers.test_find_all')
     log.debug("group providers: %s", group_providers)
-    if(len(group_providers) != 0):
+    if len(group_providers) != 0:
         assert group_providers
         for group_provider in group_providers:
             assert group_provider['baseDn'] == "ou=Groups,dc=linshare,dc=org"
@@ -121,10 +129,11 @@ def test_find_all(request_helper, base_url):
 def test_find(request_helper, base_url):
     """Test find existing group provider on API v5"""
     entity = create_group_provider(request_helper, base_url)
-    query_url = '{baseUrl}/domains/{uuid}/group_providers/{group_provider_uuid}'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/group_providers/{provider_uuid}'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid'],
-        'group_provider_uuid': entity['uuid']
+        'provider_uuid': entity['uuid']
     })
     data = request_helper.get(query_url)
     assert data
@@ -136,18 +145,20 @@ def test_delete(request_helper, base_url):
     """Test admin delete domain group provider."""
     log = logging.getLogger('tests.group.providers.test_delete')
     entity = create_group_provider(request_helper, base_url)
-    query_url = '{baseUrl}/domains/{uuid}/group_providers/{group_provider_uuid}'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/group_providers/{provider_uuid}'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid'],
-        'group_provider_uuid': entity['uuid']
+        'provider_uuid': entity['uuid']
     })
     data = request_helper.delete(query_url)
     log.debug("group provider deleted: %s", data)
     assert data
-    query_url = '{baseUrl}/domains/{uuid}/group_providers/{group_provider_uuid}'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/group_providers/{provider_uuid}'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid'],
-        'group_provider_uuid': entity['uuid']
+        'provider_uuid': entity['uuid']
     })
     request_helper.get(query_url, expected_status=404)
 
@@ -163,10 +174,11 @@ def test_delete_payload(request_helper, base_url):
     data = request_helper.delete(query_url, entity)
     log.debug("group provider deleted: %s", data)
     assert data
-    query_url = '{baseUrl}/domains/{uuid}/group_providers/{group_provider_uuid}'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/group_providers/{provider_uuid}'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid'],
-        'group_provider_uuid': entity['uuid']
+        'provider_uuid': entity['uuid']
     })
     request_helper.get(query_url, expected_status=404)
 
