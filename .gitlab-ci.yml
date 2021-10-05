@@ -36,7 +36,17 @@ lint:
   script:
     - pip install pylint
     - pip install -r requirements.txt
-    - pylint --exit-zero ./tests_linshare.py
+    - pylint --exit-zero linshare_core_tests/
+
+flake:
+  stage: test
+  tags:
+    - docker
+  image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
+  script:
+    - pip install flake8
+    - pip install -r requirements.txt
+    - flake8 linshare_core_tests/
 
 pylint:
   stage: test
