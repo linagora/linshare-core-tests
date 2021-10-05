@@ -1,0 +1,6 @@
+[flake8]
+ignore = 
+  # Ignore line length
+  E501,
+  # Comparaison to False
+  E712
