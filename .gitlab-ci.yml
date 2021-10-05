@@ -148,9 +148,8 @@ test-api-branch-maintenance-x:
     refs:
       - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
 
-test-api-branch-core-master-allow-failure-legacy:
+test-api-branch-core-master-legacy:
   stage: test
-  allow_failure: true
   tags:
     - docker
   image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
@@ -172,9 +171,8 @@ test-api-branch-core-master-allow-failure-legacy:
       - master@linagora/lgs/linshare/products/linshare-core-tests
       - tags@linagora/lgs/linshare/products/linshare-core-tests
 
-test-api-branch-core-master-allow-failure:
+test-api-branch-core-master:
   stage: test
-  allow_failure: true
   tags:
     - docker
   image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
