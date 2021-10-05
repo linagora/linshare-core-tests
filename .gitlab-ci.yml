@@ -1,5 +1,6 @@
 stages:
   - test
+  - test-optional-success
   - package
 
 variables:
@@ -28,11 +29,11 @@ check_author:
       - /^release-.*/@linagora/lgs/linshare/products/linshare-core-tests
 
 pylint:
-  stage: test
+  stage: test-optional-success
+  allow_failure: true
   tags:
     - docker
   image: python:3.9-slim-buster
-  allow_failure: true
   script:
     - pip install pylint pytest
     - pip install -r requirements.txt
@@ -202,7 +203,7 @@ test-api-branch-core-master:
       - tags@linagora/lgs/linshare/products/linshare-core-tests
 
 test-api-same-core-branch-legacy:
-  stage: test
+  stage: test-optional-success
   allow_failure: true
   tags:
     - docker
@@ -227,7 +228,7 @@ test-api-same-core-branch-legacy:
       - tags@linagora/lgs/linshare/products/linshare-core-tests
 
 test-api-same-core-branch:
-  stage: test
+  stage: test-optional-success
   allow_failure: true
   tags:
     - docker
