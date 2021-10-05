@@ -183,7 +183,11 @@ def fixture_request_helper(admin_cfg):
 
 # Scope should be class in order to access to the custom marker
 @pytest.fixture(scope="class", name="domain")
-def domain(request, request_helper, base_url):
+def fixture_create_domain(request, request_helper, base_url):
+    """
+    This fixture is design to create a domain, domain name can be passed
+    thought pytest.mark.domain_data = 'xxx'
+    """
     marker = request.node.get_closest_marker("domain_data")
     if marker is None:
         name = "TopDomainUserProvider"
