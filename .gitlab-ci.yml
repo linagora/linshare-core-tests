@@ -34,9 +34,9 @@ pylint:
   image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
   allow_failure: true
   script:
-    - pip install pylint
+    - pip install pylint pytest
     - pip install -r requirements.txt
-    - pylint linshare_core_tests/
+    - pylint --disable=R0801 linshare_core_tests/
 
 flake:
   stage: test
@@ -58,10 +58,10 @@ pylint_badge:
     - echo undefined > badges/$CI_JOB_NAME.score
     - pip install pylint-gitlab
   script:
-    - pylint --exit-zero --output-format=text $(find ./linshare_core_tests/ -type f -name "*.py") | tee /tmp/pylint.txt
+    - pylint --disable=R0801 --exit-zero --output-format=text $(find ./linshare_core_tests/ -type f -name "*.py") | tee /tmp/pylint.txt
     - sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' /tmp/pylint.txt > badges/$CI_JOB_NAME.score
-    - pylint --exit-zero --output-format=pylint_gitlab.GitlabCodeClimateReporter $(find ./linshare_core_tests/ -type f -name "*.py") > codeclimate.json
-    - pylint --exit-zero --output-format=pylint_gitlab.GitlabPagesHtmlReporter $(find ./linshare_core_tests/ -type f -name "*.py") > pylint-report/index.html
+    - pylint --disable=R0801 --exit-zero --output-format=pylint_gitlab.GitlabCodeClimateReporter $(find ./linshare_core_tests/ -type f -name "*.py") > codeclimate.json
+    - pylint --disable=R0801 --exit-zero --output-format=pylint_gitlab.GitlabPagesHtmlReporter $(find ./linshare_core_tests/ -type f -name "*.py") > pylint-report/index.html
   after_script:
     - anybadge --overwrite --label $CI_JOB_NAME --value=$(cat badges/$CI_JOB_NAME.score) --file=badges/$CI_JOB_NAME.svg 4=red 6=orange 8=yellow 10=green
     - |
