@@ -144,6 +144,10 @@ test-api-branch-maintenance-x:
     - pip install -r requirements.txt
     - ./patch_gitlab.py
     - tox
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
   only:
     refs:
       - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
@@ -188,6 +192,10 @@ test-api-branch-core-master:
     -  pip install -r requirements.txt
     - ./patch_gitlab.py
     - tox
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
   except:
     refs:
       - master@linagora/lgs/linshare/products/linshare-core-tests
@@ -236,6 +244,10 @@ test-api-same-core-branch:
     -  pip install -r requirements.txt
     - ./patch_gitlab.py
     - tox
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
   except:
     refs:
       - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
