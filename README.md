@@ -1,11 +1,11 @@
-[![pylint](https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/master/raw/badges/pylint.svg?job=pylint)](https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/master/browse?job=pylint)
+[![pylint](https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/master/raw/badges/pylint_badge.svg?job=pylint_badge)](https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/master/browse?job=pylint_badge)
 
 
 # linshare-core-tests
 
 ## Browse Gitlab artefacts
 
-* https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/master/browse?job=pylint
+* https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/master/browse?job=pylint_badge
 
 # Install 
 
