@@ -27,7 +27,7 @@ check_author:
       - tags@linagora/lgs/linshare/products/linshare-core-tests
       - /^release-.*/@linagora/lgs/linshare/products/linshare-core-tests
 
-lint:
+pylint:
   stage: test
   tags:
     - docker
@@ -36,7 +36,7 @@ lint:
   script:
     - pip install pylint
     - pip install -r requirements.txt
-    - pylint --exit-zero linshare_core_tests/
+    - pylint linshare_core_tests/
 
 flake:
   stage: test
@@ -48,7 +48,7 @@ flake:
     - pip install -r requirements.txt
     - flake8 linshare_core_tests/
 
-pylint:
+pylint_badge:
   stage: test
   image: docker-registry.linagora.com:5000/linshare-snapshots/python:3.9-slim-buster
   tags:
