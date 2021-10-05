@@ -13,6 +13,18 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 
+@pytest.fixture(name="display_admin_cfg")
+def fixture_display_admin_cfg(admin_cfg, base_url):
+    """Just display current config."""
+    def display():
+        print()
+        print(admin_cfg['DEFAULT']['host'])
+        print(admin_cfg['DEFAULT']['email'])
+        print(admin_cfg['DEFAULT']['password'])
+        print("base URL:", base_url)
+    return display
+
+
 @pytest.fixture(scope="session", name="admin_cfg")
 def fixture_admin_cfg():
     """Return a object will all configuration properties for admin api"""

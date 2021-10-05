@@ -9,13 +9,9 @@ import pytest
 # import json
 
 
-def test_config(admin_cfg, base_url):
+def test_config(display_admin_cfg):
     """Just display current config."""
-    print()
-    print(admin_cfg['DEFAULT']['host'])
-    print(admin_cfg['DEFAULT']['email'])
-    print(admin_cfg['DEFAULT']['password'])
-    print(base_url)
+    display_admin_cfg()
 
 
 def test_find_all(request_helper, base_url):
