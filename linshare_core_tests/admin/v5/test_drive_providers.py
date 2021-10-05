@@ -24,11 +24,19 @@ def create_remote_server(request_helper, base_url):
 
 def create_drive_filter(request_helper, base_url):
     """Helper to create drive filter."""
+    search_gq = (
+            "ldap.search(baseDn, "
+            "\"(&(objectClass=groupOfNames)(cn=drive-*))\");"
+    )
+    search_q = (
+            "ldap.search(baseDn, "
+            "\"(&(objectClass=groupOfNames)(cn=drive-\" + pattern + \"))\");"
+    )
     payload = {
         "description": "Test domain drive filter",
         "name": "drive filter name",
-        "searchAllGroupsQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-*))\");",
-        "searchGroupQuery": "ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-\" + pattern + \"))\");",
+        "searchAllGroupsQuery": search_gq,
+        "searchGroupQuery": search_q,
         "searchPageSize": 100,
         "groupMemberAttribute": "member",
         "groupNameAttribute": "cn",
@@ -112,7 +120,7 @@ def test_find_all(request_helper, base_url):
     drive_providers = request_helper.get(query_url)
     log = logging.getLogger('tests.drive.providers.test_find_all')
     log.debug("drive providers: %s", drive_providers)
-    if(len(drive_providers) != 0):
+    if len(drive_providers) != 0:
         assert drive_providers
         for drive_provider in drive_providers:
             assert drive_provider['baseDn'] == "ou=Groups,dc=linshare,dc=org"
@@ -122,10 +130,11 @@ def test_find_all(request_helper, base_url):
 def test_find(request_helper, base_url):
     """Test find existing driver provider on API v5"""
     entity = create_drive_provider(request_helper, base_url)
-    query_url = '{baseUrl}/domains/{uuid}/drive_providers/{drive_provider_uuid}'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/drive_providers/{provider_uuid}'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid'],
-        'drive_provider_uuid': entity['uuid']
+        'provider_uuid': entity['uuid']
     })
     data = request_helper.get(query_url)
     assert data
@@ -137,18 +146,20 @@ def test_delete(request_helper, base_url):
     """Test admin delete domain drive provider."""
     log = logging.getLogger('tests.drive.providers.test_delete')
     entity = create_drive_provider(request_helper, base_url)
-    query_url = '{baseUrl}/domains/{uuid}/drive_providers/{drive_provider_uuid}'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/drive_providers/{provider_uuid}'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid'],
-        'drive_provider_uuid': entity['uuid']
+        'provider_uuid': entity['uuid']
     })
     data = request_helper.delete(query_url)
     assert data
     log.debug("drive provider deleted: %s", data)
-    query_url = '{baseUrl}/domains/{uuid}/drive_providers/{drive_provider_uuid}'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/drive_providers/{provider_uuid}'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid'],
-        'drive_provider_uuid': entity['uuid']
+        'provider_uuid': entity['uuid']
     })
     request_helper.get(query_url, expected_status=404)
 
@@ -157,17 +168,19 @@ def test_delete_payload(request_helper, base_url):
     """Test admin delete domain drive provider."""
     log = logging.getLogger('tests.drive.providers.test_delete')
     entity = create_drive_provider(request_helper, base_url)
-    query_url = '{baseUrl}/domains/{uuid}/drive_providers'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/drive_providers'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid'],
     })
     data = request_helper.delete(query_url, entity)
     log.debug("drive provider deleted: %s", data)
     assert data
-    query_url = '{baseUrl}/domains/{uuid}/drive_providers/{drive_provider_uuid}'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/drive_providers/{provider_uuid}'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid'],
-        'drive_provider_uuid': entity['uuid']
+        'provider_uuid': entity['uuid']
     })
     request_helper.get(query_url, expected_status=404)
 
@@ -176,7 +189,8 @@ def test_update(request_helper, base_url):
     """Test admin update domain drive provider."""
     log = logging.getLogger('tests.drive.providers.test_update')
     entity = create_drive_provider(request_helper, base_url)
-    query_url = '{baseUrl}/domains/{uuid}/drive_providers'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/drive_providers'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid']
     })
