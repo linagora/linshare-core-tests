@@ -115,7 +115,7 @@ def test_create_should_fail_when_domain_doesnt_exists(request_helper, base_url):
     payload = {
         "name": "MyWelcomeMessage",
         "description": "Its description",
-        "entries": { }
+        "entries": {}
     }
     request_helper.post(query_url, payload, expected_status=404, busines_err_code=13001)
 
@@ -130,7 +130,7 @@ def test_create_should_fail_when_uuid_is_not_given(request_helper, base_url, dom
     payload = {
         "name": "MyWelcomeMessage",
         "description": "Its description",
-        "entries": { }
+        "entries": {}
     }
     request_helper.post(query_url, payload, expected_status=400)
 

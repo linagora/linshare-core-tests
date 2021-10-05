@@ -3,22 +3,18 @@
 """Testing drive providers endpoints of adminv5 API."""
 
 
-import urllib
 import logging
-import pytest
-# import json
 
 
 def create_remote_server(request_helper, base_url):
     """Helper to create remote server."""
     payload = {
-            "name": "new connection",
-            "bindDn":  "cn=linshare,dc=linshare,dc=org",
-            "url": "ldap://172.17.0.1:1389",
-            "bindPassword":"linshare"
-        }
-    query_url = '{baseUrl}/remote_servers'.format_map({
-            'baseUrl' : base_url})
+        "name": "new connection",
+        "bindDn": "cn=linshare,dc=linshare,dc=org",
+        "url": "ldap://172.17.0.1:1389",
+        "bindPassword": "linshare"
+    }
+    query_url = '{baseUrl}/remote_servers'.format_map({'baseUrl': base_url})
     remote_server = request_helper.post(query_url, payload)
     assert remote_server
     assert remote_server['url'] == "ldap://172.17.0.1:1389"
@@ -42,8 +38,7 @@ def create_drive_filter(request_helper, base_url):
         "memberMailAttribute": "mail",
         "type": "LDAP"
     }
-    query_url = '{baseUrl}/drive_filters'.format_map({
-            'baseUrl' : base_url})
+    query_url = '{baseUrl}/drive_filters'.format_map({'baseUrl': base_url})
     drive_filter = request_helper.post(query_url, payload)
     assert drive_filter['type'] == "LDAP"
     assert drive_filter['groupPrefixToRemove'] == "drive-"
@@ -53,8 +48,8 @@ def create_drive_filter(request_helper, base_url):
 def create_domain(request_helper, base_url):
     """Helper to create domain."""
     query_url = '{base_url}/domains'.format_map({
-            'base_url': base_url,
-            })
+        'base_url': base_url,
+    })
     payload = {
         "parent": {"uuid": "LinShareRootDomain"},
         "type": "TOPDOMAIN",
@@ -100,9 +95,6 @@ def create_drive_provider(request_helper, base_url):
 def test_create(request_helper, base_url):
     """Test admin create drive provider."""
     log = logging.getLogger('tests.drive.providers.test_create')
-    ldap_server = create_remote_server(request_helper, base_url)
-    drive_filter = create_drive_filter(request_helper, base_url)
-    domain = create_domain(request_helper, base_url)
     drive_provider = create_drive_provider(request_helper, base_url)
     log.debug("drive provider created: %s", drive_provider)
     assert drive_provider
@@ -116,7 +108,7 @@ def test_find_all(request_helper, base_url):
     query_url = '{baseUrl}/domains/{uuid}/drive_providers'.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid']
-        })
+    })
     drive_providers = request_helper.get(query_url)
     log = logging.getLogger('tests.drive.providers.test_find_all')
     log.debug("drive providers: %s", drive_providers)
@@ -188,19 +180,6 @@ def test_update(request_helper, base_url):
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid']
     })
-    payload = {
-        "uuid" : entity['uuid'],
-        "ldapServer": {
-            "uuid": entity['ldapServer']['uuid'],
-            "name": entity['ldapServer']['name']
-            },
-        "driveFilter": {
-            "uuid": entity['driveFilter']['uuid'],
-            "name": "Updated ldapServer name"
-        },
-        "baseDn": entity['baseDn'],
-        "type": entity['type']
-    }
     data = request_helper.put(query_url, entity)
     log.debug("drive provider update: %s", data)
     assert data

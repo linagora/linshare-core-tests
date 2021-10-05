@@ -53,7 +53,7 @@ def test_create(request_helper, base_url):
     search_all_group_query = (
         "ldap.search(baseDn, "
         "\"(&(objectClass=groupOfNames)(cn=drive-*))\");"
-        )
+    )
     search_group_query = (
         "ldap.search(baseDn, "
         "\"(&(objectClass=groupOfNames)(cn=drive-\" + pattern + \"))\");"

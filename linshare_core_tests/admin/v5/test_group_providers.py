@@ -3,22 +3,18 @@
 """Testing group providers endpoints of adminv5 API."""
 
 
-import urllib
 import logging
-import pytest
-# import json
 
 
 def create_remote_server(request_helper, base_url):
     """Helper to create remote server."""
     payload = {
-            "name": "new connection",
-            "bindDn":  "cn=linshare,dc=linshare,dc=org",
-            "url": "ldap://172.17.0.1:1389",
-            "bindPassword":"linshare"
-        }
-    query_url = '{baseUrl}/remote_servers'.format_map({
-            'baseUrl' : base_url})
+        "name": "new connection",
+        "bindDn": "cn=linshare,dc=linshare,dc=org",
+        "url": "ldap://172.17.0.1:1389",
+        "bindPassword": "linshare"
+    }
+    query_url = '{baseUrl}/remote_servers'.format_map({'baseUrl': base_url})
     remote_server = request_helper.post(query_url, payload)
     assert remote_server
     assert remote_server['url'] == "ldap://172.17.0.1:1389"
@@ -40,9 +36,8 @@ def create_group_filter(request_helper, base_url):
         "memberFirstNameAttribute": "givenname",
         "memberLastNameAttribute": "sn",
         "memberMailAttribute": "mail"
-        }
-    query_url = '{baseUrl}/group_filters'.format_map({
-            'baseUrl' : base_url})
+    }
+    query_url = '{baseUrl}/group_filters'.format_map({'baseUrl': base_url})
     group_filter = request_helper.post(query_url, payload)
     assert group_filter['type'] == "LDAP"
     assert group_filter['groupPrefixToRemove'] == "workgroup-"
@@ -52,8 +47,8 @@ def create_group_filter(request_helper, base_url):
 def create_domain(request_helper, base_url):
     """Helper to create domain."""
     query_url = '{base_url}/domains'.format_map({
-            'base_url': base_url,
-            })
+        'base_url': base_url,
+    })
     payload = {
         "parent": {"uuid": "LinShareRootDomain"},
         "type": "TOPDOMAIN",
@@ -101,9 +96,6 @@ def create_group_provider(request_helper, base_url):
 def test_create(request_helper, base_url):
     """Test admin create group provider."""
     log = logging.getLogger('tests.group.providers.test_create')
-    ldap_server = create_remote_server(request_helper, base_url)
-    group_filter = create_group_filter(request_helper, base_url)
-    domain = create_domain(request_helper, base_url)
     group_provider = create_group_provider(request_helper, base_url)
     log.debug("group provider created: %s", group_provider)
     assert group_provider
@@ -115,7 +107,7 @@ def test_find_all(request_helper, base_url):
     query_url = '{baseUrl}/domains/{uuid}/group_providers'.format_map({
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid']
-        })
+    })
     group_providers = request_helper.get(query_url)
     log = logging.getLogger('tests.group.providers.test_find_all')
     log.debug("group providers: %s", group_providers)
@@ -187,19 +179,6 @@ def test_update(request_helper, base_url):
         'baseUrl': base_url,
         'uuid': entity['domain']['uuid']
     })
-    payload = {
-        "uuid" : entity['uuid'],
-        "ldapServer": {
-            "uuid": entity['ldapServer']['uuid'],
-            "name": entity['ldapServer']['name']
-            },
-        "groupFilter": {
-            "uuid": entity['groupFilter']['uuid'],
-            "name": "Updated ldapServer name"
-        },
-        "baseDn": entity['baseDn'],
-        "type": entity['type']
-    }
     data = request_helper.put(query_url, entity)
     log.debug("group provider update: %s", data)
     assert data
