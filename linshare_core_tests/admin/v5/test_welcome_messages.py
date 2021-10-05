@@ -8,6 +8,7 @@ import pytest
 
 
 def find_default_welcome_message(request_helper, base_url):
+    """Find default welcome message."""
     log = logging.getLogger('tests.funcs.find_default_welcome_message')
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
         'baseUrl': base_url,
@@ -32,18 +33,23 @@ def test_find_all_should_work(request_helper, base_url, domain):
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_find_should_fail_when_welcome_message_doesnt_exists(request_helper, base_url, domain):
-    """Finding a WelcomeMessage should fail when welcome message doesn't exists"""
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
+def test_find_should_fail_when_welcome_message_doesnt_exists(
+        request_helper, base_url, domain):
+    """
+    Finding a WelcomeMessage should fail when welcome message doesn't exists
+    """
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': domain['uuid'],
-        'welcomeMessageUuid': "123-456-789"
+        'wmUuid': "123-456-789"
     })
     request_helper.get(query_url, expected_status=404, busines_err_code=36004)
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_find_should_fail_when_welcome_message_doesnt_belong_to_the_domain(request_helper, base_url, domain):
+def test_find_should_fail_when_welcome_message_doesnt_belong_to_the_domain(
+        request_helper, base_url, domain):
     """Finding a WelcomeMessage should fail when domain doesn't match"""
     # Given
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
@@ -69,10 +75,11 @@ def test_find_should_fail_when_welcome_message_doesnt_belong_to_the_domain(reque
     other_domain = request_helper.post(query_url, payload)
 
     # When
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': other_domain['uuid'],
-        'welcomeMessageUuid': welcome_message['uuid']
+        'wmUuid': welcome_message['uuid']
     })
 
     # Then
@@ -95,10 +102,11 @@ def test_find_should_work(request_helper, base_url, domain):
     welcome_message = request_helper.post(query_url, payload)
     log.debug("created message: %s", welcome_message)
 
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': domain['uuid'],
-        'welcomeMessageUuid': welcome_message['uuid']
+        'wmUuid': welcome_message['uuid']
     })
     response = request_helper.get(query_url)
     log.debug("get response: %s", response)
@@ -106,7 +114,8 @@ def test_find_should_work(request_helper, base_url, domain):
     assert response['uuid'] == welcome_message['uuid']
 
 
-def test_create_should_fail_when_domain_doesnt_exists(request_helper, base_url):
+def test_create_should_fail_when_domain_doesnt_exists(
+        request_helper, base_url):
     """Creating a WelcomeMessage should fail when domain doesn't exists"""
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
         'baseUrl': base_url,
@@ -117,11 +126,14 @@ def test_create_should_fail_when_domain_doesnt_exists(request_helper, base_url):
         "description": "Its description",
         "entries": {}
     }
-    request_helper.post(query_url, payload, expected_status=404, busines_err_code=13001)
+    request_helper.post(
+        query_url, payload, expected_status=404,
+        busines_err_code=13001)
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_create_should_fail_when_uuid_is_not_given(request_helper, base_url, domain):
+def test_create_should_fail_when_uuid_is_not_given(
+        request_helper, base_url, domain):
     """Creating a WelcomeMessage should fail when uuid is not in the payload"""
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
         'baseUrl': base_url,
@@ -160,17 +172,18 @@ def test_create_should_works(request_helper, base_url, domain):
     assert welcome_message
 
     # Then
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'
+    query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': domain['uuid'],
-        'welcomeMessageUuid': welcome_message['uuid']
+        'wmUuid': welcome_message['uuid']
     })
     response = request_helper.get(query_url)
     assert response['uuid']
     assert response['name'] == "MyWelcomeMessage"
     assert response['description'] == "Its description"
-    assert response['assignedToCurentDomain'] == False
-    assert response['readOnly'] == False
+    assert not response['assignedToCurentDomain']
+    assert not response['readOnly']
     assert response['creationDate']
     assert response['modificationDate']
     assert len(response['entries']) == 4
