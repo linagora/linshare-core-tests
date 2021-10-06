@@ -43,6 +43,17 @@ def create_welcome_message(request_helper, base_url, domain):
 
 
 @pytest.mark.domain_data("MyDomain")
+def test_find_all_should_fail_when_domain_does_not_exists(
+        request_helper, base_url):
+    """Finding all WelcomeMessages should return the list of messages"""
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': '27522b28-ae4e-4f8e-b569-3f9d892ecfc1'
+    })
+    request_helper.get(query_url, expected_status=404, busines_err_code=13001)
+
+
+@pytest.mark.domain_data("MyDomain")
 def test_find_all_should_work(request_helper, base_url, domain):
     """Finding all WelcomeMessages should return the list of messages"""
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
@@ -52,6 +63,42 @@ def test_find_all_should_work(request_helper, base_url, domain):
     response = request_helper.get(query_url)
     assert response
     assert len(response) >= 1
+
+
+@pytest.mark.domain_data("MyDomain")
+def test_find_all_should_return_parent_in_read_only(
+        request_helper, base_url, domain):
+    """Finding all WelcomeMessages should return
+    the parent welcome messages in read only"""
+    log = logging.getLogger(
+        'tests.funcs.test_find_all_should_return_parent_in_read_only')
+    # Given
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid']
+    })
+    payload = {
+        "uuid": find_default_welcome_message(request_helper, base_url),
+        "name": "MyWelcomeMessage",
+        "description": "Its description"
+    }
+    request_helper.post(query_url, payload)
+
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid']
+    })
+    response = request_helper.get(query_url)
+    assert response
+    assert len(response) == 2
+    for welcome_message in response:
+        if welcome_message['domain']['name'] == domain['name']:
+            log.debug("Own welcome message: %s", welcome_message)
+            assert not welcome_message['readOnly']
+        else:
+            log.debug("Parent welcome message: %s", welcome_message)
+            assert welcome_message['readOnly']
+            assert welcome_message['domain']['name'] == 'LinShareRootDomain'
 
 
 @pytest.mark.domain_data("MyDomain")
