@@ -1,6 +1,7 @@
 stages:
-  - test
+  - lint
   - test-optional-success
+  - test
   - package
 
 variables:
@@ -18,7 +19,7 @@ variables:
 
 check_author:
   image: docker-registry.linagora.com:5000/lgs-releases/gitlab-integrity-checks:latest
-  stage: test
+  stage: lint
   tags:
     - ultralight
   script:
@@ -40,7 +41,7 @@ pylint:
     - pylint --disable=R0801 linshare_core_tests/
 
 flake:
-  stage: test
+  stage: lint
   tags:
     - docker
   image: python:3.9-slim-buster
@@ -50,7 +51,7 @@ flake:
     - flake8 linshare_core_tests/
 
 pylint_badge:
-  stage: test
+  stage: lint
   image: python:3.9-slim-buster
   tags:
     - docker
@@ -84,7 +85,38 @@ see-reports:
     - "echo Once pyling job is complete, you will be able to see the result here: https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/browse?job=pylint"
  
 
-test-api-branch-core-master:
+# Playing: new tests (only master branch)
+# Onto: linshare-core master branch
+test-api-branch-core-master-on-master:
+  stage: test
+  tags:
+    - docker
+  image: python:3.9-slim-buster
+  services:
+    - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:master"
+      alias: linshare
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
+      alias: ldap
+  variables:
+    CONFIG_FILE_ADMIN: linshare.admin.test.ini
+    CONFIG_FILE_USER: linshare.user.test.ini
+    LS_TEST_DEBUG: 0
+  script:
+    - pip install -r requirements.txt
+    - ./patch_gitlab.py
+    - tox
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+  only:
+    refs:
+      - master@linagora/lgs/linshare/products/linshare-core-tests
+
+
+# Playing: old tests (only master branch)
+# Onto: linshare-core master branch
+test-api-branch-core-master-on-master-legacy:
   stage: test
   tags:
     - docker
@@ -106,6 +138,9 @@ test-api-branch-core-master:
     refs:
       - master@linagora/lgs/linshare/products/linshare-core-tests
 
+
+# Playing: old tests (only maintenance branches)
+# Onto: linshare-core maintenance branches
 test-api-branch-maintenance-x-legacy:
   stage: test
   tags:
@@ -128,6 +163,8 @@ test-api-branch-maintenance-x-legacy:
     refs:
       - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
 
+# Playing: new tests (only maintenance branches)
+# Onto: linshare-core maintenance branches
 test-api-branch-maintenance-x:
   stage: test
   tags:
@@ -153,6 +190,8 @@ test-api-branch-maintenance-x:
     refs:
       - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core-tests
 
+# Playing: old tests (every branches except master and tags)
+# Onto: linshare-core master branch
 test-api-branch-core-master-legacy:
   stage: test
   tags:
@@ -176,6 +215,8 @@ test-api-branch-core-master-legacy:
       - master@linagora/lgs/linshare/products/linshare-core-tests
       - tags@linagora/lgs/linshare/products/linshare-core-tests
 
+# Playing: new tests (every branches except master and tags)
+# Onto: linshare-core master branch
 test-api-branch-core-master:
   stage: test
   tags:
@@ -202,6 +243,8 @@ test-api-branch-core-master:
       - master@linagora/lgs/linshare/products/linshare-core-tests
       - tags@linagora/lgs/linshare/products/linshare-core-tests
 
+# Playing: old tests (every branches except master, maintenance and tags)
+# Onto: linshare-core branch with same name as the current branch.
 test-api-same-core-branch-legacy:
   stage: test-optional-success
   allow_failure: true
@@ -227,6 +270,9 @@ test-api-same-core-branch-legacy:
       - master@linagora/lgs/linshare/products/linshare-core-tests
       - tags@linagora/lgs/linshare/products/linshare-core-tests
 
+
+# Playing: new tests (every branches except master, maintenance and tags)
+# Onto: linshare-core branch with same name as the current branch.
 test-api-same-core-branch:
   stage: test-optional-success
   allow_failure: true
@@ -267,4 +313,3 @@ build:
     - docker build . -t "${DOCKER_IMAGE_CORE_TEST}:${CI_COMMIT_REF_SLUG}"
     - docker push "${DOCKER_IMAGE_CORE_TEST}:${CI_COMMIT_REF_SLUG}"
     - docker logout docker-registry.linagora.com:5000
-
