@@ -21,6 +21,7 @@ def find_default_welcome_message(request_helper, base_url):
 
 
 def create_welcome_message(request_helper, base_url, domain):
+    """Create a welcome message."""
     log = logging.getLogger('tests.funcs.test_create_should_works')
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
         'baseUrl': base_url,
@@ -41,7 +42,6 @@ def create_welcome_message(request_helper, base_url, domain):
     return response
 
 
-
 @pytest.mark.domain_data("MyDomain")
 def test_find_all_should_work(request_helper, base_url, domain):
     """Finding all WelcomeMessages should return the list of messages"""
@@ -60,12 +60,12 @@ def test_find_should_fail_when_welcome_message_does_not_exists(
     """
     Finding a WelcomeMessage should fail when welcome message doesn't exists
     """
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'
-    query_url = query_url.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid'],
-        'wmUuid': "123-456-789"
-    })
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': "123-456-789"
+        })
     request_helper.get(query_url, expected_status=404, busines_err_code=36004)
 
 
@@ -97,12 +97,12 @@ def test_find_should_fail_when_welcome_message_does_not_belong_to_the_domain(
     other_domain = request_helper.post(query_url, payload)
 
     # When
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'
-    query_url = query_url.format_map({
-        'baseUrl': base_url,
-        'uuid': other_domain['uuid'],
-        'wmUuid': welcome_message['uuid']
-    })
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': other_domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
 
     # Then
     request_helper.get(query_url, expected_status=404, busines_err_code=36004)
@@ -124,12 +124,12 @@ def test_find_should_work(request_helper, base_url, domain):
     welcome_message = request_helper.post(query_url, payload)
     log.debug("created message: %s", welcome_message)
 
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'
-    query_url = query_url.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid'],
-        'wmUuid': welcome_message['uuid']
-    })
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
     response = request_helper.get(query_url)
     log.debug("get response: %s", response)
     assert response
@@ -194,12 +194,12 @@ def test_create_should_works(request_helper, base_url, domain):
     assert welcome_message
 
     # Then
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'
-    query_url = query_url.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid'],
-        'wmUuid': welcome_message['uuid']
-    })
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
     response = request_helper.get(query_url)
     assert response['uuid']
     assert response['name'] == "MyWelcomeMessage"
@@ -212,15 +212,17 @@ def test_create_should_works(request_helper, base_url, domain):
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_update_should_fail_when_domain_does_not_exists(request_helper, base_url, domain):
+def test_update_should_fail_when_domain_does_not_exists(
+        request_helper, base_url, domain):
     """Updating a welcome message should fail when domain doesn't exists"""
     welcome_message = create_welcome_message(request_helper, base_url, domain)
 
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': 'wrong',
-        'welcomeMessageUuid': welcome_message['uuid']
-    })
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': 'wrong',
+            'wmUuid': welcome_message['uuid']
+        })
     payload = {
         "uuid": find_default_welcome_message(request_helper, base_url),
         "name": "MyWelcomeMessage",
@@ -230,17 +232,21 @@ def test_update_should_fail_when_domain_does_not_exists(request_helper, base_url
             "FRENCH": "WelcomeMessagesEntry"
         }
     }
-    request_helper.put(query_url, payload, expected_status=404, busines_err_code=13001)
+    request_helper.put(
+        query_url, payload, expected_status=404, busines_err_code=13001)
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_update_should_fail_when_welcome_message_does_not_exists(request_helper, base_url, domain):
-    """Updating a welcome message should fail when welcome message doesn't exists"""
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid'],
-        'welcomeMessageUuid': 'wrong'
-    })
+def test_update_should_fail_when_welcome_message_does_not_exists(
+        request_helper, base_url, domain):
+    """Updating a welcome message should fail
+    when welcome message doesn't exists"""
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': 'wrong'
+        })
     payload = {
         "uuid": find_default_welcome_message(request_helper, base_url),
         "name": "MyWelcomeMessage",
@@ -250,11 +256,13 @@ def test_update_should_fail_when_welcome_message_does_not_exists(request_helper,
             "FRENCH": "WelcomeMessagesEntry"
         }
     }
-    request_helper.put(query_url, payload, expected_status=404, busines_err_code=36004)
+    request_helper.put(
+        query_url, payload, expected_status=404, busines_err_code=36004)
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_update_should_fail_when_welcome_message_does_nolt_belong_to_the_domain(request_helper, base_url, domain):
+def test_update_should_fail_when_welcome_message_does_not_belong_to_domain(
+        request_helper, base_url, domain):
     """Updating a WelcomeMessage should fail when domain doesn't match"""
     # Given
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
@@ -280,11 +288,12 @@ def test_update_should_fail_when_welcome_message_does_nolt_belong_to_the_domain(
     other_domain = request_helper.post(query_url, payload)
 
     # When
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': other_domain['uuid'],
-        'welcomeMessageUuid': welcome_message['uuid']
-    })
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': other_domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
     payload = {
         "name": "MyWelcomeMessage new name",
         "description": "Its description new description",
@@ -297,7 +306,8 @@ def test_update_should_fail_when_welcome_message_does_nolt_belong_to_the_domain(
     }
 
     # Then
-    request_helper.put(query_url, payload, expected_status=404, busines_err_code=36004)
+    request_helper.put(
+        query_url, payload, expected_status=404, busines_err_code=36004)
 
 
 @pytest.mark.domain_data("MyDomain")
@@ -307,17 +317,18 @@ def test_update_should_work(request_helper, base_url, domain):
     welcome_message = create_welcome_message(request_helper, base_url, domain)
 
     # When
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid'],
-        'welcomeMessageUuid': welcome_message['uuid']
-    })
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
     payload = {
         "name": "MyWelcomeMessage new name",
         "description": "Its description new description",
         "entries": {
             "ENGLISH": "WelcomeMessagesEntry new entry",
-            "FRENCH": "WelcomeMessagesEntry nouvelle entrée",
+            "FRENCH": "Nouvelle entrée",
             "RUSSIAN": "WelcomeMessagesEntry",
             "VIETNAMESE": "WelcomeMessagesEntry"
         }
@@ -325,36 +336,39 @@ def test_update_should_work(request_helper, base_url, domain):
     request_helper.put(query_url, payload)
 
     # Then
-    query_get = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid'],
-        'welcomeMessageUuid': welcome_message['uuid']
-    })
+    query_get = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
     response = request_helper.get(query_get)
     assert response['uuid']
     assert response['name'] == "MyWelcomeMessage new name"
     assert response['description'] == "Its description new description"
-    assert response['assignedToCurentDomain'] == False
-    assert response['readOnly'] == False
+    assert not response['assignedToCurentDomain']
+    assert not response['readOnly']
     assert response['creationDate'] == welcome_message['creationDate']
     assert response['modificationDate'] != welcome_message['modificationDate']
     assert len(response['entries']) == 4
     assert response['entries']['ENGLISH'] == 'WelcomeMessagesEntry new entry'
-    assert response['entries']['FRENCH'] == 'WelcomeMessagesEntry nouvelle entrée'
+    assert response['entries']['FRENCH'] == 'Nouvelle entrée'
     assert response['entries']['RUSSIAN'] == 'WelcomeMessagesEntry'
     assert response['entries']['VIETNAMESE'] == 'WelcomeMessagesEntry'
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_delete_should_fail_when_domain_does_not_exists(request_helper, base_url, domain):
+def test_delete_should_fail_when_domain_does_not_exists(
+        request_helper, base_url, domain):
     """Deleting a welcome message should fail when domain doesn't exists"""
     welcome_message = create_welcome_message(request_helper, base_url, domain)
 
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': 'wrong',
-        'welcomeMessageUuid': welcome_message['uuid']
-    })
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': 'wrong',
+            'wmUuid': welcome_message['uuid']
+        })
     payload = {
         "uuid": find_default_welcome_message(request_helper, base_url),
         "name": "MyWelcomeMessage",
@@ -364,17 +378,21 @@ def test_delete_should_fail_when_domain_does_not_exists(request_helper, base_url
             "FRENCH": "WelcomeMessagesEntry"
         }
     }
-    request_helper.delete(query_url, payload, expected_status=404, busines_err_code=13001)
+    request_helper.delete(
+        query_url, payload, expected_status=404, busines_err_code=13001)
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_delete_should_fail_when_welcome_message_does_not_exists(request_helper, base_url, domain):
-    """Deleting a welcome message should fail when welcome message doesn't exists"""
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid'],
-        'welcomeMessageUuid': 'wrong'
-    })
+def test_delete_should_fail_when_welcome_message_does_not_exists(
+        request_helper, base_url, domain):
+    """Deleting a welcome message should fail
+    when welcome message doesn't exists"""
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': 'wrong'
+        })
     payload = {
         "uuid": find_default_welcome_message(request_helper, base_url),
         "name": "MyWelcomeMessage",
@@ -384,11 +402,13 @@ def test_delete_should_fail_when_welcome_message_does_not_exists(request_helper,
             "FRENCH": "WelcomeMessagesEntry"
         }
     }
-    request_helper.delete(query_url, payload, expected_status=404, busines_err_code=36004)
+    request_helper.delete(
+        query_url, payload, expected_status=404, busines_err_code=36004)
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_delete_should_fail_when_welcome_message_does_not_belong_to_the_domain(request_helper, base_url, domain):
+def test_delete_should_fail_when_welcome_message_does_not_belong_to_domain(
+        request_helper, base_url, domain):
     """Deleting a WelcomeMessage should fail when domain doesn't match"""
     # Given
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
@@ -414,11 +434,12 @@ def test_delete_should_fail_when_welcome_message_does_not_belong_to_the_domain(r
     other_domain = request_helper.post(query_url, payload)
 
     # When
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': other_domain['uuid'],
-        'welcomeMessageUuid': welcome_message['uuid']
-    })
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': other_domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
     payload = {
         "name": "MyWelcomeMessage new name",
         "description": "Its description new description",
@@ -431,14 +452,17 @@ def test_delete_should_fail_when_welcome_message_does_not_belong_to_the_domain(r
     }
 
     # Then
-    request_helper.delete(query_url, payload, expected_status=404, busines_err_code=36004)
+    request_helper.delete(
+        query_url, payload, expected_status=404, busines_err_code=36004)
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_delete_should_fail_when_welcome_message_uuid_param_is_null_and_also_dto(request_helper, base_url, domain):
-    """Deleting a welcome message should fail when welcome message uuid param is null and also dto"""
+def test_delete_should_fail_when_welcome_message_uuid_param_and_dto_are_null(
+        request_helper, base_url, domain):
+    """Deleting a welcome message should fail when
+    welcome message uuid param is null and also dto"""
     # Given
-    welcome_message = create_welcome_message(request_helper, base_url, domain)
+    create_welcome_message(request_helper, base_url, domain)
 
     # When
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
@@ -455,11 +479,13 @@ def test_delete_should_fail_when_welcome_message_uuid_param_is_null_and_also_dto
             "VIETNAMESE": "WelcomeMessagesEntry"
         }
     }
-    request_helper.delete(query_url, payload, expected_status=400, busines_err_code=20005)
+    request_helper.delete(
+        query_url, payload, expected_status=400, busines_err_code=20005)
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_delete_should_work_when_welcome_message_uuid_param_is_null(request_helper, base_url, domain):
+def test_delete_should_work_when_welcome_message_uuid_param_is_null(
+        request_helper, base_url, domain):
     """Deleting a welcome message should work"""
     # Given
     welcome_message = create_welcome_message(request_helper, base_url, domain)
@@ -483,11 +509,12 @@ def test_delete_should_work_when_welcome_message_uuid_param_is_null(request_help
     request_helper.delete(query_url, payload)
 
     # Then
-    query_get = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid'],
-        'welcomeMessageUuid': welcome_message['uuid']
-    })
+    query_get = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
     request_helper.get(query_get, expected_status=404, busines_err_code=36004)
 
 
@@ -498,11 +525,12 @@ def test_delete_should_work(request_helper, base_url, domain):
     welcome_message = create_welcome_message(request_helper, base_url, domain)
 
     # When
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid'],
-        'welcomeMessageUuid': welcome_message['uuid']
-    })
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
     payload = {
         "name": "MyWelcomeMessage new name",
         "description": "Its description new description",
@@ -516,9 +544,10 @@ def test_delete_should_work(request_helper, base_url, domain):
     request_helper.delete(query_url, payload)
 
     # Then
-    query_get = '{baseUrl}/domains/{uuid}/welcome_messages/{welcomeMessageUuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid'],
-        'welcomeMessageUuid': welcome_message['uuid']
-    })
+    query_get = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
     request_helper.get(query_get, expected_status=404, busines_err_code=36004)
