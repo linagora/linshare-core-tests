@@ -88,4 +88,10 @@ setup(
         'requests-toolbelt==0.9.1',
         'pylint'
     ],
+    extras_require={
+        'DEV': [
+            'docker-compose',
+            'jedi'
+        ]
+    }
 )
