@@ -103,7 +103,7 @@ test-api-branch-core-master-on-master:
     LS_TEST_DEBUG: 0
   script:
     - pip install -r requirements.txt
-    - ./patch_gitlab.py
+    - pytest linshare_core_tests/admin/v4/test_patch_ldap.py -vvv --env=gitlab
     - tox
   artifacts:
     when: always
@@ -132,7 +132,7 @@ test-api-branch-core-master-on-master-legacy:
     LS_TEST_DEBUG: 0
   script:
     - pip install -r requirements.txt
-    - ./patch_gitlab.py
+    - pytest linshare_core_tests/admin/v4/test_patch_ldap.py -vvv --env=gitlab
     - ./tests_linshare.py
   only:
     refs:
@@ -157,7 +157,7 @@ test-api-branch-maintenance-x-legacy:
     LS_TEST_DEBUG: 0
   script:
     - pip install -r requirements.txt
-    - ./patch_gitlab.py
+    - pytest linshare_core_tests/admin/v4/test_patch_ldap.py -vvv --env=gitlab
     - ./tests_linshare.py
   only:
     refs:
@@ -180,7 +180,7 @@ test-api-branch-maintenance-x:
     CONFIG_FILE_USER: linshare.user.test.ini
   script:
     - pip install -r requirements.txt
-    - ./patch_gitlab.py
+    - pytest linshare_core_tests/admin/v4/test_patch_ldap.py -vvv --env=gitlab
     - tox
   artifacts:
     when: always
@@ -207,8 +207,8 @@ test-api-branch-core-master-legacy:
     CONFIG_FILE_USER: linshare.user.test.ini
     LS_TEST_DEBUG: 0
   script:
-    -  pip install -r requirements.txt
-    - ./patch_gitlab.py
+    - pip install -r requirements.txt
+    - pytest linshare_core_tests/admin/v4/test_patch_ldap.py -vvv --env=gitlab
     - ./tests_linshare.py
   except:
     refs:
@@ -231,8 +231,8 @@ test-api-branch-core-master:
     CONFIG_FILE_ADMIN: linshare.admin.test.ini
     CONFIG_FILE_USER: linshare.user.test.ini
   script:
-    -  pip install -r requirements.txt
-    - ./patch_gitlab.py
+    - pip install -r requirements.txt
+    - pytest linshare_core_tests/admin/v4/test_patch_ldap.py -vvv --env=gitlab
     - tox
   artifacts:
     when: always
@@ -261,8 +261,8 @@ test-api-same-core-branch-legacy:
     CONFIG_FILE_USER: linshare.user.test.ini
     LS_TEST_DEBUG: 0
   script:
-    -  pip install -r requirements.txt
-    - ./patch_gitlab.py
+    - pip install -r requirements.txt
+    - pytest linshare_core_tests/admin/v4/test_patch_ldap.py -vvv --env=gitlab
     - ./tests_linshare.py
   except:
     refs:
@@ -288,8 +288,8 @@ test-api-same-core-branch:
     CONFIG_FILE_ADMIN: linshare.admin.test.ini
     CONFIG_FILE_USER: linshare.user.test.ini
   script:
-    -  pip install -r requirements.txt
-    - ./patch_gitlab.py
+    - pip install -r requirements.txt
+    - pytest linshare_core_tests/admin/v4/test_patch_ldap.py -vvv --env=gitlab
     - tox
   artifacts:
     when: always
