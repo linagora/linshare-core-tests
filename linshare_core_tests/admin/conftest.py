@@ -153,7 +153,8 @@ class RequestHelper:
             assert data['errCode'] == busines_err_code
         return data
 
-    def patch(self, query_url, payload):
+    def patch(self, query_url, payload, expected_status=200,
+              busines_err_code=None):
         """PATCH HTTP method"""
         req = requests.patch(
             query_url,
@@ -163,9 +164,11 @@ class RequestHelper:
             verify=self.verify)
         self.log.debug("status_code : %s", req.status_code)
         self.log.debug("result : %s", req.text)
-        assert req.status_code == 200
+        assert req.status_code == expected_status
         data = req.json()
         self.log.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
+        if busines_err_code:
+            assert data['errCode'] == busines_err_code
         return data
 
 
