@@ -252,7 +252,7 @@ def test_create_should_works(request_helper, base_url, domain):
     assert response['uuid']
     assert response['name'] == "MyWelcomeMessage"
     assert response['description'] == "Its description"
-    assert not response['assignedToCurentDomain']
+    assert not response['assignedToCurrentDomain']
     assert not response['readOnly']
     assert response['creationDate']
     assert response['modificationDate']
@@ -395,7 +395,7 @@ def test_update_should_work(request_helper, base_url, domain):
     assert response['uuid']
     assert response['name'] == "MyWelcomeMessage new name"
     assert response['description'] == "Its description new description"
-    assert not response['assignedToCurentDomain']
+    assert not response['assignedToCurrentDomain']
     assert not response['readOnly']
     assert response['creationDate'] == welcome_message['creationDate']
     assert response['modificationDate'] != welcome_message['modificationDate']
