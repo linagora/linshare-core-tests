@@ -2811,32 +2811,6 @@ class TestUserApiGuest (UserTestCase):
         LOGGER.debug("data : %s", req.json())
 
 
-class TestFindQuota(AdminTestCase):
-    def create_shared_space(self):
-        """Test user create a shared space."""
-        query_url = self.user_base_url + '/shared_spaces'
-        payload = {
-            "name": "workgroup_test",
-            "nodeType": "WORK_GROUP"
-        }
-        data = self.request_post(query_url, payload)
-        self.assertEqual(data['name'], 'workgroup_test')
-        return data
-
-    def test_find_quota(self):
-        """"Test user API create find a quota"""
-        user1 = self.get_user1()
-        shared_space = self.create_shared_space()
-        query_url = self.user_base_url + '/quota/' + shared_space['quotaUuid']
-        req = requests.get(
-            query_url,
-            headers={'Accept': 'application/json'},
-            auth=HTTPBasicAuth(self.user1_email, self.password),
-            verify=self.verify
-        )
-        data = self.request_get(query_url)
-
-
 class TestAdminWorkGroupPattern (AdminTestCase):
     """"Test admin API workGroup pattern """
 
