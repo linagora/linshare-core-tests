@@ -157,6 +157,30 @@ class RequestHelper:
         self.log.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
 
+    def assert_json_payload(self, expected, payload_response):
+        """Method that allows to assert information returned on the responses
+        Parameters:
+        expected: list of expected fields in the source object.
+        payload_response : returned object to be tested.
+         """
+        all_fields_exists = True
+        for item in payload_response:
+            if item not in expected:
+                all_fields_exists = False
+                self.log.error(
+                    "Field '%s' was not found in the expected payload",
+                    item)
+        for item in expected:
+            if item not in payload_response:
+                all_fields_exists = False
+                self.log.error(
+                    "Expected field '%s' was not found in the response",
+                    item)
+        assert all_fields_exists
+        self.log.debug("expected: %s", expected)
+        self.log.debug("payload_response keys: %s", payload_response.keys())
+        assert len(expected), len(payload_response.keys())
+
 
 @pytest.fixture(scope="module", name="request_helper")
 def fixture_request_helper(user_cfg):
