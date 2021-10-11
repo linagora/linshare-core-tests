@@ -5,6 +5,7 @@
 
 import logging
 import urllib
+import pytest
 
 
 def test_config(display_admin_cfg):
@@ -26,6 +27,7 @@ def test_find_all_functionalites(request_helper, base_url):
     assert len([a['identifier'] for a in data]) == 17
 
 
+@pytest.mark.skip(reason="WIP")
 def test_find_all_functionalites_and_subs(request_helper, base_url):
     """Test find all functionalities for root domain on API v4"""
     encoded_url = urllib.parse.urlencode(
