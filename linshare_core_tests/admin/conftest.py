@@ -217,3 +217,43 @@ def fixture_create_domain(request, request_helper, base_url):
         'uuid': domain['uuid']
     })
     request_helper.delete(query_url)
+
+
+@pytest.fixture(scope="module", name="new_group_filter")
+def fixture_create_group_filter(request_helper, base_url):
+    """Create domain group filter."""
+    search_gq = (
+        "ldap.search(baseDn, "
+        "\"(&(objectClass=groupOfNames)(cn=drive-*))\");"
+    )
+    search_q = (
+        "ldap.search(baseDn, "
+        "\"(&(objectClass=groupOfNames)(cn=drive-\" + pattern + \"))\");"
+    )
+    payload = {
+        "description": "Test domain workgroup filter",
+        "name": "Group filter name",
+        "searchAllGroupsQuery": search_gq,
+        "searchGroupQuery": search_q,
+        "searchPageSize": 100,
+        "groupMemberAttribute": "member",
+        "groupNameAttribute": "cn",
+        "groupPrefixToRemove": "workgroup-",
+        "memberFirstNameAttribute": "givenname",
+        "memberLastNameAttribute": "sn",
+        "memberMailAttribute": "mail"
+    }
+    query_url = '{baseUrl}/group_filters'.format_map({
+        'baseUrl': base_url
+    })
+    group_filter = request_helper.post(query_url, payload)
+    assert group_filter
+    assert group_filter['uuid']
+
+    yield group_filter
+
+    query_url = '{baseUrl}/group_filters/{groupFilterUuid}'.format_map({
+        'baseUrl': base_url,
+        'groupFilterUuid': group_filter['uuid']
+    })
+    request_helper.delete(query_url)
