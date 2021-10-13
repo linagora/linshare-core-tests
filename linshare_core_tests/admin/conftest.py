@@ -260,3 +260,27 @@ def fixture_create_group_filter(request_helper, base_url):
         'groupFilterUuid': group_filter['uuid']
     })
     request_helper.delete(query_url)
+
+
+@pytest.fixture(scope="module", name="remote_server")
+def fixture_create_remote_server(request_helper, base_url, admin_cfg):
+    """Create a remote server."""
+    payload = {
+        "name": "new remote server",
+        "bindDn": admin_cfg['DEFAULT']['local_ldap_user_dn'],
+        "url": admin_cfg['DEFAULT']['local_ldap_url'],
+        "bindPassword": admin_cfg['DEFAULT']['local_ldap_password']
+    }
+    query_url = '{baseUrl}/remote_servers'.format_map({
+        'baseUrl': base_url
+    })
+    server = request_helper.post(query_url, payload)
+    assert server
+
+    yield server
+
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': server['uuid']
+    })
+    request_helper.delete(query_url)

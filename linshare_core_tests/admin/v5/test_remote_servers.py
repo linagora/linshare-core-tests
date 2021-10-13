@@ -3,22 +3,6 @@
 """Testing RemoteServers endpoints of adminv5 API."""
 
 
-def create_remote_server(request_helper, base_url, admin_cfg):
-    """Create a remote server."""
-    payload = {
-        "name": "new remote server",
-        "bindDn": admin_cfg['DEFAULT']['local_ldap_user_dn'],
-        "url": admin_cfg['DEFAULT']['local_ldap_url'],
-        "bindPassword": admin_cfg['DEFAULT']['local_ldap_password']
-    }
-    query_url = '{baseUrl}/remote_servers'.format_map({
-        'baseUrl': base_url
-    })
-    server = request_helper.post(query_url, payload)
-    assert server
-    return server
-
-
 def test_find_all_remote_servers(request_helper, base_url):
     """Test admin find all remote servers."""
     query_url = '{baseUrl}/remote_servers'.format_map({
@@ -56,9 +40,8 @@ def test_create_remote_server_without_binddn_and_pwd(
     assert server['name'] == payload['name']
 
 
-def test_find_remote_servers(request_helper, base_url, admin_cfg):
+def test_find_remote_servers(request_helper, base_url, remote_server):
     """Test admin find remote server."""
-    remote_server = create_remote_server(request_helper, base_url, admin_cfg)
     query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
         'baseUrl': base_url,
         'uuid': remote_server['uuid']
@@ -69,32 +52,56 @@ def test_find_remote_servers(request_helper, base_url, admin_cfg):
 def test_delete_remote_server_with_payload(
         request_helper, base_url, admin_cfg):
     """Test admin delete remote server."""
-    remote_server = create_remote_server(request_helper, base_url, admin_cfg)
+    # Given
+    payload = {
+        "name": "new connection",
+        "bindDn": admin_cfg['DEFAULT']['local_ldap_user_dn'],
+        "url": admin_cfg['DEFAULT']['local_ldap_url'],
+        "bindPassword": admin_cfg['DEFAULT']['local_ldap_password']
+    }
+    query_url = '{baseUrl}/remote_servers'.format_map({
+        'baseUrl': base_url
+    })
+    server = request_helper.post(query_url, payload)
+
+    # When
     query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
         'baseUrl': base_url,
-        'uuid': remote_server['uuid']
+        'uuid': server['uuid']
     })
     payload = {
         "name": "new connection",
-        "bindDn": remote_server['bindDn'],
-        "url": remote_server['url'],
+        "bindDn": server['bindDn'],
+        "url": server['url'],
     }
     request_helper.delete(query_url, payload)
 
 
-def test_delete_remote_server_no_payload(request_helper, base_url, admin_cfg):
+def test_delete_remote_server_no_payload(
+        request_helper, base_url, admin_cfg):
     """Test admin delete remote server no payload."""
-    remote_server = create_remote_server(request_helper, base_url, admin_cfg)
+    # Given
+    payload = {
+        "name": "new connection",
+        "bindDn": admin_cfg['DEFAULT']['local_ldap_user_dn'],
+        "url": admin_cfg['DEFAULT']['local_ldap_url'],
+        "bindPassword": admin_cfg['DEFAULT']['local_ldap_password']
+    }
+    query_url = '{baseUrl}/remote_servers'.format_map({
+        'baseUrl': base_url
+    })
+    server = request_helper.post(query_url, payload)
+
+    # When
     query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
         'baseUrl': base_url,
-        'uuid': remote_server['uuid']
+        'uuid': server['uuid']
     })
     request_helper.delete(query_url)
 
 
-def test_update_remote_servers(request_helper, base_url, admin_cfg):
+def test_update_remote_servers(request_helper, base_url, remote_server):
     """Test admin update remote server."""
-    remote_server = create_remote_server(request_helper, base_url, admin_cfg)
     query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
         'baseUrl': base_url,
         'uuid': remote_server['uuid']
@@ -111,9 +118,8 @@ def test_update_remote_servers(request_helper, base_url, admin_cfg):
 
 
 def test_update_remote_servers_without_binddn_and_pwd(
-        request_helper, base_url, admin_cfg):
+        request_helper, base_url, remote_server):
     """Test admin update remote server."""
-    remote_server = create_remote_server(request_helper, base_url, admin_cfg)
     query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
         'baseUrl': base_url,
         'uuid': remote_server['uuid']
