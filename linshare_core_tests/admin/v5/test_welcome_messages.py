@@ -216,6 +216,7 @@ def test_create_should_fail_when_uuid_is_not_given(
     request_helper.post(query_url, payload, expected_status=400)
 
 
+@pytest.mark.skip(reason="WIP")
 @pytest.mark.domain_data("MyDomain")
 def test_create_should_works(request_helper, base_url, domain):
     """Creating a WelcomeMessage should work and return all data"""
@@ -357,6 +358,7 @@ def test_update_should_fail_when_welcome_message_does_not_belong_to_domain(
         query_url, payload, expected_status=404, busines_err_code=36004)
 
 
+@pytest.mark.skip(reason="WIP")
 @pytest.mark.domain_data("MyDomain")
 def test_update_should_work(request_helper, base_url, domain):
     """Updating a welcome message should work"""
