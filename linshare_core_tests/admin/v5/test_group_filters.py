@@ -95,6 +95,7 @@ def test_find_domain_group_filter(request_helper, base_url, new_group_filter):
     assert group_filter
     assert group_filter['description'] == new_group_filter['description']
     assert group_filter['name'] == new_group_filter['name']
+    # pylint: disable=line-too-long
     assert group_filter['searchAllGroupsQuery'] == new_group_filter['searchAllGroupsQuery']  # noqa: E501 # Line length & assert statement
     assert group_filter['searchGroupQuery'] == new_group_filter['searchGroupQuery']  # noqa: E501 # Line length & assert statement
     assert group_filter['searchPageSize'] == new_group_filter['searchPageSize']  # noqa: E501 # Line length & assert statement
