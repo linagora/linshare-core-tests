@@ -103,7 +103,6 @@ test-api-branch-core-master-on-master:
     LS_TEST_DEBUG: 0
   script:
     - pip install -r requirements.txt
-    - pytest linshare_core_tests/admin/v4/test_patch_ldap.py -vvv --env=gitlab
     - tox
   artifacts:
     when: always
@@ -180,7 +179,6 @@ test-api-branch-maintenance-x:
     CONFIG_FILE_USER: linshare.user.test.ini
   script:
     - pip install -r requirements.txt
-    - pytest linshare_core_tests/admin/v4/test_patch_ldap.py -vvv --env=gitlab
     - tox
   artifacts:
     when: always
@@ -232,7 +230,6 @@ test-api-branch-core-master:
     CONFIG_FILE_USER: linshare.user.test.ini
   script:
     - pip install -r requirements.txt
-    - pytest linshare_core_tests/admin/v4/test_patch_ldap.py -vvv --env=gitlab
     - tox
   artifacts:
     when: always
@@ -289,7 +286,6 @@ test-api-same-core-branch:
     CONFIG_FILE_USER: linshare.user.test.ini
   script:
     - pip install -r requirements.txt
-    - pytest linshare_core_tests/admin/v4/test_patch_ldap.py -vvv --env=gitlab
     - tox
   artifacts:
     when: always
