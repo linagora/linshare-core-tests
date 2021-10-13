@@ -8,22 +8,43 @@ def test_find_all_remote_servers(request_helper, base_url):
     query_url = '{baseUrl}/remote_servers'.format_map({
         'baseUrl': base_url
     })
-    request_helper.get(query_url)
+    servers = request_helper.get(query_url)
+    assert servers
+    assert len(servers) >= 1
 
 
 def test_create_remote_server(request_helper, base_url, admin_cfg):
     """Test admin create remote server."""
+    local_ldap_user_dn = admin_cfg['DEFAULT']['local_ldap_user_dn']
+    local_ldap_url = admin_cfg['DEFAULT']['local_ldap_url']
+    local_ldap_password = admin_cfg['DEFAULT']['local_ldap_password']
     payload = {
         "name": "new connection",
-        "bindDn": admin_cfg['DEFAULT']['local_ldap_user_dn'],
-        "url": admin_cfg['DEFAULT']['local_ldap_url'],
-        "bindPassword": admin_cfg['DEFAULT']['local_ldap_password']
+        "bindDn": local_ldap_user_dn,
+        "url": local_ldap_url,
+        "bindPassword": local_ldap_password,
+        "description": "description"
     }
     query_url = '{baseUrl}/remote_servers'.format_map({
         'baseUrl': base_url
     })
-    server = request_helper.post(query_url, payload)
-    assert server['name'] == payload['name']
+    created_server = request_helper.post(query_url, payload)
+
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': created_server['uuid']
+    })
+    server = request_helper.get(query_url)
+
+    assert server
+    assert server['uuid']
+    assert server['name'] == "new connection"
+    assert server['url'] == local_ldap_url
+    assert server['bindDn'] == local_ldap_user_dn
+    assert server['bindPassword'] == local_ldap_password
+    assert server['serverType'] == "LDAP"
+    assert server['creationDate']
+    assert server['modificationDate']
 
 
 def test_create_remote_server_without_binddn_and_pwd(
@@ -36,8 +57,21 @@ def test_create_remote_server_without_binddn_and_pwd(
     query_url = '{baseUrl}/remote_servers'.format_map({
         'baseUrl': base_url
     })
-    server = request_helper.post(query_url, payload)
-    assert server['name'] == payload['name']
+    created_server = request_helper.post(query_url, payload)
+
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': created_server['uuid']
+    })
+    server = request_helper.get(query_url)
+
+    assert server
+    assert server['uuid']
+    assert server['name'] == "new connection"
+    assert server['url'] == admin_cfg['DEFAULT']['local_ldap_url']
+    assert server['serverType'] == "LDAP"
+    assert server['creationDate']
+    assert server['modificationDate']
 
 
 def test_find_remote_servers(request_helper, base_url, remote_server):
@@ -46,7 +80,8 @@ def test_find_remote_servers(request_helper, base_url, remote_server):
         'baseUrl': base_url,
         'uuid': remote_server['uuid']
     })
-    request_helper.get(query_url)
+    server = request_helper.get(query_url)
+    assert server
 
 
 def test_delete_remote_server_with_payload(
@@ -76,6 +111,13 @@ def test_delete_remote_server_with_payload(
     }
     request_helper.delete(query_url, payload)
 
+    # Then
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': server['uuid']
+    })
+    request_helper.get(query_url, expected_status=404)
+
 
 def test_delete_remote_server_no_payload(
         request_helper, base_url, admin_cfg):
@@ -99,6 +141,13 @@ def test_delete_remote_server_no_payload(
     })
     request_helper.delete(query_url)
 
+    # Then
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': server['uuid']
+    })
+    request_helper.get(query_url, expected_status=404)
+
 
 def test_update_remote_servers(request_helper, base_url, remote_server):
     """Test admin update remote server."""
@@ -112,9 +161,18 @@ def test_update_remote_servers(request_helper, base_url, remote_server):
         "url": remote_server['url'],
         "bindPassword": 'test'
     }
-    server = request_helper.put(query_url, payload)
+    request_helper.put(query_url, payload)
+
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': remote_server['uuid']
+    })
+    server = request_helper.get(query_url)
+
+    assert server
     assert server['name'] == payload['name']
     assert server['bindPassword'] == payload['bindPassword']
+    assert remote_server['modificationDate'] != server['modificationDate']
 
 
 def test_update_remote_servers_without_binddn_and_pwd(
@@ -128,6 +186,13 @@ def test_update_remote_servers_without_binddn_and_pwd(
         "name": "updated connection name",
         "url": remote_server['url'],
     }
-    server = request_helper.put(query_url, payload)
+    request_helper.put(query_url, payload)
+
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': remote_server['uuid']
+    })
+    server = request_helper.get(query_url)
+
+    assert server
     assert server['name'] == payload['name']
-    assert not hasattr(server, "bindPassword")
