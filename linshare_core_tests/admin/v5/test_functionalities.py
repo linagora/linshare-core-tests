@@ -7,7 +7,6 @@ import os
 import json
 import logging
 import urllib
-import pytest
 
 from deepdiff import DeepDiff
 
@@ -38,7 +37,6 @@ def test_find_all_functionalites(request_helper, base_url):
     assert len([a['identifier'] for a in data]) == 17
 
 
-@pytest.mark.skip(reason="WIP")
 def test_find_all_functionalites_and_subs(request_helper, base_url):
     """Test find all functionalities for root domain on API v5"""
     encoded_url = urllib.parse.urlencode(
@@ -57,6 +55,10 @@ def test_find_all_functionalites_and_subs(request_helper, base_url):
     log.debug("functionalities: %s", data)
     assert data
     assert len([a['identifier'] for a in data]) == 45
+    assert not DeepDiff(
+        data,
+        load_data_from_file("test_functionalities.all.json")
+    )
 
 
 def test_find_functionality_share_expiration(request_helper, base_url):
