@@ -86,7 +86,8 @@ setup(
         'clint==0.5.1',
         'requests==2.25.1',
         'requests-toolbelt==0.9.1',
-        'pylint'
+        'pylint',
+        'deepdiff'
     ],
     extras_require={
         'DEV': [
