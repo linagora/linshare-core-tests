@@ -1,0 +1,86 @@
+{
+    "activationPolicy": {
+        "allowOverride": {
+            "overriden": false,
+            "parentValue": true,
+            "value": true
+        },
+        "enable": {
+            "overriden": false,
+            "parentValue": true,
+            "value": true
+        },
+        "hidden": false,
+        "readonly": false
+    },
+    "configurationPolicy": {
+        "allowOverride": {
+            "overriden": false,
+            "parentValue": true,
+            "value": true
+        },
+        "enable": {
+            "overriden": false,
+            "parentValue": true,
+            "value": true
+        },
+        "hidden": false,
+        "readonly": false
+    },
+    "delegationPolicy": {
+        "allowOverride": {
+            "overriden": false,
+            "parentValue": true,
+            "value": true
+        },
+        "enable": {
+            "overriden": false,
+            "parentValue": true,
+            "value": true
+        },
+        "hidden": false,
+        "readonly": false
+    },
+    "domain": {
+        "name": "LinShareRootDomain",
+        "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "SHARE_EXPIRATION",
+    "parameter": {
+        "defaut": {
+            "overriden": false,
+            "parentUnit": "MONTH",
+            "parentValue": 3,
+            "unit": "MONTH",
+            "units": [
+                "DAY",
+                "WEEK",
+                "MONTH"
+            ],
+            "value": 3
+        },
+        "hidden": false,
+        "maximum": {
+            "overriden": false,
+            "parentUnit": "MONTH",
+            "parentValue": 4,
+            "unit": "MONTH",
+            "units": [
+                "DAY",
+                "WEEK",
+                "MONTH"
+            ],
+            "value": 4
+        },
+        "readonly": false,
+        "type": "UNIT_SIZE_ALL",
+        "unlimited": {
+            "parentValue": false,
+            "supported": true,
+            "value": false
+        }
+    },
+    "readonly": false,
+    "type": "UNIT"
+}

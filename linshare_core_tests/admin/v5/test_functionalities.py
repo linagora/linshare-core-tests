@@ -3,11 +3,20 @@
 """Testing functionalities endpoints of adminv5 API."""
 
 
+import os
+import json
 import logging
 import urllib
 import pytest
 
 from deepdiff import DeepDiff
+
+
+def load_data_from_file(test_file):
+    """Read a json file and converter it to a python dict."""
+    test_dir = os.path.dirname(os.path.abspath(__file__))
+    with open(test_dir + '/' + test_file, encoding='UTF-8') as json_file:
+        return json.load(json_file)
 
 
 def test_config(display_admin_cfg):
@@ -62,91 +71,7 @@ def test_find_functionality_share_expiration(request_helper, base_url):
     log = logging.getLogger('tests.funcs.test_find_functionality')
     log.debug("functionalities: %s", data)
     assert data
-    assert data['identifier'] == 'SHARE_EXPIRATION'
-    orig = {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": False,
-                "parentValue": True,
-                "value": True
-            },
-            "enable": {
-                "overriden": False,
-                "parentValue": True,
-                "value": True
-            },
-            "hidden": False,
-            "readonly": False
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": False,
-                "parentValue": True,
-                "value": True
-            },
-            "enable": {
-                "overriden": False,
-                "parentValue": True,
-                "value": True
-            },
-            "hidden": False,
-            "readonly": False
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": False,
-                "parentValue": True,
-                "value": True
-            },
-            "enable": {
-                "overriden": False,
-                "parentValue": True,
-                "value": True
-            },
-            "hidden": False,
-            "readonly": False
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": False,
-        "identifier": "SHARE_EXPIRATION",
-        "parameter": {
-            "defaut": {
-                "overriden": False,
-                "parentUnit": "MONTH",
-                "parentValue": 3,
-                "unit": "MONTH",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": 3
-            },
-            "hidden": False,
-            "maximum": {
-                "overriden": False,
-                "parentUnit": "MONTH",
-                "parentValue": 4,
-                "unit": "MONTH",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": 4
-            },
-            "readonly": False,
-            "type": "UNIT_SIZE_ALL",
-            "unlimited": {
-                "parentValue": False,
-                "supported": True,
-                "value": False
-            }
-        },
-        "readonly": False,
-        "type": "UNIT"
-    }
-    assert not DeepDiff(data, orig)
+    assert not DeepDiff(
+        data,
+        load_data_from_file("test_functionalities.share_expiration.json")
+    )
