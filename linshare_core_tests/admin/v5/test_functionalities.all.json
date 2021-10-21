@@ -52,6 +52,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": true,
+        "type": "BOOLEAN",
         "value": true
       },
       "hidden": false,
@@ -114,6 +115,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": false,
+        "type": "BOOLEAN",
         "value": false
       },
       "hidden": false,
@@ -216,6 +218,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": true,
+        "type": "BOOLEAN",
         "value": true
       },
       "hidden": false,
@@ -279,6 +282,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": "http://linshare-ui-user.local/",
+        "type": "STRING",
         "value": "http://linshare-ui-user.local/"
       },
       "hidden": false,
@@ -366,11 +370,12 @@
       "defaut": {
         "overriden": false,
         "parentValue": 3,
+        "type": "INTEGER",
         "value": 3
       },
       "hidden": false,
       "readonly": false,
-      "type": "INTEGER"
+      "type": "INTEGER_DEFAULT"
     },
     "readonly": false,
     "type": "INTEGER"
@@ -492,6 +497,7 @@
         "overriden": false,
         "parentUnit": "MONTH",
         "parentValue": 3,
+        "type": "UNIT_TIME",
         "unit": "MONTH",
         "units": [
           "DAY",
@@ -584,6 +590,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": "linshare-noreply@linagora.com",
+        "type": "STRING",
         "value": "linshare-noreply@linagora.com"
       },
       "hidden": false,
@@ -633,6 +640,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": "http://linshare-ui-user.local/",
+        "type": "STRING",
         "value": "http://linshare-ui-user.local/"
       },
       "hidden": false,
@@ -811,6 +819,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": true,
+        "type": "BOOLEAN",
         "value": true
       },
       "hidden": false,
@@ -875,6 +884,7 @@
         "overriden": false,
         "parentUnit": "MONTH",
         "parentValue": 3,
+        "type": "UNIT_TIME",
         "unit": "MONTH",
         "units": [
           "DAY",
@@ -888,6 +898,7 @@
         "overriden": false,
         "parentUnit": "MONTH",
         "parentValue": 4,
+        "type": "UNIT_TIME",
         "unit": "MONTH",
         "units": [
           "DAY",
@@ -998,6 +1009,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": true,
+        "type": "BOOLEAN",
         "value": true
       },
       "hidden": false,
@@ -1047,6 +1059,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": true,
+        "type": "BOOLEAN",
         "value": true
       },
       "hidden": true,
@@ -1238,6 +1251,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": false,
+        "type": "BOOLEAN",
         "value": false
       },
       "hidden": false,
@@ -1300,6 +1314,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": true,
+        "type": "BOOLEAN",
         "value": true
       },
       "hidden": false,
@@ -1363,6 +1378,7 @@
         "overriden": false,
         "parentUnit": "MONTH",
         "parentValue": 3,
+        "type": "UNIT_TIME",
         "unit": "MONTH",
         "units": [
           "DAY",
@@ -1376,6 +1392,7 @@
         "overriden": false,
         "parentUnit": "MONTH",
         "parentValue": 4,
+        "type": "UNIT_TIME",
         "unit": "MONTH",
         "units": [
           "DAY",
@@ -1434,6 +1451,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": false,
+        "type": "BOOLEAN",
         "value": false
       },
       "hidden": false,
@@ -1497,6 +1515,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": true,
+        "type": "BOOLEAN",
         "value": true
       },
       "hidden": false,
@@ -1559,11 +1578,12 @@
       "defaut": {
         "overriden": false,
         "parentValue": 3,
+        "type": "INTEGER",
         "value": 3
       },
       "hidden": false,
       "readonly": false,
-      "type": "INTEGER"
+      "type": "INTEGER_DEFAULT"
     },
     "parentIdentifier": "UNDOWNLOADED_SHARED_DOCUMENTS_ALERT",
     "readonly": false,
@@ -1608,6 +1628,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": "http://linshare-upload-request.local",
+        "type": "STRING",
         "value": "http://linshare-upload-request.local"
       },
       "hidden": false,
@@ -1670,6 +1691,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": true,
+        "type": "BOOLEAN",
         "value": true
       },
       "hidden": false,
@@ -1733,6 +1755,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": true,
+        "type": "BOOLEAN",
         "value": true
       },
       "hidden": false,
@@ -1797,6 +1820,7 @@
         "overriden": false,
         "parentUnit": "MONTH",
         "parentValue": 0,
+        "type": "UNIT_TIME",
         "unit": "MONTH",
         "units": [
           "DAY",
@@ -1810,6 +1834,7 @@
         "overriden": false,
         "parentUnit": "MONTH",
         "parentValue": -1,
+        "type": "UNIT_TIME",
         "unit": "MONTH",
         "units": [
           "DAY",
@@ -1884,6 +1909,7 @@
         "overriden": false,
         "parentUnit": "MONTH",
         "parentValue": 3,
+        "type": "UNIT_TIME",
         "unit": "MONTH",
         "units": [
           "DAY",
@@ -1897,6 +1923,7 @@
         "overriden": false,
         "parentUnit": "MONTH",
         "parentValue": 4,
+        "type": "UNIT_TIME",
         "unit": "MONTH",
         "units": [
           "DAY",
@@ -1971,6 +1998,7 @@
         "overriden": false,
         "parentUnit": "DAY",
         "parentValue": 7,
+        "type": "UNIT_TIME",
         "unit": "DAY",
         "units": [
           "DAY",
@@ -1984,6 +2012,7 @@
         "overriden": false,
         "parentUnit": "DAY",
         "parentValue": 21,
+        "type": "UNIT_TIME",
         "unit": "DAY",
         "units": [
           "DAY",
@@ -2058,6 +2087,7 @@
         "overriden": false,
         "parentUnit": "MEGA",
         "parentValue": 500,
+        "type": "UNIT_SIZE",
         "unit": "MEGA",
         "units": [
           "KILO",
@@ -2071,6 +2101,7 @@
         "overriden": false,
         "parentUnit": "MEGA",
         "parentValue": 1000,
+        "type": "UNIT_SIZE",
         "unit": "MEGA",
         "units": [
           "KILO",
@@ -2144,16 +2175,18 @@
       "defaut": {
         "overriden": false,
         "parentValue": 10,
+        "type": "INTEGER",
         "value": 10
       },
       "hidden": false,
       "maximum": {
         "overriden": false,
         "parentValue": 100,
+        "type": "INTEGER",
         "value": 100
       },
       "readonly": false,
-      "type": "INTEGER",
+      "type": "INTEGER_ALL",
       "unlimited": {
         "supported": false
       }
@@ -2170,9 +2203,9 @@
         "value": true
       },
       "enable": {
-        "overriden": false,
+        "overriden": true,
         "parentValue": false,
-        "value": false
+        "value": true
       },
       "hidden": false,
       "readonly": false
@@ -2216,6 +2249,7 @@
         "overriden": false,
         "parentUnit": "MEGA",
         "parentValue": 10,
+        "type": "UNIT_SIZE",
         "unit": "MEGA",
         "units": [
           "KILO",
@@ -2229,6 +2263,7 @@
         "overriden": false,
         "parentUnit": "MEGA",
         "parentValue": 20,
+        "type": "UNIT_SIZE",
         "unit": "MEGA",
         "units": [
           "KILO",
@@ -2302,6 +2337,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": "ENGLISH",
+        "type": "LANGUAGE",
         "value": "ENGLISH"
       },
       "hidden": false,
@@ -2320,9 +2356,9 @@
         "value": true
       },
       "enable": {
-        "overriden": false,
+        "overriden": true,
         "parentValue": false,
-        "value": false
+        "value": true
       },
       "hidden": false,
       "readonly": false
@@ -2365,6 +2401,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": false,
+        "type": "BOOLEAN",
         "value": false
       },
       "hidden": false,
@@ -2493,6 +2530,7 @@
         "overriden": false,
         "parentUnit": "MEGA",
         "parentValue": 900,
+        "type": "UNIT_SIZE",
         "unit": "MEGA",
         "units": [
           "KILO",
@@ -2566,6 +2604,7 @@
       "defaut": {
         "overriden": false,
         "parentValue": true,
+        "type": "BOOLEAN",
         "value": true
       },
       "hidden": false,
