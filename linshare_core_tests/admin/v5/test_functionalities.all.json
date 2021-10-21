@@ -1,2579 +1,2579 @@
 [
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "ANONYMOUS_URL",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "readonly": false,
-        "type": "BOOLEAN"
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "ANONYMOUS_URL__FORCE_ANONYMOUS_SHARING",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "parentIdentifier": "ANONYMOUS_URL",
-        "readonly": false,
-        "type": "BOOLEAN"
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": true,
-                "parentValue": true,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "ANONYMOUS_URL__HIDE_RECEIVED_SHARE_MENU",
-        "parentIdentifier": "ANONYMOUS_URL",
-        "readonly": false,
-        "type": "DEFAULT"
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "ANONYMOUS_URL__NOTIFICATION",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "parentIdentifier": "ANONYMOUS_URL",
-        "readonly": false,
-        "type": "BOOLEAN"
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "ANONYMOUS_URL__NOTIFICATION_URL",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": "https://user.linshare.local",
-                "value": "https://user.linshare.local"
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "STRING"
-        },
-        "parentIdentifier": "ANONYMOUS_URL",
-        "readonly": false,
-        "type": "STRING"
+    "hidden": false,
+    "identifier": "ANONYMOUS_URL",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "ANTIVIRUS",
-        "readonly": false,
-        "type": "DEFAULT"
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "COMPLETION",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": 3,
-                "value": 3
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "INTEGER"
-        },
-        "readonly": false,
-        "type": "INTEGER"
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": true,
-                "parentValue": false,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "CONTACTS_LIST",
-        "readonly": false,
-        "type": "DEFAULT"
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "CONTACTS_LIST__CREATION_RIGHT",
-        "parentIdentifier": "CONTACTS_LIST",
-        "readonly": false,
-        "type": "DEFAULT"
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": true,
-                "parentValue": true,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "DOCUMENT_EXPIRATION",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentUnit": "MONTH",
-                "parentValue": 3,
-                "unit": "MONTH",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": 3
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "UNIT_SIZE_DEFAULT"
-        },
-        "readonly": false,
-        "type": "UNIT"
+    "hidden": false,
+    "identifier": "ANONYMOUS_URL__FORCE_ANONYMOUS_SHARING",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "DOMAIN",
-        "readonly": false,
-        "type": "DEFAULT"
+    "parentIdentifier": "ANONYMOUS_URL",
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": true,
+        "parentValue": true,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": true,
-                "parentValue": true,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "DOMAIN__MAIL",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": "no-reply@linshare.org",
-                "value": "no-reply@linshare.org"
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "STRING"
-        },
-        "parentIdentifier": "DOMAIN",
-        "readonly": false,
-        "type": "STRING"
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "DOMAIN__NOTIFICATION_URL",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": "https://user.linshare.local",
-                "value": "https://user.linshare.local"
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "STRING"
-        },
-        "parentIdentifier": "DOMAIN",
-        "readonly": false,
-        "type": "STRING"
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "DRIVE",
-        "readonly": false,
-        "type": "DEFAULT"
+    "hidden": false,
+    "identifier": "ANONYMOUS_URL__HIDE_RECEIVED_SHARE_MENU",
+    "parentIdentifier": "ANONYMOUS_URL",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "DRIVE__CREATION_RIGHT",
-        "parentIdentifier": "DRIVE",
-        "readonly": false,
-        "type": "DEFAULT"
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": true,
-                "parentValue": false,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "GUESTS",
-        "readonly": false,
-        "type": "DEFAULT"
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "GUESTS__CAN_UPLOAD",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "parentIdentifier": "GUESTS",
-        "readonly": false,
-        "type": "BOOLEAN"
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "GUESTS__EXPIRATION",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentUnit": "MONTH",
-                "parentValue": 3,
-                "unit": "MONTH",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": 3
-            },
-            "hidden": false,
-            "maximum": {
-                "overriden": false,
-                "parentUnit": "MONTH",
-                "parentValue": 4,
-                "unit": "MONTH",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": 4
-            },
-            "readonly": false,
-            "type": "UNIT_SIZE_ALL",
-            "unlimited": {
-                "supported": false
-            }
-        },
-        "parentIdentifier": "GUESTS",
-        "readonly": false,
-        "type": "UNIT"
+    "hidden": false,
+    "identifier": "ANONYMOUS_URL__NOTIFICATION",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "GUESTS__EXPIRATION_ALLOW_PROLONGATION",
-        "parentIdentifier": "GUESTS",
-        "readonly": false,
-        "type": "DEFAULT"
+    "parentIdentifier": "ANONYMOUS_URL",
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "GUESTS__RESTRICTED",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "parentIdentifier": "GUESTS",
-        "readonly": false,
-        "type": "BOOLEAN"
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "INTERNAL_CAN_UPLOAD",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true,
-            "type": "BOOLEAN"
-        },
-        "readonly": false,
-        "type": "BOOLEAN"
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "JWT_PERMANENT_TOKEN",
-        "readonly": false,
-        "type": "DEFAULT"
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": true,
-                "parentValue": false,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "JWT_PERMANENT_TOKEN__USER_MANAGEMENT",
-        "parentIdentifier": "JWT_PERMANENT_TOKEN",
-        "readonly": false,
-        "type": "DEFAULT"
+    "hidden": false,
+    "identifier": "ANONYMOUS_URL__NOTIFICATION_URL",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": "http://linshare-ui-user.local/",
+        "value": "http://linshare-ui-user.local/"
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "STRING"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "MIME_TYPE",
-        "readonly": false,
-        "type": "DEFAULT"
+    "parentIdentifier": "ANONYMOUS_URL",
+    "readonly": false,
+    "type": "STRING"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "SECOND_FACTOR_AUTHENTICATION",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "readonly": false,
-        "type": "BOOLEAN"
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "readonly": false,
-        "type": "BOOLEAN"
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "SHARE_EXPIRATION",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentUnit": "MONTH",
-                "parentValue": 3,
-                "unit": "MONTH",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": 3
-            },
-            "hidden": false,
-            "maximum": {
-                "overriden": false,
-                "parentUnit": "MONTH",
-                "parentValue": 4,
-                "unit": "MONTH",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": 4
-            },
-            "readonly": false,
-            "type": "UNIT_SIZE_ALL",
-            "unlimited": {
-                "parentValue": false,
-                "supported": true,
-                "value": false
-            }
-        },
-        "readonly": false,
-        "type": "UNIT"
+    "hidden": false,
+    "identifier": "ANTIVIRUS",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "SHARE_EXPIRATION__DELETE_FILE_ON_EXPIRATION",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "parentIdentifier": "SHARE_EXPIRATION",
-        "readonly": false,
-        "type": "BOOLEAN"
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UNDOWNLOADED_SHARED_DOCUMENTS_ALERT",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "readonly": false,
-        "type": "BOOLEAN"
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": 3,
-                "value": 3
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "INTEGER"
-        },
-        "parentIdentifier": "UNDOWNLOADED_SHARED_DOCUMENTS_ALERT",
-        "readonly": false,
-        "type": "INTEGER"
+    "hidden": false,
+    "identifier": "COMPLETION",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": 3,
+        "value": 3
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "INTEGER"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": true,
-                "parentValue": false,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UPLOAD_REQUEST",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": "https://upload-request.linshare.local",
-                "value": "https://upload-request.linshare.local"
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "STRING"
-        },
-        "readonly": false,
-        "type": "STRING"
+    "readonly": false,
+    "type": "INTEGER"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UPLOAD_REQUEST__CAN_CLOSE",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "parentIdentifier": "UPLOAD_REQUEST",
-        "readonly": false,
-        "type": "BOOLEAN"
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": true,
+        "parentValue": false,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UPLOAD_REQUEST__CAN_DELETE",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "parentIdentifier": "UPLOAD_REQUEST",
-        "readonly": false,
-        "type": "BOOLEAN"
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentUnit": "MONTH",
-                "parentValue": 0,
-                "unit": "MONTH",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": 0
-            },
-            "hidden": false,
-            "maximum": {
-                "overriden": false,
-                "parentUnit": "MONTH",
-                "parentValue": -1,
-                "unit": "MONTH",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": -1
-            },
-            "readonly": false,
-            "type": "UNIT_SIZE_ALL",
-            "unlimited": {
-                "parentValue": true,
-                "supported": true,
-                "value": true
-            }
-        },
-        "parentIdentifier": "UPLOAD_REQUEST",
-        "readonly": false,
-        "type": "UNIT"
+    "hidden": false,
+    "identifier": "CONTACTS_LIST",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentUnit": "MONTH",
-                "parentValue": 3,
-                "unit": "MONTH",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": 3
-            },
-            "hidden": false,
-            "maximum": {
-                "overriden": false,
-                "parentUnit": "MONTH",
-                "parentValue": 4,
-                "unit": "MONTH",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": 4
-            },
-            "readonly": false,
-            "type": "UNIT_SIZE_ALL",
-            "unlimited": {
-                "parentValue": false,
-                "supported": true,
-                "value": false
-            }
-        },
-        "parentIdentifier": "UPLOAD_REQUEST",
-        "readonly": false,
-        "type": "UNIT"
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentUnit": "DAY",
-                "parentValue": 7,
-                "unit": "DAY",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": 7
-            },
-            "hidden": false,
-            "maximum": {
-                "overriden": false,
-                "parentUnit": "DAY",
-                "parentValue": 21,
-                "unit": "DAY",
-                "units": [
-                    "DAY",
-                    "WEEK",
-                    "MONTH"
-                ],
-                "value": 21
-            },
-            "readonly": false,
-            "type": "UNIT_SIZE_ALL",
-            "unlimited": {
-                "parentValue": false,
-                "supported": true,
-                "value": false
-            }
-        },
-        "parentIdentifier": "UPLOAD_REQUEST",
-        "readonly": false,
-        "type": "UNIT"
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentUnit": "MEGA",
-                "parentValue": 500,
-                "unit": "MEGA",
-                "units": [
-                    "KILO",
-                    "MEGA",
-                    "GIGA"
-                ],
-                "value": 500
-            },
-            "hidden": false,
-            "maximum": {
-                "overriden": false,
-                "parentUnit": "MEGA",
-                "parentValue": 1000,
-                "unit": "MEGA",
-                "units": [
-                    "KILO",
-                    "MEGA",
-                    "GIGA"
-                ],
-                "value": 1000
-            },
-            "readonly": false,
-            "type": "UNIT_TIME_ALL",
-            "unlimited": {
-                "parentValue": false,
-                "supported": true,
-                "value": false
-            }
-        },
-        "parentIdentifier": "UPLOAD_REQUEST",
-        "readonly": false,
-        "type": "UNIT"
+    "hidden": false,
+    "identifier": "CONTACTS_LIST__CREATION_RIGHT",
+    "parentIdentifier": "CONTACTS_LIST",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UPLOAD_REQUEST__MAXIMUM_FILE_COUNT",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": 10,
-                "value": 10
-            },
-            "hidden": false,
-            "maximum": {
-                "overriden": false,
-                "parentValue": 100,
-                "value": 100
-            },
-            "readonly": false,
-            "type": "INTEGER",
-            "unlimited": {
-                "supported": false
-            }
-        },
-        "parentIdentifier": "UPLOAD_REQUEST",
-        "readonly": false,
-        "type": "INTEGER"
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UPLOAD_REQUEST__MAXIMUM_FILE_SIZE",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentUnit": "MEGA",
-                "parentValue": 10,
-                "unit": "MEGA",
-                "units": [
-                    "KILO",
-                    "MEGA",
-                    "GIGA"
-                ],
-                "value": 10
-            },
-            "hidden": false,
-            "maximum": {
-                "overriden": false,
-                "parentUnit": "MEGA",
-                "parentValue": 20,
-                "unit": "MEGA",
-                "units": [
-                    "KILO",
-                    "MEGA",
-                    "GIGA"
-                ],
-                "value": 20
-            },
-            "readonly": false,
-            "type": "UNIT_TIME_ALL",
-            "unlimited": {
-                "parentValue": false,
-                "supported": true,
-                "value": false
-            }
-        },
-        "parentIdentifier": "UPLOAD_REQUEST",
-        "readonly": false,
-        "type": "UNIT"
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": true,
-                "parentValue": false,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UPLOAD_REQUEST__NOTIFICATION_LANGUAGE",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": "ENGLISH",
-                "value": "ENGLISH"
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "LANGUAGE"
-        },
-        "parentIdentifier": "UPLOAD_REQUEST",
-        "readonly": false,
-        "type": "ENUM_LANG"
+    "hidden": false,
+    "identifier": "DOCUMENT_EXPIRATION",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentUnit": "MONTH",
+        "parentValue": 3,
+        "unit": "MONTH",
+        "units": [
+          "DAY",
+          "WEEK",
+          "MONTH"
+        ],
+        "value": 3
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "UNIT_SIZE_DEFAULT"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "UPLOAD_REQUEST__PROTECTED_BY_PASSWORD",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "parentIdentifier": "UPLOAD_REQUEST",
-        "readonly": false,
-        "type": "BOOLEAN"
+    "readonly": false,
+    "type": "UNIT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": true,
-                "parentValue": false,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": true,
-            "readonly": true
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "WORK_GROUP",
-        "readonly": false,
-        "type": "DEFAULT"
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": false,
-                "value": false
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "WORK_GROUP__CREATION_RIGHT",
-        "parentIdentifier": "WORK_GROUP",
-        "readonly": false,
-        "type": "DEFAULT"
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "WORK_GROUP__DOWNLOAD_ARCHIVE",
-        "parameter": {
-            "hidden": false,
-            "maximum": {
-                "overriden": false,
-                "parentUnit": "MEGA",
-                "parentValue": 900,
-                "unit": "MEGA",
-                "units": [
-                    "KILO",
-                    "MEGA",
-                    "GIGA"
-                ],
-                "value": 900
-            },
-            "readonly": false,
-            "type": "UNIT_TIME_MAX",
-            "unlimited": {
-                "parentValue": false,
-                "supported": true,
-                "value": false
-            }
-        },
-        "parentIdentifier": "WORK_GROUP",
-        "readonly": false,
-        "type": "UNIT"
+    "hidden": false,
+    "identifier": "DOMAIN",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
     },
-    {
-        "activationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "configurationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "delegationPolicy": {
-            "allowOverride": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "enable": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false
-        },
-        "domain": {
-            "name": "LinShareRootDomain",
-            "uuid": "LinShareRootDomain"
-        },
-        "hidden": false,
-        "identifier": "WORK_GROUP__FILE_VERSIONING",
-        "parameter": {
-            "defaut": {
-                "overriden": false,
-                "parentValue": true,
-                "value": true
-            },
-            "hidden": false,
-            "readonly": false,
-            "type": "BOOLEAN"
-        },
-        "parentIdentifier": "WORK_GROUP",
-        "readonly": false,
-        "type": "BOOLEAN"
-    }
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": true,
+        "parentValue": true,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "DOMAIN__MAIL",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": "linshare-noreply@linagora.com",
+        "value": "linshare-noreply@linagora.com"
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "STRING"
+    },
+    "parentIdentifier": "DOMAIN",
+    "readonly": false,
+    "type": "STRING"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "DOMAIN__NOTIFICATION_URL",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": "http://linshare-ui-user.local/",
+        "value": "http://linshare-ui-user.local/"
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "STRING"
+    },
+    "parentIdentifier": "DOMAIN",
+    "readonly": false,
+    "type": "STRING"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "DRIVE",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "DRIVE__CREATION_RIGHT",
+    "parentIdentifier": "DRIVE",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "GUESTS",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "GUESTS__CAN_UPLOAD",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
+    },
+    "parentIdentifier": "GUESTS",
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "GUESTS__EXPIRATION",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentUnit": "MONTH",
+        "parentValue": 3,
+        "unit": "MONTH",
+        "units": [
+          "DAY",
+          "WEEK",
+          "MONTH"
+        ],
+        "value": 3
+      },
+      "hidden": false,
+      "maximum": {
+        "overriden": false,
+        "parentUnit": "MONTH",
+        "parentValue": 4,
+        "unit": "MONTH",
+        "units": [
+          "DAY",
+          "WEEK",
+          "MONTH"
+        ],
+        "value": 4
+      },
+      "readonly": false,
+      "type": "UNIT_SIZE_ALL",
+      "unlimited": {
+        "supported": false
+      }
+    },
+    "parentIdentifier": "GUESTS",
+    "readonly": false,
+    "type": "UNIT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "GUESTS__EXPIRATION_ALLOW_PROLONGATION",
+    "parentIdentifier": "GUESTS",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "GUESTS__RESTRICTED",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
+    },
+    "parentIdentifier": "GUESTS",
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "INTERNAL_CAN_UPLOAD",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true,
+      "type": "BOOLEAN"
+    },
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "JWT_PERMANENT_TOKEN",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": true,
+        "parentValue": false,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "JWT_PERMANENT_TOKEN__USER_MANAGEMENT",
+    "parentIdentifier": "JWT_PERMANENT_TOKEN",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "MIME_TYPE",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "SECOND_FACTOR_AUTHENTICATION",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
+    },
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
+    },
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "SHARE_EXPIRATION",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentUnit": "MONTH",
+        "parentValue": 3,
+        "unit": "MONTH",
+        "units": [
+          "DAY",
+          "WEEK",
+          "MONTH"
+        ],
+        "value": 3
+      },
+      "hidden": false,
+      "maximum": {
+        "overriden": false,
+        "parentUnit": "MONTH",
+        "parentValue": 4,
+        "unit": "MONTH",
+        "units": [
+          "DAY",
+          "WEEK",
+          "MONTH"
+        ],
+        "value": 4
+      },
+      "readonly": false,
+      "type": "UNIT_SIZE_ALL",
+      "unlimited": {
+        "parentValue": false,
+        "supported": true,
+        "value": false
+      }
+    },
+    "readonly": false,
+    "type": "UNIT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "SHARE_EXPIRATION__DELETE_FILE_ON_EXPIRATION",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
+    },
+    "parentIdentifier": "SHARE_EXPIRATION",
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UNDOWNLOADED_SHARED_DOCUMENTS_ALERT",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
+    },
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": 3,
+        "value": 3
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "INTEGER"
+    },
+    "parentIdentifier": "UNDOWNLOADED_SHARED_DOCUMENTS_ALERT",
+    "readonly": false,
+    "type": "INTEGER"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": true,
+        "parentValue": true,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": true,
+        "parentValue": false,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UPLOAD_REQUEST",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": "http://linshare-upload-request.local",
+        "value": "http://linshare-upload-request.local"
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "STRING"
+    },
+    "readonly": false,
+    "type": "STRING"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UPLOAD_REQUEST__CAN_CLOSE",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
+    },
+    "parentIdentifier": "UPLOAD_REQUEST",
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UPLOAD_REQUEST__CAN_DELETE",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
+    },
+    "parentIdentifier": "UPLOAD_REQUEST",
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentUnit": "MONTH",
+        "parentValue": 0,
+        "unit": "MONTH",
+        "units": [
+          "DAY",
+          "WEEK",
+          "MONTH"
+        ],
+        "value": 0
+      },
+      "hidden": false,
+      "maximum": {
+        "overriden": false,
+        "parentUnit": "MONTH",
+        "parentValue": -1,
+        "unit": "MONTH",
+        "units": [
+          "DAY",
+          "WEEK",
+          "MONTH"
+        ],
+        "value": -1
+      },
+      "readonly": false,
+      "type": "UNIT_SIZE_ALL",
+      "unlimited": {
+        "parentValue": true,
+        "supported": true,
+        "value": true
+      }
+    },
+    "parentIdentifier": "UPLOAD_REQUEST",
+    "readonly": false,
+    "type": "UNIT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentUnit": "MONTH",
+        "parentValue": 3,
+        "unit": "MONTH",
+        "units": [
+          "DAY",
+          "WEEK",
+          "MONTH"
+        ],
+        "value": 3
+      },
+      "hidden": false,
+      "maximum": {
+        "overriden": false,
+        "parentUnit": "MONTH",
+        "parentValue": 4,
+        "unit": "MONTH",
+        "units": [
+          "DAY",
+          "WEEK",
+          "MONTH"
+        ],
+        "value": 4
+      },
+      "readonly": false,
+      "type": "UNIT_SIZE_ALL",
+      "unlimited": {
+        "parentValue": false,
+        "supported": true,
+        "value": false
+      }
+    },
+    "parentIdentifier": "UPLOAD_REQUEST",
+    "readonly": false,
+    "type": "UNIT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentUnit": "DAY",
+        "parentValue": 7,
+        "unit": "DAY",
+        "units": [
+          "DAY",
+          "WEEK",
+          "MONTH"
+        ],
+        "value": 7
+      },
+      "hidden": false,
+      "maximum": {
+        "overriden": false,
+        "parentUnit": "DAY",
+        "parentValue": 21,
+        "unit": "DAY",
+        "units": [
+          "DAY",
+          "WEEK",
+          "MONTH"
+        ],
+        "value": 21
+      },
+      "readonly": false,
+      "type": "UNIT_SIZE_ALL",
+      "unlimited": {
+        "parentValue": false,
+        "supported": true,
+        "value": false
+      }
+    },
+    "parentIdentifier": "UPLOAD_REQUEST",
+    "readonly": false,
+    "type": "UNIT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentUnit": "MEGA",
+        "parentValue": 500,
+        "unit": "MEGA",
+        "units": [
+          "KILO",
+          "MEGA",
+          "GIGA"
+        ],
+        "value": 500
+      },
+      "hidden": false,
+      "maximum": {
+        "overriden": false,
+        "parentUnit": "MEGA",
+        "parentValue": 1000,
+        "unit": "MEGA",
+        "units": [
+          "KILO",
+          "MEGA",
+          "GIGA"
+        ],
+        "value": 1000
+      },
+      "readonly": false,
+      "type": "UNIT_TIME_ALL",
+      "unlimited": {
+        "parentValue": false,
+        "supported": true,
+        "value": false
+      }
+    },
+    "parentIdentifier": "UPLOAD_REQUEST",
+    "readonly": false,
+    "type": "UNIT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UPLOAD_REQUEST__MAXIMUM_FILE_COUNT",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": 10,
+        "value": 10
+      },
+      "hidden": false,
+      "maximum": {
+        "overriden": false,
+        "parentValue": 100,
+        "value": 100
+      },
+      "readonly": false,
+      "type": "INTEGER",
+      "unlimited": {
+        "supported": false
+      }
+    },
+    "parentIdentifier": "UPLOAD_REQUEST",
+    "readonly": false,
+    "type": "INTEGER"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UPLOAD_REQUEST__MAXIMUM_FILE_SIZE",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentUnit": "MEGA",
+        "parentValue": 10,
+        "unit": "MEGA",
+        "units": [
+          "KILO",
+          "MEGA",
+          "GIGA"
+        ],
+        "value": 10
+      },
+      "hidden": false,
+      "maximum": {
+        "overriden": false,
+        "parentUnit": "MEGA",
+        "parentValue": 20,
+        "unit": "MEGA",
+        "units": [
+          "KILO",
+          "MEGA",
+          "GIGA"
+        ],
+        "value": 20
+      },
+      "readonly": false,
+      "type": "UNIT_TIME_ALL",
+      "unlimited": {
+        "parentValue": false,
+        "supported": true,
+        "value": false
+      }
+    },
+    "parentIdentifier": "UPLOAD_REQUEST",
+    "readonly": false,
+    "type": "UNIT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": true,
+        "parentValue": false,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UPLOAD_REQUEST__NOTIFICATION_LANGUAGE",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": "ENGLISH",
+        "value": "ENGLISH"
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "LANGUAGE"
+    },
+    "parentIdentifier": "UPLOAD_REQUEST",
+    "readonly": false,
+    "type": "ENUM_LANG"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UPLOAD_REQUEST__PROTECTED_BY_PASSWORD",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
+    },
+    "parentIdentifier": "UPLOAD_REQUEST",
+    "readonly": false,
+    "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": true,
+        "parentValue": false,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "WORK_GROUP",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "WORK_GROUP__CREATION_RIGHT",
+    "parentIdentifier": "WORK_GROUP",
+    "readonly": false,
+    "type": "DEFAULT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "WORK_GROUP__DOWNLOAD_ARCHIVE",
+    "parameter": {
+      "hidden": false,
+      "maximum": {
+        "overriden": false,
+        "parentUnit": "MEGA",
+        "parentValue": 900,
+        "unit": "MEGA",
+        "units": [
+          "KILO",
+          "MEGA",
+          "GIGA"
+        ],
+        "value": 900
+      },
+      "readonly": false,
+      "type": "UNIT_TIME_MAX",
+      "unlimited": {
+        "parentValue": false,
+        "supported": true,
+        "value": false
+      }
+    },
+    "parentIdentifier": "WORK_GROUP",
+    "readonly": false,
+    "type": "UNIT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "delegationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "WORK_GROUP__FILE_VERSIONING",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
+    },
+    "parentIdentifier": "WORK_GROUP",
+    "readonly": false,
+    "type": "BOOLEAN"
+  }
 ]
