@@ -26,7 +26,7 @@ $ pytest -vv --color=yes linshare_core_tests/  -k test_config -s
 
 $ pytest -vv --color=yes --log-level=DEBUG linshare_core_tests
 or
-$ pytest -vv --color=yes --log-level=DEBUG linshare_core_tests/test_admin_v5_functionalities.py
+$ pytest -vv --color=yes --log-level=DEBUG linshare_core_tests/admin/v5/test_functionalities.py
 or
 $ pytest -vv --color=yes --log-level=DEBUG linshare_core_tests -k test_find_all_functionalites_and_subs
 
