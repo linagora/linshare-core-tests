@@ -221,6 +221,34 @@ def test_update_functionality_share_expiration_parameters(
     assert not DeepDiff(orig, output)
 
 
+def test_update_functionality_guest_expiration_parameters(
+        request_helper, base_url):
+    """Test of parameters updates"""
+    query_url = '{baseUrl}/domains/{domain}/functionalities/{identifier}'
+    query_url = query_url.format_map({
+        'domain': "LinShareRootDomain",
+        'baseUrl': base_url,
+        'identifier': 'GUESTS__EXPIRATION'
+    })
+    orig = request_helper.get(query_url)
+    log = logging.getLogger('tests.funcs')
+    log.debug("functionalities: %s", orig)
+    assert orig
+    # changing some values
+    orig['parameter']['defaut']['value'] = 6
+    orig['parameter']['defaut']['unit'] = "WEEK"
+    orig['parameter']['maximum']['value'] = -1
+    orig['parameter']['maximum']['unit'] = "WEEK"
+    # sending data to the server
+    output = request_helper.put(
+        query_url, orig,
+        expected_status=400,
+        busines_err_code=14001
+    )
+    log.debug("output:type:: %s", type(output))
+    assert output
+
+
 def test_find_functionality_upload_request__protected_by_password(
         request_helper, base_url):
     """Testing find of a Boolean Functionality"""
