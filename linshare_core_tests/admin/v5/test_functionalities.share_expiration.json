@@ -76,7 +76,7 @@
       "value": 4
     },
     "readonly": false,
-    "type": "UNIT_SIZE_ALL",
+    "type": "UNIT_TIME_ALL",
     "unlimited": {
       "parentValue": false,
       "supported": true,
