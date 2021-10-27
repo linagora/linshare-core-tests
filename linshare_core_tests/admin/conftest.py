@@ -284,3 +284,61 @@ def fixture_create_remote_server(request_helper, base_url, admin_cfg):
         'uuid': server['uuid']
     })
     request_helper.delete(query_url)
+
+
+@pytest.fixture(scope="module", name="new_user_filter")
+def fixture_create_user_filter(request_helper, base_url):
+    """Create domain user filter."""
+    auth_command = (
+        "ldap.search(domain, \"(&(objectClass=inetOrgPerson) "
+        "(mail=*)(givenName=*)(sn=*)(|(mail=\"+login+\") "
+        "(uid=\"+login+\")))\");"
+    )
+    search_user_command = (
+        "ldap.search(domain, "
+        "\"(&(objectClass=inetOrgPerson) "
+        "(mail=\"+mail+\")(givenName=\"+first_name+\") "
+        "(sn=\"+last_name+\"))\");"
+    )
+    ac_on_all_attributes = (
+        "ldap.search(domain, "
+        " \"(&(objectClass=inetOrgPerson)(mail=*) "
+        "(givenName=*)(sn=*) "
+        "(|(mail=\" + pattern + \")(sn=\" + pattern + \") "
+        "(givenName=\" + pattern + \")))\");"
+    )
+    ac_on_first_and_last_name = (
+        "ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=*) "
+        "(givenName=*)(sn=*) "
+        "(|(&(sn=\" + first_name + \") "
+        "(givenName=\" + last_name + \"))"
+        "(&(sn=\" + last_name + \") "
+        "(givenName=\" + first_name + \"))))\");"
+    )
+    payload = {
+        "description": "Test domain workgroup filter",
+        "name": "User filter name",
+        "authenticationQuery": auth_command,
+        "searchUserQuery": search_user_command,
+        "userMailAttribute": "mail",
+        "userFirstNameAttribute": "givenName",
+        "userLastNameAttribute": "sn",
+        "userUidAttribute": "uid",
+        "autoCompleteCommandOnAllAttributes": ac_on_all_attributes,
+        "autoCompleteCommandOnFirstAndLastName": ac_on_first_and_last_name,
+        "searchPageSize": 100,
+        "searchSizeLimit": 100,
+        "completionPageSize": 10,
+        "completionSizeLimit": 10
+    }
+    query_url = '{baseUrl}/user_filters'.format_map({'baseUrl': base_url})
+    user_filter = request_helper.post(query_url, payload)
+    assert user_filter['userMailAttribute'] == "mail"
+
+    yield user_filter
+
+    query_url = '{baseUrl}/user_filters/{userFilterUuid}'.format_map({
+        'baseUrl': base_url,
+        'userFilterUuid': user_filter['uuid']
+    })
+    request_helper.delete(query_url)
