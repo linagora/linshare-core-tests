@@ -12,6 +12,7 @@ def create_remote_server(request_helper, base_url):
         "name": "new connection",
         "bindDn": "cn=linshare,dc=linshare,dc=org",
         "url": "ldap://172.17.0.1:1389",
+        "serverType": "LDAP",
         "bindPassword": "linshare"
     }
     query_url = '{baseUrl}/remote_servers'.format_map({'baseUrl': base_url})

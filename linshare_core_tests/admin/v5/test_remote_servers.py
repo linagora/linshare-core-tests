@@ -20,6 +20,7 @@ def test_create_remote_server(request_helper, base_url, admin_cfg):
     local_ldap_password = admin_cfg['DEFAULT']['local_ldap_password']
     payload = {
         "name": "new connection",
+        "serverType": "LDAP",
         "bindDn": local_ldap_user_dn,
         "url": local_ldap_url,
         "bindPassword": local_ldap_password,
@@ -52,6 +53,7 @@ def test_create_remote_server_without_binddn_and_pwd(
     """Test admin create remote server."""
     payload = {
         "name": "new connection",
+        "serverType": "LDAP",
         "url": admin_cfg['DEFAULT']['local_ldap_url']
     }
     query_url = '{baseUrl}/remote_servers'.format_map({
@@ -90,6 +92,7 @@ def test_delete_remote_server_with_payload(
     # Given
     payload = {
         "name": "new connection",
+        "serverType": "LDAP",
         "bindDn": admin_cfg['DEFAULT']['local_ldap_user_dn'],
         "url": admin_cfg['DEFAULT']['local_ldap_url'],
         "bindPassword": admin_cfg['DEFAULT']['local_ldap_password']
@@ -100,14 +103,16 @@ def test_delete_remote_server_with_payload(
     server = request_helper.post(query_url, payload)
 
     # When
-    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': server['uuid']
+    query_url = '{baseUrl}/remote_servers'.format_map({
+        'baseUrl': base_url
     })
     payload = {
         "name": "new connection",
-        "bindDn": server['bindDn'],
-        "url": server['url'],
+        'uuid': server['uuid'],
+        "serverType": "LDAP",
+        "bindDn": admin_cfg['DEFAULT']['local_ldap_user_dn'],
+        "url": admin_cfg['DEFAULT']['local_ldap_url'],
+        "bindPassword": admin_cfg['DEFAULT']['local_ldap_password']
     }
     request_helper.delete(query_url, payload)
 
@@ -125,6 +130,7 @@ def test_delete_remote_server_no_payload(
     # Given
     payload = {
         "name": "new connection",
+        "serverType": "LDAP",
         "bindDn": admin_cfg['DEFAULT']['local_ldap_user_dn'],
         "url": admin_cfg['DEFAULT']['local_ldap_url'],
         "bindPassword": admin_cfg['DEFAULT']['local_ldap_password']
@@ -157,6 +163,7 @@ def test_update_remote_servers(request_helper, base_url, remote_server):
     })
     payload = {
         "name": "updated connection name",
+        "serverType": "LDAP",
         "bindDn": remote_server['bindDn'],
         "url": remote_server['url'],
         "bindPassword": 'test'
@@ -184,6 +191,7 @@ def test_update_remote_servers_without_binddn_and_pwd(
     })
     payload = {
         "name": "updated connection name",
+        "serverType": "LDAP",
         "url": remote_server['url'],
     }
     request_helper.put(query_url, payload)

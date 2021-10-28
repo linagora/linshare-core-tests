@@ -267,6 +267,7 @@ def fixture_create_remote_server(request_helper, base_url, admin_cfg):
     """Create a remote server."""
     payload = {
         "name": "new remote server",
+        "serverType": "LDAP",
         "bindDn": admin_cfg['DEFAULT']['local_ldap_user_dn'],
         "url": admin_cfg['DEFAULT']['local_ldap_url'],
         "bindPassword": admin_cfg['DEFAULT']['local_ldap_password']
