@@ -104,6 +104,9 @@ def test_update_functionality_share_expiration_ap(request_helper, base_url):
     # comparing sent payload with payload sent back by the update method
     # before / after
     assert not DeepDiff(orig, output)
+    # comparing update payload with get payload
+    new = request_helper.get(query_url)
+    assert not DeepDiff(new, output)
 
 
 def test_update_functionality_share_expiration_cp_false(
@@ -132,6 +135,9 @@ def test_update_functionality_share_expiration_cp_false(
     # comparing sent payload with payload sent back by the update method
     # before / after
     assert not DeepDiff(orig, output)
+    # comparing update payload with get payload
+    new = request_helper.get(query_url)
+    assert not DeepDiff(new, output)
 
 
 def test_update_functionality_share_expiration_cp_true(
@@ -160,6 +166,9 @@ def test_update_functionality_share_expiration_cp_true(
     # comparing sent payload with payload sent back by the update method
     # before / after
     assert not DeepDiff(orig, output)
+    # comparing update payload with get payload
+    new = request_helper.get(query_url)
+    assert not DeepDiff(new, output)
 
 
 def test_update_functionality_share_expiration_dp(request_helper, base_url):
@@ -187,6 +196,9 @@ def test_update_functionality_share_expiration_dp(request_helper, base_url):
     # comparing sent payload with payload sent back by the update method
     # before / after
     assert not DeepDiff(orig, output)
+    # comparing update payload with get payload
+    new = request_helper.get(query_url)
+    assert not DeepDiff(new, output)
 
 
 def test_update_functionality_share_expiration_parameters(
@@ -219,6 +231,9 @@ def test_update_functionality_share_expiration_parameters(
     # comparing sent payload with payload sent back by the update method
     # before / after
     assert not DeepDiff(orig, output)
+    # comparing update payload with get payload
+    new = request_helper.get(query_url)
+    assert not DeepDiff(new, output)
 
 
 def test_update_functionality_guest_expiration_parameters(
@@ -299,3 +314,6 @@ def test_update_functionality_upload_request__protected_by_password(
     # comparing sent payload with payload sent back by the update method
     # before / after
     assert not DeepDiff(orig, output)
+    # comparing update payload with get payload
+    new = request_helper.get(query_url)
+    assert not DeepDiff(new, output)
