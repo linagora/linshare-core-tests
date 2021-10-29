@@ -59,6 +59,8 @@ pylint_badge:
     - mkdir -p badges pylint-report
     - echo undefined > badges/$CI_JOB_NAME.score
     - pip install pylint-gitlab
+    - pip install pylint pytest
+    - pip install -r requirements.txt
   script:
     - pylint --disable=R0801 --exit-zero --output-format=text $(find ./linshare_core_tests/ -type f -name "*.py") | tee /tmp/pylint.txt
     - sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' /tmp/pylint.txt > badges/$CI_JOB_NAME.score
