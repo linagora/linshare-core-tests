@@ -115,13 +115,7 @@ def fixture_reset(base_url, request_helper):
             'identifier': func['identifier']
         })
         log.debug("reset functionality: %s", func)
-        if func['identifier'] not in [
-                "COMPLETION",
-                "UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION",
-                "UPLOAD_REQUEST__MAXIMUM_FILE_COUNT",
-                "WORK_GROUP__DOWNLOAD_ARCHIVE",
-                ]:
-            request_helper.put(query_url, func)
+        request_helper.put(query_url, func)
 
 
 class TestWithUpdates:
