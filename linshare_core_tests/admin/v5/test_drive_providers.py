@@ -198,3 +198,17 @@ def test_update(request_helper, base_url):
     log.debug("drive provider update: %s", data)
     assert data
     assert data['driveFilter']['name'] == entity['driveFilter']['name']
+
+
+def test_find_domains_using_drive_filter(request_helper, base_url):
+    """Test find domains using drive filter"""
+    entity = create_drive_provider(request_helper, base_url)
+    query_url = '{baseUrl}/drive_filters/{filter_uuid}/domains'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'filter_uuid': entity['driveFilter']['uuid'],
+    })
+    data = request_helper.get(query_url)
+    assert data
+    assert data[0]['name'] == entity['domain']['name']
+    assert data[0]['uuid'] == entity['domain']['uuid']
