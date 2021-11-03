@@ -336,3 +336,40 @@ class TestWithUpdates:
         # comparing update payload with get payload
         new = request_helper.get(query_url)
         assert not DeepDiff(new, output)
+
+    def test_update_functionality_completion(
+            self, reset, request_helper, base_url):
+        """Testing update of a Integer Functionality"""
+        query_url = '{baseUrl}/domains/{domain}/functionalities/{identifier}'
+        query_url = query_url.format_map({
+            'domain': "LinShareRootDomain",
+            'baseUrl': base_url,
+            'identifier': 'COMPLETION'
+        })
+        orig = request_helper.get(query_url)
+        log = logging.getLogger('tests.funcs')
+        log.debug("orig: %s", orig)
+        log.debug("orig: %s", json.dumps(orig, sort_keys=True, indent=2))
+        assert orig
+        # changing some values
+        orig['configurationPolicy']['allowOverride']['value'] = False
+        orig['configurationPolicy']['enable']['value'] = False
+        # orig['parameter']['defaut']['value'] = True
+        # sending data to the server
+        output = request_helper.put(query_url, orig)
+        log.debug("output: %s", output)
+        assert output
+        log.debug("output: %s", json.dumps(output, sort_keys=True, indent=2))
+        # changing the sent payload with what we are expecting.
+        orig['configurationPolicy']['allowOverride']['overriden'] = True
+        orig['configurationPolicy']['enable']['overriden'] = True
+        # Parent value is equal to current value on the root domain.
+        # orig['parameter']['defaut']['parentValue'] = True
+        log.debug(
+            "orig patched: %s", json.dumps(orig, sort_keys=True, indent=2))
+        # comparing sent payload with payload sent back by the update method
+        # before / after
+        assert not DeepDiff(orig, output)
+        # comparing update payload with get payload
+        new = request_helper.get(query_url)
+        assert not DeepDiff(new, output)
