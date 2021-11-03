@@ -245,7 +245,7 @@ class TestWithUpdates:
 
     def test_update_functionality_share_expiration_parameters(
             self, reset, request_helper, base_url):
-        """Test of parameters updates"""
+        """Test of parameters updates,  time unit"""
         query_url = '{baseUrl}/domains/{domain}/functionalities/{identifier}'
         query_url = query_url.format_map({
             'domain': "LinShareRootDomain",
@@ -365,6 +365,50 @@ class TestWithUpdates:
         orig['configurationPolicy']['enable']['overriden'] = True
         # Parent value is equal to current value on the root domain.
         # orig['parameter']['defaut']['parentValue'] = True
+        log.debug(
+            "orig patched: %s", json.dumps(orig, sort_keys=True, indent=2))
+        # comparing sent payload with payload sent back by the update method
+        # before / after
+        assert not DeepDiff(orig, output)
+        # comparing update payload with get payload
+        new = request_helper.get(query_url)
+        assert not DeepDiff(new, output)
+
+    def test_update_functionality_upload_request__maximum_deposit_size(
+            self, reset, request_helper, base_url):
+        """Testing update of a File size Functionality"""
+        query_url = '{baseUrl}/domains/{domain}/functionalities/{identifier}'
+        query_url = query_url.format_map({
+            'domain': "LinShareRootDomain",
+            'baseUrl': base_url,
+            'identifier': 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE'
+        })
+        orig = request_helper.get(query_url)
+        log = logging.getLogger('tests.funcs')
+        log.debug("orig: %s", orig)
+        log.debug("orig: %s", json.dumps(orig, sort_keys=True, indent=2))
+        assert orig
+        # changing some values
+        orig['configurationPolicy']['allowOverride']['value'] = False
+        orig['configurationPolicy']['enable']['value'] = False
+        # changing some values
+        orig['parameter']['defaut']['value'] = 6
+        orig['parameter']['defaut']['unit'] = "GIGA"
+        orig['parameter']['maximum']['value'] = 7
+        orig['parameter']['maximum']['unit'] = "GIGA"
+        # sending data to the server
+        output = request_helper.put(query_url, orig)
+        log.debug("output: %s", output)
+        assert output
+        log.debug("output: %s", json.dumps(output, sort_keys=True, indent=2))
+        # changing the sent payload with what we are expecting.
+        orig['configurationPolicy']['allowOverride']['overriden'] = True
+        orig['configurationPolicy']['enable']['overriden'] = True
+        # Parent value is equal to current value on the root domain.
+        orig['parameter']['defaut']['parentValue'] = 6
+        orig['parameter']['maximum']['parentValue'] = 7
+        orig['parameter']['defaut']['parentUnit'] = "GIGA"
+        orig['parameter']['maximum']['parentUnit'] = "GIGA"
         log.debug(
             "orig patched: %s", json.dumps(orig, sort_keys=True, indent=2))
         # comparing sent payload with payload sent back by the update method
