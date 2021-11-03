@@ -218,14 +218,15 @@ def test_update(request_helper, base_url):
     assert data['userFilter']['name'] == entity['userFilter']['name']
 
 
-def create_test_oidc_up(request_helper, base_url, domain, dmDiscri):
+def create_test_oidc_up(request_helper, base_url, domain, dm_discri):
+    '''Helper to create OIDC user provider'''
     query_url = '{base_url}/domains/{uuid}/user_providers'.format_map({
         'base_url': base_url,
         'uuid': domain['uuid']
     })
     payload = {
         "type": "OIDC_PROVIDER",
-        "domainDiscriminator": dmDiscri,
+        "domainDiscriminator": dm_discri,
         "checkExternalUserID": True
     }
     provider = request_helper.post(query_url, payload)
@@ -233,15 +234,16 @@ def create_test_oidc_up(request_helper, base_url, domain, dmDiscri):
 
 
 def test_create_oidc_user_provider(request_helper, base_url):
-    dm = create_domain(request_helper, base_url)
-    provider = create_test_oidc_up(request_helper, base_url, dm, "DOM_TO_1")
+    '''Test create OIDC user provider'''
+    dom = create_domain(request_helper, base_url)
+    provider = create_test_oidc_up(request_helper, base_url, dom, "DOM_TO_1")
     assert provider
     assert provider['type'] == "OIDC_PROVIDER"
     assert provider['domainDiscriminator'] == "DOM_TO_1"
     query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'
     query_url = query_url.format_map({
         'base_url': base_url,
-        'uuid': dm['uuid'],
+        'uuid': dom['uuid'],
         'up_uuid': provider['uuid']
         })
     request_helper.delete(query_url)
@@ -249,12 +251,12 @@ def test_create_oidc_user_provider(request_helper, base_url):
 
 def test_fail_creating_two_oidc_ups(request_helper, base_url):
     '''Two_oidc_user_providers_with_same_domain_discriminator'''
-    dm = create_domain(request_helper, base_url, "DOM1")
-    first_up = create_test_oidc_up(request_helper, base_url, dm, "DOM_TO_2")
-    otherDomain = create_domain(request_helper, base_url, name="OtherDomain")
+    dom = create_domain(request_helper, base_url, "DOM1")
+    first_up = create_test_oidc_up(request_helper, base_url, dom, "DOM_TO_2")
+    new_dom = create_domain(request_helper, base_url, name="OtherDomain")
     query_url = '{base_url}/domains/{uuid}/user_providers'.format_map({
         'base_url': base_url,
-        'uuid': otherDomain['uuid']
+        'uuid': new_dom['uuid']
     })
     payload = {
         "type": "OIDC_PROVIDER",
@@ -265,18 +267,19 @@ def test_fail_creating_two_oidc_ups(request_helper, base_url):
     query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'
     query_url = query_url.format_map({
         'base_url': base_url,
-        'uuid': dm['uuid'],
+        'uuid': dom['uuid'],
         'up_uuid': first_up['uuid']
         })
     request_helper.delete(query_url)
 
 
 def test_update_oidc_up(request_helper, base_url):
-    dm = create_domain(request_helper, base_url)
-    provider = create_test_oidc_up(request_helper, base_url, dm, "DOM_TO_3")
+    '''Update OIDC user provider'''
+    dom = create_domain(request_helper, base_url)
+    provider = create_test_oidc_up(request_helper, base_url, dom, "DOM_TO_3")
     url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'.format_map({
         'base_url': base_url,
-        'uuid': dm['uuid'],
+        'uuid': dom['uuid'],
         'up_uuid': provider['uuid']
     })
     provider['checkExternalUserID'] = True
@@ -293,7 +296,7 @@ def test_update_oidc_up(request_helper, base_url):
     query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'
     query_url = query_url.format_map({
         'base_url': base_url,
-        'uuid': dm['uuid'],
+        'uuid': dom['uuid'],
         'up_uuid': provider['uuid']
         })
     request_helper.delete(query_url)
@@ -301,12 +304,12 @@ def test_update_oidc_up(request_helper, base_url):
 
 def test_update_oidc_up_same_domain_discriminator(request_helper, base_url):
     '''test updated provider with same domain descriminator'''
-    dm = create_domain(request_helper, base_url)
-    provider = create_test_oidc_up(request_helper, base_url, dm, "DOM_TO_31")
+    dom = create_domain(request_helper, base_url)
+    provider = create_test_oidc_up(request_helper, base_url, dom, "DOM_TO_31")
     query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'
     query_url = query_url.format_map({
         'base_url': base_url,
-        'uuid': dm['uuid'],
+        'uuid': dom['uuid'],
         'up_uuid': provider['uuid']
     })
     provider['domainDiscriminator'] = "DOM_TO_31"
@@ -315,7 +318,7 @@ def test_update_oidc_up_same_domain_discriminator(request_helper, base_url):
     query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'
     query_url = query_url.format_map({
         'base_url': base_url,
-        'uuid': dm['uuid'],
+        'uuid': dom['uuid'],
         'up_uuid': provider['uuid']
         })
     request_helper.delete(query_url)
@@ -325,12 +328,12 @@ def test_fail_update_oidc_up_with_dm_discri_used(request_helper, base_url):
     '''Fail update oidc user provider when domain discriminator used'''
     new_dm = create_domain(request_helper, base_url, name="newDm")
     create_test_oidc_up(request_helper, base_url, new_dm, "NewDmDiscri")
-    dm = create_domain(request_helper, base_url, name="DOM")
-    provider = create_test_oidc_up(request_helper, base_url, dm, "DOM_TO_32")
+    dom = create_domain(request_helper, base_url, name="DOM")
+    provider = create_test_oidc_up(request_helper, base_url, dom, "DOM_TO_32")
     query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'
     query_url = query_url.format_map({
         'base_url': base_url,
-        'uuid': dm['uuid'],
+        'uuid': dom['uuid'],
         'up_uuid': provider['uuid']
     })
     provider['domainDiscriminator'] = "NewDmDiscri"
@@ -340,19 +343,20 @@ def test_fail_update_oidc_up_with_dm_discri_used(request_helper, base_url):
     query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'
     query_url = query_url.format_map({
         'base_url': base_url,
-        'uuid': dm['uuid'],
+        'uuid': dom['uuid'],
         'up_uuid': provider['uuid']
         })
     request_helper.delete(query_url)
 
 
 def test_delete_oidc_up(request_helper, base_url):
-    dm = create_domain(request_helper, base_url)
-    provider = create_test_oidc_up(request_helper, base_url, dm, "DOM_TO_4")
+    '''Delete OIDC user provider'''
+    dom = create_domain(request_helper, base_url)
+    provider = create_test_oidc_up(request_helper, base_url, dom, "DOM_TO_4")
     query_url = '{base_url}/domains/{uuid}/user_providers'
     query_url = query_url.format_map({
         'base_url': base_url,
-        'uuid': dm['uuid']
+        'uuid': dom['uuid']
     })
     provider = request_helper.delete(query_url, provider)
     query_url = '{baseUrl}/domains/{uuid}/user_providers/{provider_uuid}'
@@ -365,12 +369,13 @@ def test_delete_oidc_up(request_helper, base_url):
 
 
 def test_delete_oidc_up2(request_helper, base_url):
-    dm = create_domain(request_helper, base_url)
-    provider = create_test_oidc_up(request_helper, base_url, dm, "DOM_TO_5")
+    '''Delete OIDC user provider using uuid in url'''
+    dom = create_domain(request_helper, base_url)
+    provider = create_test_oidc_up(request_helper, base_url, dom, "DOM_TO_5")
     query_url = '{base_url}/domains/{uuid}/user_providers/{up_uuid}'
     query_url = query_url.format_map({
         'base_url': base_url,
-        'uuid': dm['uuid'],
+        'uuid': dom['uuid'],
         'up_uuid': provider['uuid']
         })
     request_helper.delete(query_url)
