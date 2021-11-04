@@ -417,3 +417,61 @@ class TestWithUpdates:
         # comparing update payload with get payload
         new = request_helper.get(query_url)
         assert not DeepDiff(new, output)
+
+
+@pytest.mark.domain_data("MyDomainForFunc")
+def test_delete_functionality_upload_request__maximum_deposit_size(
+        domain, request_helper, base_url):
+    """Testing reset of a File size Functionality"""
+    query_url = '{baseUrl}/domains/{domain}/functionalities/{identifier}'
+    query = query_url.format_map({
+        'domain': domain['uuid'],
+        'baseUrl': base_url,
+        'identifier': 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE'
+    })
+    orig = request_helper.get(query)
+    log = logging.getLogger('tests.funcs')
+    log.debug("orig: %s", orig)
+    log.debug("orig: %s", json.dumps(orig, sort_keys=True, indent=2))
+    assert orig
+    # changing some values
+    orig['configurationPolicy']['allowOverride']['value'] = False
+    orig['configurationPolicy']['enable']['value'] = False
+    # changing some values
+    orig['parameter']['defaut']['value'] = 6
+    orig['parameter']['defaut']['unit'] = "GIGA"
+    orig['parameter']['maximum']['value'] = 7
+    orig['parameter']['maximum']['unit'] = "GIGA"
+    # sending data to the server
+    output = request_helper.put(query, orig)
+    log.debug("output: %s", output)
+    assert output
+    log.debug("output: %s", json.dumps(output, sort_keys=True, indent=2))
+    # changing the sent payload with what we are expecting.
+    orig['configurationPolicy']['allowOverride']['overriden'] = True
+    orig['configurationPolicy']['enable']['overriden'] = True
+    orig['parameter']['defaut']['overriden'] = True
+    orig['parameter']['maximum']['overriden'] = True
+    log.debug(
+        "orig patched: %s", json.dumps(orig, sort_keys=True, indent=2))
+    # comparing sent payload with payload sent back by the update method
+    # before / after
+    assert not DeepDiff(orig, output)
+
+    # getting parent func from server
+    query = query_url.format_map({
+        'domain': 'LinShareRootDomain',
+        'baseUrl': base_url,
+        'identifier': 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE'
+    })
+    parent_func = request_helper.get(query)
+
+    query = query_url.format_map({
+        'domain': domain['uuid'],
+        'baseUrl': base_url,
+        'identifier': 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE'
+    })
+    nested_func = request_helper.delete(query)
+    nested_func['domain']['uuid'] = 'LinShareRootDomain'
+    nested_func['domain']['name'] = 'LinShareRootDomain'
+    assert not DeepDiff(parent_func, nested_func)
