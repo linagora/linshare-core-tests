@@ -182,6 +182,7 @@ def test_find_should_work(request_helper, base_url, domain):
     log.debug("get response: %s", response)
     assert response
     assert response['uuid'] == welcome_message['uuid']
+    assert not response['assignedToCurrentDomain']
 
 
 def test_create_should_fail_when_domain_does_not_exists(
@@ -711,6 +712,68 @@ def test_put_assign_should_assign_when_true(request_helper, base_url, domain):
     response = request_helper.get(query_url)
     assert response
     assert response['welcomeMessage']['uuid'] == welcome_message['uuid']
+
+
+@pytest.mark.domain_data("MyDomain")
+def test_assignedtocurrentdomain_should_be_true_when_assigned(
+        request_helper, base_url, domain):
+    """Assigning a welcome message should assign when true"""
+    # Given
+    welcome_message = create_welcome_message(request_helper, base_url, domain)
+
+    # When
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}/assign'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid'],
+        'wmUuid': welcome_message['uuid']
+    })
+    payload = {
+        "assign": True
+    }
+    request_helper.put(query_url, payload)
+
+    # Then
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
+    response = request_helper.get(query_url)
+    assert response
+    assert response['assignedToCurrentDomain']
+
+
+@pytest.mark.domain_data("MyDomain")
+def test_assignedtocurrentdomain_should_be_false_when_not_assigned(
+        request_helper, base_url, domain):
+    """Assigning a welcome message should remove assign when false"""
+    # Given
+    welcome_message = create_welcome_message(request_helper, base_url, domain)
+
+    # When
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}/assign'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid'],
+        'wmUuid': welcome_message['uuid']
+    })
+    payload = {
+        "assign": False
+    }
+    request_helper.put(query_url, payload)
+
+    # Then
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
+    response = request_helper.get(query_url)
+    assert response
+    assert not response['assignedToCurrentDomain']
 
 
 @pytest.mark.domain_data("MyDomain")
