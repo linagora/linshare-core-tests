@@ -79,7 +79,7 @@ pylint_badge:
     when: always
 
 see-reports:
-  stage: package
+  stage: test
   image: alpine:latest
   tags:
     - docker
@@ -301,7 +301,7 @@ test-api-same-core-branch:
 
 build:
   <<: *build-docker-tpl
-  stage: package
+  stage: test
   tags:
     - docker
   variables:
