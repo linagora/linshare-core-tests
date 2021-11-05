@@ -243,7 +243,7 @@ class TestWithUpdates:
         new = request_helper.get(query_url)
         assert not DeepDiff(new, output)
 
-    def test_update_functionality_share_expiration_parameters(
+    def test_update_functionality_share_expiration_parameters_date(
             self, reset, request_helper, base_url):
         """Test of parameters updates,  time unit"""
         query_url = '{baseUrl}/domains/{domain}/functionalities/{identifier}'
@@ -270,6 +270,34 @@ class TestWithUpdates:
         orig['parameter']['defaut']['parentUnit'] = "WEEK"
         orig['parameter']['maximum']['parentValue'] = 9
         orig['parameter']['maximum']['parentUnit'] = "WEEK"
+        # comparing sent payload with payload sent back by the update method
+        # before / after
+        assert not DeepDiff(orig, output)
+        # comparing update payload with get payload
+        new = request_helper.get(query_url)
+        assert not DeepDiff(new, output)
+
+    def test_update_functionality_share_expiration_parameters_unlimited(
+            self, reset, request_helper, base_url):
+        """Test of updates of unlimited parameter,  time unit"""
+        query_url = '{baseUrl}/domains/{domain}/functionalities/{identifier}'
+        query_url = query_url.format_map({
+            'domain': "LinShareRootDomain",
+            'baseUrl': base_url,
+            'identifier': 'SHARE_EXPIRATION'
+        })
+        orig = request_helper.get(query_url)
+        log = logging.getLogger('tests.funcs')
+        log.debug("functionalities: %s", orig)
+        assert orig
+        # changing some values
+        orig['parameter']['unlimited']['value'] = True
+        # sending data to the server
+        output = request_helper.put(query_url, orig)
+        log.debug("output:type:: %s", type(output))
+        assert output
+        # changing the sent payload with what we are expecting.
+        orig['parameter']['unlimited']['parentValue'] = True
         # comparing sent payload with payload sent back by the update method
         # before / after
         assert not DeepDiff(orig, output)
