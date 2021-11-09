@@ -287,6 +287,32 @@ def fixture_create_remote_server(request_helper, base_url, admin_cfg):
     request_helper.delete(query_url)
 
 
+@pytest.fixture(scope="module", name="twake_remote_server")
+def fixture_create_twake_remote_server(request_helper, base_url):
+    """Create a Twake remote server."""
+    payload = {
+        "name": "Twake connection",
+        "url": "twake_url",
+        "serverType": "TWAKE",
+        "description": "Twake description",
+        "clientId": "twakeClientId",
+        "clientSecret": "twakeClientSecret"
+    }
+    query_url = '{baseUrl}/remote_servers'.format_map({
+        'baseUrl': base_url
+    })
+    server = request_helper.post(query_url, payload)
+    assert server
+
+    yield server
+
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': server['uuid']
+    })
+    request_helper.delete(query_url)
+
+
 @pytest.fixture(scope="module", name="new_user_filter")
 def fixture_create_user_filter(request_helper, base_url):
     """Create domain user filter."""

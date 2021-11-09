@@ -76,11 +76,54 @@ def test_create_remote_server_without_binddn_and_pwd(
     assert server['modificationDate']
 
 
+def test_create_twake_remote_server(request_helper, base_url):
+    """Test admin create Twake remote server."""
+    payload = {
+        "name": "Twake connection",
+        "url": "twake_url",
+        "serverType": "TWAKE",
+        "description": "Twake description",
+        "clientId": "twakeClientId",
+        "clientSecret": "twakeClientSecret"
+    }
+    query_url = '{baseUrl}/remote_servers'.format_map({
+        'baseUrl': base_url
+    })
+    created_server = request_helper.post(query_url, payload)
+
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': created_server['uuid']
+    })
+    server = request_helper.get(query_url)
+
+    assert server
+    assert server['uuid']
+    assert server['name'] == "Twake connection"
+    assert server['url'] == "twake_url"
+    assert server['serverType'] == "TWAKE"
+    assert server['clientId'] == "twakeClientId"
+    assert server['clientSecret'] == "twakeClientSecret"
+    assert server['creationDate']
+    assert server['modificationDate']
+
+
 def test_find_remote_servers(request_helper, base_url, remote_server):
     """Test admin find remote server."""
     query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
         'baseUrl': base_url,
         'uuid': remote_server['uuid']
+    })
+    server = request_helper.get(query_url)
+    assert server
+
+
+def test_find_twake_remote_servers(
+        request_helper, base_url, twake_remote_server):
+    """Test admin find Twake remote server."""
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': twake_remote_server['uuid']
     })
     server = request_helper.get(query_url)
     assert server
@@ -155,6 +198,78 @@ def test_delete_remote_server_no_payload(
     request_helper.get(query_url, expected_status=404)
 
 
+def test_delete_twake_remote_server_with_payload(
+        request_helper, base_url):
+    """Test admin delete Twake remote server."""
+    # Given
+    payload = {
+        "name": "Twake connection",
+        "url": "twake_url",
+        "serverType": "TWAKE",
+        "description": "Twake description",
+        "clientId": "twakeClientId",
+        "clientSecret": "twakeClientSecret"
+    }
+    query_url = '{baseUrl}/remote_servers'.format_map({
+        'baseUrl': base_url
+    })
+    server = request_helper.post(query_url, payload)
+
+    # When
+    query_url = '{baseUrl}/remote_servers'.format_map({
+        'baseUrl': base_url
+    })
+    payload = {
+        "name": "Twake connection",
+        'uuid': server['uuid'],
+        "url": "twake_url",
+        "serverType": "TWAKE",
+        "description": "Twake description",
+        "clientId": "twakeClientId",
+        "clientSecret": "twakeClientSecret"
+    }
+    request_helper.delete(query_url, payload)
+
+    # Then
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': server['uuid']
+    })
+    request_helper.get(query_url, expected_status=404)
+
+
+def test_delete_twake_remote_server_no_payload(
+        request_helper, base_url):
+    """Test admin delete Twake remote server no payload."""
+    # Given
+    payload = {
+        "name": "Twake connection",
+        "url": "twake_url",
+        "serverType": "TWAKE",
+        "description": "Twake description",
+        "clientId": "twakeClientId",
+        "clientSecret": "twakeClientSecret"
+    }
+    query_url = '{baseUrl}/remote_servers'.format_map({
+        'baseUrl': base_url
+    })
+    server = request_helper.post(query_url, payload)
+
+    # When
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': server['uuid']
+    })
+    request_helper.delete(query_url)
+
+    # Then
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': server['uuid']
+    })
+    request_helper.get(query_url, expected_status=404)
+
+
 def test_update_remote_servers(request_helper, base_url, remote_server):
     """Test admin update remote server."""
     query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
@@ -204,3 +319,33 @@ def test_update_remote_servers_without_binddn_and_pwd(
 
     assert server
     assert server['name'] == payload['name']
+
+
+def test_update_twake_remote_servers(
+        request_helper, base_url, twake_remote_server):
+    """Test admin update Twake remote server."""
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': twake_remote_server['uuid']
+    })
+    payload = {
+        "name": "New Twake connection",
+        "url": "twake_url",
+        "serverType": "TWAKE",
+        "description": "New Twake description",
+        "clientId": "twakeClientId",
+        "clientSecret": "newTwakeClientSecret"
+    }
+    request_helper.put(query_url, payload)
+
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': twake_remote_server['uuid']
+    })
+    srv = request_helper.get(query_url)
+
+    assert srv
+    assert srv['name'] == "New Twake connection"
+    assert srv['clientId'] == "twakeClientId"
+    assert srv['clientSecret'] == "newTwakeClientSecret"
+    assert twake_remote_server['modificationDate'] != srv['modificationDate']
