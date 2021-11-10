@@ -338,6 +338,23 @@ def test_delete_twake_remote_server_no_payload(
     request_helper.get(query_url, expected_status=404)
 
 
+def test_update_server_type_should_fail(
+        request_helper, base_url, remote_server):
+    """Test admin update remote server."""
+    query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': remote_server['uuid']
+    })
+    payload = {
+        "name": "updated connection name",
+        "serverType": "TWAKE",
+        "url": remote_server['url'],
+        "clientId": "twakeClientId",
+        "clientSecret": "newTwakeClientSecret"
+    }
+    request_helper.put(query_url, payload, expected_status=404)
+
+
 def test_update_remote_servers(request_helper, base_url, remote_server):
     """Test admin update remote server."""
     query_url = '{baseUrl}/remote_servers/{uuid}'.format_map({
@@ -346,10 +363,10 @@ def test_update_remote_servers(request_helper, base_url, remote_server):
     })
     payload = {
         "name": "updated connection name",
+        "url": "newUrl",
         "serverType": "LDAP",
-        "bindDn": remote_server['bindDn'],
-        "url": remote_server['url'],
-        "bindPassword": 'test'
+        "bindDn": "newBindDn",
+        "bindPassword": 'newBindPassword'
     }
     request_helper.put(query_url, payload)
 
@@ -361,6 +378,8 @@ def test_update_remote_servers(request_helper, base_url, remote_server):
 
     assert server
     assert server['name'] == payload['name']
+    assert server['url'] == payload['url']
+    assert server['bindDn'] == payload['bindDn']
     assert server['bindPassword'] == payload['bindPassword']
     assert remote_server['modificationDate'] != server['modificationDate']
 
@@ -398,7 +417,7 @@ def test_update_twake_remote_servers(
     })
     payload = {
         "name": "New Twake connection",
-        "url": "twake_url",
+        "url": "newTwakeUrl",
         "serverType": "TWAKE",
         "description": "New Twake description",
         "clientId": "twakeClientId",
@@ -413,7 +432,8 @@ def test_update_twake_remote_servers(
     srv = request_helper.get(query_url)
 
     assert srv
-    assert srv['name'] == "New Twake connection"
-    assert srv['clientId'] == "twakeClientId"
-    assert srv['clientSecret'] == "newTwakeClientSecret"
+    assert srv['name'] == payload['name']
+    assert srv['url'] == payload['url']
+    assert srv['clientId'] == payload['clientId']
+    assert srv['clientSecret'] == payload['clientSecret']
     assert twake_remote_server['modificationDate'] != srv['modificationDate']
