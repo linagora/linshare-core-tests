@@ -2188,7 +2188,9 @@
       "readonly": false,
       "type": "INTEGER_ALL",
       "unlimited": {
-        "supported": false
+        "parentValue": false,
+        "supported": true,
+        "value": false
       }
     },
     "parentIdentifier": "UPLOAD_REQUEST",
