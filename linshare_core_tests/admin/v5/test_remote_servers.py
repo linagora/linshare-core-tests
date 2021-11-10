@@ -3,7 +3,8 @@
 """Testing RemoteServers endpoints of adminv5 API."""
 
 
-def test_find_all_remote_servers(request_helper, base_url):
+def test_find_all_remote_servers(
+        request_helper, base_url, remote_server, twake_remote_server):
     """Test admin find all remote servers."""
     query_url = '{baseUrl}/remote_servers'.format_map({
         'baseUrl': base_url
@@ -11,6 +12,24 @@ def test_find_all_remote_servers(request_helper, base_url):
     servers = request_helper.get(query_url)
     assert servers
     assert len(servers) >= 1
+    for srv in servers:
+        if srv['uuid'] == remote_server['uuid']:
+            assert srv['serverType'] == remote_server['serverType']
+            assert srv['url'] == remote_server['url']
+            assert srv['name'] == remote_server['name']
+            assert srv['creationDate'] == remote_server['creationDate']
+            assert srv['modificationDate'] == remote_server['modificationDate']
+            assert srv['bindDn'] == remote_server['bindDn']
+            assert srv['bindPassword'] == remote_server['bindPassword']
+        if srv['uuid'] == twake_remote_server['uuid']:
+            assert srv['serverType'] == twake_remote_server['serverType']
+            assert srv['url'] == twake_remote_server['url']
+            assert srv['name'] == twake_remote_server['name']
+            assert srv['creationDate'] == twake_remote_server['creationDate']
+            assert srv['modificationDate'] == \
+                   twake_remote_server['modificationDate']
+            assert srv['clientId'] == twake_remote_server['clientId']
+            assert srv['clientSecret'] == twake_remote_server['clientSecret']
 
 
 def test_create_remote_server(request_helper, base_url, admin_cfg):
