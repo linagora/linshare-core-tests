@@ -2542,9 +2542,7 @@
       "readonly": false,
       "type": "UNIT_SIZE_MAX",
       "unlimited": {
-        "parentValue": false,
-        "supported": true,
-        "value": false
+        "supported": false
       }
     },
     "parentIdentifier": "WORK_GROUP",
