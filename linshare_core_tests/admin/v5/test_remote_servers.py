@@ -32,6 +32,55 @@ def test_find_all_remote_servers(
             assert srv['clientSecret'] == twake_remote_server['clientSecret']
 
 
+def test_find_all_remote_servers_should_order(
+        request_helper, base_url, twake_remote_server):
+    """Test admin find all remote servers should order by creation date."""
+    payload = {
+        "name": "Twake connection 2",
+        "url": "twake_url",
+        "serverType": "TWAKE",
+        "description": "Twake description",
+        "clientId": "twakeClientId2",
+        "clientSecret": "twakeClientSecret2"
+    }
+    query_url = '{baseUrl}/remote_servers'.format_map({
+        'baseUrl': base_url
+    })
+    twake_remote_server2 = request_helper.post(query_url, payload)
+    payload = {
+        "name": "Twake connection 3",
+        "url": "twake_url",
+        "serverType": "TWAKE",
+        "description": "Twake description",
+        "clientId": "twakeClientId3",
+        "clientSecret": "twakeClientSecret3"
+    }
+    query_url = '{baseUrl}/remote_servers'.format_map({
+        'baseUrl': base_url
+    })
+    twake_remote_server3 = request_helper.post(query_url, payload)
+
+    query_url = '{baseUrl}/remote_servers'.format_map({
+        'baseUrl': base_url
+    })
+    servers = request_helper.get(query_url)
+    assert servers
+    assert len(servers) >= 1
+    current_remote_server = 0
+    for srv in servers:
+        if srv['uuid'] == twake_remote_server['uuid']:
+            assert current_remote_server == 0
+            current_remote_server = 1
+        if srv['uuid'] == twake_remote_server2['uuid']:
+            assert current_remote_server == 1
+            current_remote_server = 2
+        if srv['uuid'] == twake_remote_server3['uuid']:
+            assert current_remote_server == 2
+            current_remote_server = 3
+
+    assert current_remote_server == 3
+
+
 def test_create_remote_server(request_helper, base_url, admin_cfg):
     """Test admin create remote server."""
     local_ldap_user_dn = admin_cfg['DEFAULT']['local_ldap_user_dn']
