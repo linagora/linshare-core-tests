@@ -1833,7 +1833,7 @@
       "maximum": {
         "overriden": false,
         "parentUnit": "MONTH",
-        "parentValue": -1,
+        "parentValue": 0,
         "type": "UNIT_TIME",
         "unit": "MONTH",
         "units": [
@@ -1841,7 +1841,7 @@
           "WEEK",
           "MONTH"
         ],
-        "value": -1
+        "value": 0
       },
       "readonly": false,
       "type": "UNIT_TIME_ALL",
