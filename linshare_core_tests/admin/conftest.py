@@ -369,3 +369,32 @@ def fixture_create_user_filter(request_helper, base_url):
         'userFilterUuid': user_filter['uuid']
     })
     request_helper.delete(query_url)
+
+
+@pytest.fixture(scope="class", name="twake_user_provider")
+def fixture_create_twake_user_provider(
+        request_helper, base_url, twake_remote_server, domain):
+    """Create a Twake user provider."""
+    query_url = '{baseUrl}/domains/{uuid}/user_providers'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid']
+    })
+    payload = {
+        "twakeServer": {
+            "uuid": twake_remote_server['uuid'],
+            "name": "Twake connection"
+        },
+        "twakeCompanyId": "TcId",
+        "type": "TWAKE_PROVIDER"
+    }
+    user_provider = request_helper.post(query_url, payload)
+    assert user_provider
+
+    yield user_provider
+
+    query_url = '{baseUrl}/domains/{uuid}/user_providers/{pid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid'],
+        'pid': user_provider['uuid']
+    })
+    request_helper.delete(query_url)
