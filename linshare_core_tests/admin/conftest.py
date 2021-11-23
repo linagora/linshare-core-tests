@@ -222,31 +222,6 @@ def fixture_create_domain(request, request_helper, base_url):
     request_helper.delete(query_url)
 
 
-@pytest.fixture(scope="module", name="guest_domain")
-def fixture_create_guest_domain(request_helper, base_url):
-    """This fixture is design to create a guest domain"""
-    query_url = '{baseUrl}/domains'.format_map({
-        'baseUrl': base_url,
-    })
-    payload = {
-        "parent": {"uuid": "LinShareRootDomain"},
-        "type": "GUESTDOMAIN",
-        "name": "MyGuestDomain",
-        "description": "Description of guest domain"
-    }
-    domain = request_helper.post(query_url, payload)
-    assert domain
-    assert domain['uuid']
-
-    yield domain
-
-    query_url = '{baseUrl}/domains/{uuid}'.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid']
-    })
-    request_helper.delete(query_url)
-
-
 @pytest.fixture(scope="module", name="new_group_filter")
 def fixture_create_group_filter(request_helper, base_url):
     """Create domain group filter."""

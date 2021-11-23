@@ -158,25 +158,6 @@ def test_create_twake(twake_user_provider):
     assert twake_user_provider['uuid']
 
 
-def test_create_twake_should_fail_on_guest_domain(
-        request_helper, base_url, guest_domain, twake_remote_server):
-    """Test admin create Twake user provider should fail on Guest domain."""
-    query_url = '{base_url}/domains/{uuid}/user_providers'.format_map({
-        'base_url': base_url,
-        'uuid': guest_domain['uuid']
-    })
-    payload = {
-        "twakeServer": {
-            "uuid": twake_remote_server['uuid'],
-            "name": "Twake connection"
-        },
-        "twakeCompanyId": "TcId",
-        "type": "TWAKE_PROVIDER"
-    }
-    request_helper.post(query_url, payload,
-                        expected_status=403, busines_err_code=38003)
-
-
 def test_find_all(request_helper, base_url):
     """Test admin find all created user providers"""
     entity = create_ldap_user_provider(request_helper, base_url)
