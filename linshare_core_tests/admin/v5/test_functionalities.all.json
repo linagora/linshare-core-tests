@@ -1024,6 +1024,20 @@
     "activationPolicy": {
       "allowOverride": {
         "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": true,
+      "readonly": true
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
         "parentValue": true,
         "value": true
       },
@@ -1035,26 +1049,12 @@
       "hidden": false,
       "readonly": false
     },
-    "configurationPolicy": {
-      "allowOverride": {
-        "overriden": false,
-        "parentValue": false,
-        "value": false
-      },
-      "enable": {
-        "overriden": false,
-        "parentValue": false,
-        "value": false
-      },
-      "hidden": true,
-      "readonly": true
-    },
     "domain": {
       "name": "LinShareRootDomain",
       "uuid": "LinShareRootDomain"
     },
     "hidden": false,
-    "identifier": "INTERNAL_CAN_UPLOAD",
+    "identifier": "INTERNAL_ENABLE_PERSONAL_SPACE",
     "parameter": {
       "defaut": {
         "overriden": false,
@@ -1062,8 +1062,8 @@
         "type": "BOOLEAN",
         "value": true
       },
-      "hidden": true,
-      "readonly": true,
+      "hidden": false,
+      "readonly": false,
       "type": "BOOLEAN"
     },
     "readonly": false,
