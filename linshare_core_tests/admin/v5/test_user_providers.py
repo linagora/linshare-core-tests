@@ -89,6 +89,23 @@ def create_domain(request_helper, base_url, name="TopDomainUserProvider"):
     return domain
 
 
+def create_guest_domain(
+        request_helper, base_url, name="TopDomainUserProvider"):
+    """Helper to create guest domain."""
+    query_url = '{base_url}/domains'.format_map({
+        'base_url': base_url,
+    })
+    payload = {
+        "parent": {"uuid": "LinShareRootDomain"},
+        "type": "GUESTDOMAIN",
+        "name": name,
+        "description": "Description of guest 'test user provider'"
+    }
+    domain = request_helper.post(query_url, payload)
+    assert domain['type'] == "GUESTDOMAIN"
+    return domain
+
+
 def create_ldap_user_provider(request_helper, base_url):
     """helper to create user provider."""
     ldap_server = create_remote_server(request_helper, base_url)
@@ -141,6 +158,28 @@ def create_twake_user_provider(request_helper, base_url, twake_remote_server):
     return user_provider
 
 
+def create_twake_guest_user_provider(
+        request_helper, base_url, twake_remote_server):
+    """helper to create Twake Guest user provider."""
+    domain = create_guest_domain(
+        request_helper, base_url, "TopDomainUserProvider")
+    query_url = '{base_url}/domains/{uuid}/user_providers'.format_map({
+        'base_url': base_url,
+        'uuid': domain['uuid']
+    })
+    payload = {
+        "twakeServer": {
+            "uuid": twake_remote_server['uuid'],
+            "name": "Twake connection"
+        },
+        "twakeCompanyId": "TcId",
+        "type": "TWAKE_GUEST_PROVIDER"
+    }
+    user_provider = request_helper.post(query_url, payload)
+    assert user_provider
+    return user_provider
+
+
 def test_create(request_helper, base_url):
     """Test admin create user provider."""
     log = logging.getLogger('tests.user.providers.test_create')
@@ -177,6 +216,33 @@ def test_create_twake_should_fail_on_guest_domain(
                         expected_status=403, busines_err_code=38003)
 
 
+def test_create_twake_guest(twake_guest_up):
+    """Test admin create Twake Guest user provider."""
+    assert twake_guest_up
+    assert twake_guest_up['type'] == 'TWAKE_GUEST_PROVIDER'
+    assert twake_guest_up['uuid']
+
+
+def test_create_twake_guest_should_fail_on_common_domain(
+        request_helper, base_url, domain, twake_remote_server):
+    """Test admin create Twake Guest user provider
+    should fail on non Guest domain."""
+    query_url = '{base_url}/domains/{uuid}/user_providers'.format_map({
+        'base_url': base_url,
+        'uuid': domain['uuid']
+    })
+    payload = {
+        "twakeServer": {
+            "uuid": twake_remote_server['uuid'],
+            "name": "Twake connection"
+        },
+        "twakeCompanyId": "TcId",
+        "type": "TWAKE_GUEST_PROVIDER"
+    }
+    request_helper.post(query_url, payload,
+                        expected_status=403, busines_err_code=38003)
+
+
 def test_find_all(request_helper, base_url):
     """Test admin find all created user providers"""
     entity = create_ldap_user_provider(request_helper, base_url)
@@ -208,8 +274,27 @@ def test_find_all_twake(request_helper, base_url, twake_user_provider):
     found = False
     for user_provider in user_providers:
         if user_provider['type'] == 'TWAKE_PROVIDER':
-            if user_provider['uuid'] == \
-                   twake_user_provider['uuid']:
+            if user_provider['uuid'] == twake_user_provider['uuid']:
+                found = True
+
+    assert found
+
+
+def test_find_all_twake_guest(request_helper, base_url, twake_guest_up):
+    """Test admin find all created user providers"""
+    query_url = '{baseUrl}/domains/{uuid}/user_providers'.format_map({
+        'baseUrl': base_url,
+        'uuid': twake_guest_up['domain']['uuid']
+    })
+    user_providers = request_helper.get(query_url)
+    log = logging.getLogger('tests.user.providers.test_find_all_twake_guest')
+    log.debug("user providers: %s", user_providers)
+    assert user_providers
+    assert len(user_providers) >= 1
+    found = False
+    for user_provider in user_providers:
+        if user_provider['type'] == 'TWAKE_GUEST_PROVIDER':
+            if user_provider['uuid'] == twake_guest_up['uuid']:
                 found = True
 
     assert found
@@ -242,6 +327,20 @@ def test_find_twake(request_helper, base_url, twake_user_provider):
     assert data
     assert data['type'] == 'TWAKE_PROVIDER'
     assert data['uuid'] == twake_user_provider['uuid']
+
+
+def test_find_twake_guest(request_helper, base_url, twake_guest_up):
+    """Test find existing Twake Guest user provider on API v5"""
+    query_url = '{baseUrl}/domains/{uuid}/user_providers/{pid}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': twake_guest_up['domain']['uuid'],
+        'pid': twake_guest_up['uuid']
+    })
+    data = request_helper.get(query_url)
+    assert data
+    assert data['type'] == 'TWAKE_GUEST_PROVIDER'
+    assert data['uuid'] == twake_guest_up['uuid']
 
 
 def test_delete(request_helper, base_url):
@@ -287,6 +386,27 @@ def test_delete_twake(request_helper, base_url, twake_remote_server):
     request_helper.get(query_url, expected_status=404)
 
 
+def test_delete_twake_guest(request_helper, base_url, twake_remote_server):
+    """Test admin delete domain Twake Guest user provider."""
+    entity = create_twake_guest_user_provider(
+        request_helper, base_url, twake_remote_server)
+    query_url = '{baseUrl}/domains/{uuid}/user_providers/{provider_uuid}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': entity['domain']['uuid'],
+        'provider_uuid': entity['uuid']
+    })
+    data = request_helper.delete(query_url)
+    assert data
+    query_url = '{baseUrl}/domains/{uuid}/user_providers/{pid}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': entity['domain']['uuid'],
+        'pid': entity['uuid']
+    })
+    request_helper.get(query_url, expected_status=404)
+
+
 def test_delete_payload(request_helper, base_url):
     """Test admin delete domain user provider."""
     log = logging.getLogger('tests.user.providers.test_delete')
@@ -310,6 +430,26 @@ def test_delete_payload(request_helper, base_url):
 def test_delete_payload_twake(request_helper, base_url, twake_remote_server):
     """Test admin delete domain Twake user provider."""
     entity = create_twake_user_provider(
+        request_helper, base_url, twake_remote_server)
+    query_url = '{baseUrl}/domains/{uuid}/user_providers'.format_map({
+        'baseUrl': base_url,
+        'uuid': entity['domain']['uuid'],
+    })
+    data = request_helper.delete(query_url, entity)
+    assert data
+    query_url = '{baseUrl}/domains/{uuid}/user_providers/{provider_uuid}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': entity['domain']['uuid'],
+        'provider_uuid': entity['uuid']
+    })
+    request_helper.get(query_url, expected_status=404)
+
+
+def test_delete_payload_twake_guest(
+        request_helper, base_url, twake_remote_server):
+    """Test admin delete domain Twake Guest user provider."""
+    entity = create_twake_guest_user_provider(
         request_helper, base_url, twake_remote_server)
     query_url = '{baseUrl}/domains/{uuid}/user_providers'.format_map({
         'baseUrl': base_url,
