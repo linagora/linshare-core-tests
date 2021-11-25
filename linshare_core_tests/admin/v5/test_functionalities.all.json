@@ -335,6 +335,62 @@
     "activationPolicy": {
       "allowOverride": {
         "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "COLLECTED_EMAILS_EXPIRATION",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentUnit": "DAY",
+        "parentValue": 8,
+        "type": "UNIT_TIME",
+        "unit": "DAY",
+        "units": [
+          "DAY",
+          "WEEK",
+          "MONTH"
+        ],
+        "value": 8
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "UNIT_TIME_DEFAULT"
+    },
+    "readonly": false,
+    "type": "UNIT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
         "parentValue": false,
         "value": false
       },
