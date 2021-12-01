@@ -1172,59 +1172,6 @@
       },
       "enable": {
         "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "hidden": false,
-      "readonly": false
-    },
-    "configurationPolicy": {
-      "allowOverride": {
-        "overriden": true,
-        "parentValue": false,
-        "value": true
-      },
-      "enable": {
-        "overriden": false,
-        "parentValue": false,
-        "value": false
-      },
-      "hidden": true,
-      "readonly": true
-    },
-    "delegationPolicy": {
-      "allowOverride": {
-        "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "enable": {
-        "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "hidden": false,
-      "readonly": false
-    },
-    "domain": {
-      "name": "LinShareRootDomain",
-      "uuid": "LinShareRootDomain"
-    },
-    "hidden": false,
-    "identifier": "JWT_PERMANENT_TOKEN__USER_MANAGEMENT",
-    "parentIdentifier": "JWT_PERMANENT_TOKEN",
-    "readonly": false,
-    "type": "DEFAULT"
-  },
-  {
-    "activationPolicy": {
-      "allowOverride": {
-        "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "enable": {
-        "overriden": false,
         "parentValue": false,
         "value": false
       },

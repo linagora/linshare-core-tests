@@ -38,7 +38,7 @@ def test_find_all_functionalites(request_helper, base_url):
     assert len([a['identifier'] for a in data]) == 18
 
 
-def test_find_all_functionalites_and_subs(request_helper, base_url):
+def test_find_all_functionalities_and_subs(request_helper, base_url):
     """Test find all functionalities for root domain on API v5"""
     encoded_url = urllib.parse.urlencode(
         {
@@ -55,7 +55,7 @@ def test_find_all_functionalites_and_subs(request_helper, base_url):
     log = logging.getLogger('tests.funcs.test_find_all_functionalites_and_sub')
     log.debug("functionalities: %s", data)
     assert data
-    assert len([a['identifier'] for a in data]) == 46
+    assert len([a['identifier'] for a in data]) == 45
     assert not DeepDiff(
         load_data_from_file("test_functionalities.all.json"),
         data
