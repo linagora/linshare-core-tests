@@ -741,46 +741,8 @@
       "uuid": "LinShareRootDomain"
     },
     "hidden": false,
-    "identifier": "DRIVE",
-    "readonly": false,
-    "type": "DEFAULT"
-  },
-  {
-    "activationPolicy": {
-      "allowOverride": {
-        "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "enable": {
-        "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "hidden": false,
-      "readonly": false
-    },
-    "configurationPolicy": {
-      "allowOverride": {
-        "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "enable": {
-        "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "hidden": false,
-      "readonly": false
-    },
-    "domain": {
-      "name": "LinShareRootDomain",
-      "uuid": "LinShareRootDomain"
-    },
-    "hidden": false,
     "identifier": "DRIVE__CREATION_RIGHT",
-    "parentIdentifier": "DRIVE",
+    "parentIdentifier": "SHARED_SPACE",
     "readonly": false,
     "type": "DEFAULT"
   },
@@ -1263,6 +1225,44 @@
     },
     "readonly": false,
     "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "SHARED_SPACE",
+    "readonly": false,
+    "type": "DEFAULT"
   },
   {
     "activationPolicy": {
@@ -2434,44 +2434,6 @@
     },
     "configurationPolicy": {
       "allowOverride": {
-        "overriden": true,
-        "parentValue": false,
-        "value": true
-      },
-      "enable": {
-        "overriden": false,
-        "parentValue": false,
-        "value": false
-      },
-      "hidden": true,
-      "readonly": true
-    },
-    "domain": {
-      "name": "LinShareRootDomain",
-      "uuid": "LinShareRootDomain"
-    },
-    "hidden": false,
-    "identifier": "WORK_GROUP",
-    "readonly": false,
-    "type": "DEFAULT"
-  },
-  {
-    "activationPolicy": {
-      "allowOverride": {
-        "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "enable": {
-        "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "hidden": false,
-      "readonly": false
-    },
-    "configurationPolicy": {
-      "allowOverride": {
         "overriden": false,
         "parentValue": true,
         "value": true
@@ -2490,7 +2452,7 @@
     },
     "hidden": false,
     "identifier": "WORK_GROUP__CREATION_RIGHT",
-    "parentIdentifier": "WORK_GROUP",
+    "parentIdentifier": "SHARED_SPACE",
     "readonly": false,
     "type": "DEFAULT"
   },
@@ -2550,7 +2512,7 @@
         "supported": false
       }
     },
-    "parentIdentifier": "WORK_GROUP",
+    "parentIdentifier": "SHARED_SPACE",
     "readonly": false,
     "type": "UNIT"
   },
@@ -2614,7 +2576,7 @@
       "readonly": false,
       "type": "BOOLEAN"
     },
-    "parentIdentifier": "WORK_GROUP",
+    "parentIdentifier": "SHARED_SPACE",
     "readonly": false,
     "type": "BOOLEAN"
   }
