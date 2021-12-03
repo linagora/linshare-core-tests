@@ -278,7 +278,10 @@ class UserTestCase(AbstractTestCase):
             query_url,
             data=json.dumps(payload),
             headers=self.headers,
-            auth=HTTPBasicAuth('root@localhost.localdomain', 'adminlinshare'),
+            auth=HTTPBasicAuth(
+                CONFIG_USER['ADMIN']['email'],
+                CONFIG_USER['ADMIN']['password']
+            ),
             verify=self.verify)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
@@ -306,7 +309,10 @@ class UserTestCase(AbstractTestCase):
                 url,
                 data=json.dumps(user1),
                 headers=self.headers,
-                auth=HTTPBasicAuth('root@localhost.localdomain', 'adminlinshare'),
+                auth=HTTPBasicAuth(
+                    CONFIG_USER['ADMIN']['email'],
+                    CONFIG_USER['ADMIN']['password']
+                ),
                 verify=self.verify)
             LOGGER.debug("status_code : %s", req.status_code)
             LOGGER.debug("result : %s", req.text)
@@ -329,7 +335,10 @@ class UserTestCase(AbstractTestCase):
             query_url,
             data=json.dumps(payload),
             headers=self.headers,
-            auth=HTTPBasicAuth('root@localhost.localdomain', 'adminlinshare'),
+            auth=HTTPBasicAuth(
+                CONFIG_USER['ADMIN']['email'],
+                CONFIG_USER['ADMIN']['password']
+            ),
             verify=self.verify)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
@@ -357,7 +366,10 @@ class UserTestCase(AbstractTestCase):
                 url,
                 data=json.dumps(user1),
                 headers=self.headers,
-                auth=HTTPBasicAuth('root@localhost.localdomain', 'adminlinshare'),
+                auth=HTTPBasicAuth(
+                    CONFIG_USER['ADMIN']['email'],
+                    CONFIG_USER['ADMIN']['password']
+                ),
                 verify=self.verify)
             LOGGER.debug("status_code : %s", req.status_code)
             LOGGER.debug("result : %s", req.text)
