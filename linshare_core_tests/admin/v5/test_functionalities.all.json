@@ -1122,8 +1122,19 @@
     },
     "hidden": false,
     "identifier": "JWT_PERMANENT_TOKEN",
+    "parameter": {
+      "defaut": {
+        "overriden": false,
+        "parentValue": true,
+        "type": "BOOLEAN",
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false,
+      "type": "BOOLEAN"
+    },
     "readonly": false,
-    "type": "DEFAULT"
+    "type": "BOOLEAN"
   },
   {
     "activationPolicy": {
