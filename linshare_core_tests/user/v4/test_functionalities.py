@@ -22,7 +22,7 @@ def test_find_all_functionalites(request_helper, base_url):
     log = logging.getLogger('tests.funcs.test_find_all_functionalites')
     log.debug("functionalities: %s", data)
     assert data
-    assert len([a['identifier'] for a in data]) == 47
+    assert len([a['identifier'] for a in data]) == 45
 
 
 @pytest.mark.xfail(reason="Bad server configuration")
