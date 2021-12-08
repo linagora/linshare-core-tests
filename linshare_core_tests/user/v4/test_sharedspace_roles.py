@@ -5,7 +5,6 @@
 
 import logging
 import urllib
-import pytest
 
 
 def test_config(display_user_cfg):
@@ -13,7 +12,6 @@ def test_config(display_user_cfg):
     display_user_cfg()
 
 
-@pytest.mark.skip(reason="Works locally but not in gitlab. Weird.")
 def test_find_all_roles(request_helper, base_url):
     """Test user api find all shared spaces role by nodeType."""
     query_url = '{baseUrl}/shared_space_roles'.format_map({
@@ -28,7 +26,6 @@ def test_find_all_roles(request_helper, base_url):
             assert role['type'] == "WORK_GROUP"
 
 
-@pytest.mark.skip(reason="Works locally but not in gitlab. Weird.")
 def test_find_all_ss_roles_by_node_type_drive(request_helper, base_url):
     """Test user api find all shared spaces role by nodeType."""
     encode = urllib.parse.urlencode({'nodeType': 'DRIVE'})
