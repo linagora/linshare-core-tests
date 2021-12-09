@@ -122,3 +122,84 @@ def test_create_with_add_to_domain_policy(request_helper, base_url):
     assert data2['creationDate']
     assert data2['domainPolicy']
     assert data2['domainPolicy']['name'] == 'MyNewDomain'
+
+
+def test_delete(request_helper, base_url):
+    """Deleting a domain"""
+    # Given
+    payload = {
+        "name": "ToBeDeleted",
+        "parent": {"uuid": "LinShareRootDomain"},
+        "type": "TOPDOMAIN"
+    }
+    query_url = '{baseUrl}/domains'.format_map({
+        'baseUrl': base_url
+    })
+    domain = request_helper.post(query_url, payload)
+
+    # When
+    query_url = '{baseUrl}/domains/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid']
+    })
+    deleted = request_helper.delete(query_url)
+
+    # Then
+    assert deleted
+
+
+def test_delete_should_fail_when_null_uuid_and_payload(
+        request_helper, base_url):
+    """Deleting a domain should fail on null uuid and payload"""
+    query_url = '{baseUrl}/domains'.format_map({
+        'baseUrl': base_url
+    })
+    request_helper.delete(query_url, expected_status=400)
+
+
+def test_delete_should_fail_when_root_domain(request_helper, base_url):
+    """Deleting a domain should fail on root domain"""
+    query_url = '{baseUrl}/domains/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': 'LinShareRootDomain'
+    })
+    request_helper.delete(
+        query_url, expected_status=403, busines_err_code=13021)
+
+
+def test_delete_should_fail_when_parent_domain(request_helper, base_url):
+    """Deleting a parent domain should fail"""
+    query_url = '{baseUrl}/domains'.format_map({
+        'baseUrl': base_url
+    })
+    payload = {
+        "name": "MyNewDomain",
+        "parent": {"uuid": "LinShareRootDomain"},
+        "type": "TOPDOMAIN"
+    }
+    parent = request_helper.post(query_url, payload)
+    query_url = '{baseUrl}/domains'.format_map({
+        'baseUrl': base_url
+    })
+    payload = {
+        "name": "MyNewNestedDomain",
+        "parent": {"uuid": parent['uuid']},
+        "type": "SUBDOMAIN"
+    }
+    request_helper.post(query_url, payload)
+
+    query_url = '{baseUrl}/domains/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': parent['uuid']
+    })
+    request_helper.delete(
+        query_url, expected_status=403, busines_err_code=13021)
+
+
+def test_delete_should_fail_when_unknown(request_helper, base_url):
+    """Deleting a domain should fail on unknown domain"""
+    query_url = '{baseUrl}/domains/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': 'unknown'
+    })
+    request_helper.delete(query_url, expected_status=404)
