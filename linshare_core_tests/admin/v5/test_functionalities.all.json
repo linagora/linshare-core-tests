@@ -1255,16 +1255,16 @@
     "configurationPolicy": {
       "allowOverride": {
         "overriden": false,
-        "parentValue": true,
-        "value": true
+        "parentValue": false,
+        "value": false
       },
       "enable": {
-        "overriden": false,
-        "parentValue": true,
+        "overriden": true,
+        "parentValue": false,
         "value": true
       },
-      "hidden": false,
-      "readonly": false
+      "hidden": true,
+      "readonly": true
     },
     "domain": {
       "name": "LinShareRootDomain",
