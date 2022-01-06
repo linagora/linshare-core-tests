@@ -35,7 +35,7 @@ def test_find_all(request_helper, base_url, domain):
     url = '{baseUrl}/domains/{dm_id}/domain_quotas/{qt_id}/containers'
     query_url = url.format_map({
         'baseUrl': base_url,
-        'dm_id': domain_quota['domain']['identifier'],
+        'dm_id': domain_quota['domain']['uuid'],
         'qt_id': domain_quota['uuid']
     })
     data = request_helper.get(query_url)
@@ -53,14 +53,14 @@ def test_find(request_helper, base_url, domain):
     url = '{baseUrl}/domains/{dm_id}/domain_quotas/{qt_id}/containers'
     query_url = url.format_map({
         'baseUrl': base_url,
-        'dm_id': domain_quota['domain']['identifier'],
+        'dm_id': domain_quota['domain']['uuid'],
         'qt_id': domain_quota['uuid']
     })
     container_quotas = request_helper.get(query_url)
     url = '{baseUrl}/domains/{dm_id}/domain_quotas/{qt_id}/containers/{cq_id}'
     query_url = url.format_map({
         'baseUrl': base_url,
-        'dm_id': domain_quota['domain']['identifier'],
+        'dm_id': domain_quota['domain']['uuid'],
         'qt_id': domain_quota['uuid'],
         'cq_id': container_quotas[0]['uuid']
     })
@@ -78,14 +78,14 @@ def test_update(request_helper, base_url, domain):
     url = '{baseUrl}/domains/{dm_id}/domain_quotas/{qt_id}/containers'
     query_url = url.format_map({
         'baseUrl': base_url,
-        'dm_id': domain_quota['domain']['identifier'],
+        'dm_id': domain_quota['domain']['uuid'],
         'qt_id': domain_quota['uuid']
     })
     container_quotas = request_helper.get(query_url)
     url = '{baseUrl}/domains/{dm_id}/domain_quotas/{qt_id}/containers/{cq_id}'
     query_url = url.format_map({
         'baseUrl': base_url,
-        'dm_id': domain_quota['domain']['identifier'],
+        'dm_id': domain_quota['domain']['uuid'],
         'qt_id': domain_quota['uuid'],
         'cq_id': container_quotas[0]['uuid']
     })

@@ -49,11 +49,13 @@ def test_update(request_helper, base_url, domain):
     domain_quotas = request_helper.get(query_url)
     query_url = '{baseUrl}/domains/{dm_id}/domain_quotas/{qt_id}'.format_map({
         'baseUrl': base_url,
-        'dm_id': domain_quotas[0]['domain']['identifier'],
+        'dm_id': domain_quotas[0]['domain']['uuid'],
         'qt_id': domain_quotas[0]['uuid']
     })
     payload = {
         "quota": 2000000000000,
+        "domain": domain_quotas[0]['domain'],
+        "parentDomain": domain_quotas[0]['parentDomain'],
         "defaultQuota": 1000000000000,
         "defaultQuotaOverride": False,
         "maintenance": False,
