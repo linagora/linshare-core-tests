@@ -5138,18 +5138,18 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
         # Create 3 Drives
         query_url = self.user_base_url + '/shared_spaces'
         payload = {
-            "name": "First Drive test",
-            "nodeType": "DRIVE"
+            "name": "First workSpace test",
+            "nodeType": "WORK_SPACE"
         }
         drive = self.request_post(query_url, payload)
         payload = {
-            "name": "Second  Drive test",
-            "nodeType": "DRIVE"
+            "name": "Second  workSpace test",
+            "nodeType": "WORK_SPACE"
         }
         drive2 = self.request_post(query_url, payload)
         payload = {
-            "name": "Third  Drive test",
-            "nodeType": "DRIVE"
+            "name": "Third  workSpace test",
+            "nodeType": "WORK_SPACE"
         }
         drive3 = self.request_post(query_url, payload)
         # Add member to first Drive with DRIVE_WRITER role
@@ -5200,14 +5200,14 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
         nodes = self.request_get(query_url)
         self.assertEqual(1, len(nodes))
         for node in nodes:
-            self.assertEqual(node['nodeType'], "DRIVE")
+            self.assertEqual(node['nodeType'], "WORK_SPACE")
         # Test admin find all sharedSpaces by name
         encoded_url = urllib.parse.urlencode({'name': "First"})
         query_url = '{baseUrl}/shared_spaces?{encode}'.format_map({
             'baseUrl' : self.base_admin_v5_url,
             'encode': encoded_url})
         nodes = self.request_get(query_url)
-        self.assertEqual(nodes[0]["name"], "First Drive test")
+        self.assertEqual(nodes[0]["name"], "First workSpace test")
         # Delete drives
         query_url = '{baseUrl}/shared_spaces/{driveUuid}'.format_map({
             'baseUrl' : self.base_admin_v5_url,
