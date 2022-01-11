@@ -716,45 +716,6 @@
       },
       "enable": {
         "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "hidden": false,
-      "readonly": false
-    },
-    "configurationPolicy": {
-      "allowOverride": {
-        "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "enable": {
-        "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "hidden": false,
-      "readonly": false
-    },
-    "domain": {
-      "name": "LinShareRootDomain",
-      "uuid": "LinShareRootDomain"
-    },
-    "hidden": false,
-    "identifier": "DRIVE__CREATION_RIGHT",
-    "parentIdentifier": "SHARED_SPACE",
-    "readonly": false,
-    "type": "DEFAULT"
-  },
-  {
-    "activationPolicy": {
-      "allowOverride": {
-        "overriden": false,
-        "parentValue": true,
-        "value": true
-      },
-      "enable": {
-        "overriden": false,
         "parentValue": false,
         "value": false
       },
@@ -1105,16 +1066,16 @@
     "configurationPolicy": {
       "allowOverride": {
         "overriden": false,
-        "parentValue": true,
-        "value": true
+        "parentValue": false,
+        "value": false
       },
       "enable": {
         "overriden": false,
-        "parentValue": true,
-        "value": true
+        "parentValue": false,
+        "value": false
       },
-      "hidden": false,
-      "readonly": false
+      "hidden": true,
+      "readonly": true
     },
     "domain": {
       "name": "LinShareRootDomain",
@@ -2590,5 +2551,44 @@
     "parentIdentifier": "SHARED_SPACE",
     "readonly": false,
     "type": "BOOLEAN"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "WORK_SPACE__CREATION_RIGHT",
+    "parentIdentifier": "SHARED_SPACE",
+    "readonly": false,
+    "type": "DEFAULT"
   }
 ]
