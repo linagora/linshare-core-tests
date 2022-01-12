@@ -17,7 +17,7 @@ def test_config(display_admin_cfg):
 def test_find_all(request_helper, base_url):
     """Test find all drive model filters for root domain on API v5"""
     encoded_url = urllib.parse.urlencode({'model': "true"})
-    query_url = '{baseUrl}/drive_filters?{encode}'.format_map({
+    query_url = '{baseUrl}/workspace_filters?{encode}'.format_map({
         'baseUrl': base_url,
         'encode': encoded_url
     })
@@ -31,7 +31,7 @@ def test_find_all(request_helper, base_url):
 def test_find(request_helper, base_url):
     """Test find existing driver filter (model)  for root domain on API v5"""
     # using default model uuid.
-    query_url = '{baseUrl}/drive_filters/{uuid}'.format_map({
+    query_url = '{baseUrl}/workspace_filters/{uuid}'.format_map({
         'baseUrl': base_url,
         'uuid': 'c59078f1-2366-4360-baa0-6c089202e9a6'
     })
@@ -72,7 +72,7 @@ def test_create(request_helper, base_url):
         "memberMailAttribute": "mail",
         "type": "LDAP"
     }
-    query_url = '{baseUrl}/drive_filters'.format_map({
+    query_url = '{baseUrl}/workspace_filters'.format_map({
         'baseUrl': base_url
     })
     data = request_helper.post(query_url, payload)
@@ -91,7 +91,7 @@ def test_delete(request_helper, base_url):
 
     # Since these tests are not pure function, we can reuse them here.
     entity = test_create(request_helper, base_url)
-    query_url = '{baseUrl}/drive_filters/{uuid}'.format_map({
+    query_url = '{baseUrl}/workspace_filters/{uuid}'.format_map({
         'baseUrl': base_url,
         'uuid': entity['uuid']
     })
@@ -108,7 +108,7 @@ def test_delete_payload(request_helper, base_url):
 
     # Since these tests are not pure function, we can reuse them here.
     entity = test_create(request_helper, base_url)
-    query_url = '{baseUrl}/drive_filters'.format_map({
+    query_url = '{baseUrl}/workspace_filters'.format_map({
         'baseUrl': base_url
     })
     data = request_helper.delete(query_url, entity)
@@ -124,7 +124,7 @@ def test_update(request_helper, base_url):
 
     # Since these tests are not pure function, we can reuse them here.
     entity = test_create(request_helper, base_url)
-    query_url = '{baseUrl}/drive_filters'.format_map({
+    query_url = '{baseUrl}/workspace_filters'.format_map({
         'baseUrl': base_url
     })
     entity['name'] = "NEw drive filter name"
@@ -145,7 +145,7 @@ def test_update_empty_description(request_helper, base_url):
 
     # Since these tests are not pure function, we can reuse them here.
     entity = test_create(request_helper, base_url)
-    query_url = '{baseUrl}/drive_filters'.format_map({
+    query_url = '{baseUrl}/workspace_filters'.format_map({
         'baseUrl': base_url
     })
     entity['name'] = "NEw drive filter name"
