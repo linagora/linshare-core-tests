@@ -2398,8 +2398,8 @@
       },
       "enable": {
         "overriden": false,
-        "parentValue": true,
-        "value": true
+        "parentValue": false,
+        "value": false
       },
       "hidden": false,
       "readonly": false
