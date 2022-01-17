@@ -49,13 +49,18 @@ class RequestHelper:
         self.headers = headers
         self.log = logging.getLogger('tests.funcs.requesthelper')
 
+    # pylint: disable=too-many-arguments
     def get(self, query_url, expected_status=200,
-            busines_err_code=None):
+            busines_err_code=None, email=None, password=None):
         """GET HTTP method"""
+        if not email:
+            email = self.email
+        if not password:
+            password = self.password
         req = requests.get(
             query_url,
             headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
+            auth=HTTPBasicAuth(email, password),
             verify=self.verify
         )
         self.log.debug("status_code : %s", req.status_code)
@@ -66,6 +71,7 @@ class RequestHelper:
         self.log.debug("data : %s", json.dumps(req.json(), sort_keys=True,
                        indent=2))
         return data
+    # pylint: enable=too-many-arguments
 
     def head(self, query_url):
         """HEAD HTTP method"""
@@ -124,14 +130,19 @@ class RequestHelper:
             assert data['errCode'] == busines_err_code
         return data
 
+    # pylint: disable=too-many-arguments
     def put(self, query_url, payload=None, expected_status=200,
-            busines_err_code=None):
+            busines_err_code=None, email=None, password=None):
         """PUT HTTP method"""
+        if not email:
+            email = self.email
+        if not password:
+            password = self.password
         req = requests.put(
             query_url,
             data=json.dumps(payload),
             headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
+            auth=HTTPBasicAuth(email, password),
             verify=self.verify)
         self.log.debug("status_code : %s", req.status_code)
         self.log.debug("result : %s", req.text)
@@ -141,6 +152,7 @@ class RequestHelper:
         if busines_err_code:
             assert data['errCode'] == busines_err_code
         return data
+    # pylint: enable=too-many-arguments
 
     def patch(self, query_url, payload):
         """PATCH HTTP method"""
