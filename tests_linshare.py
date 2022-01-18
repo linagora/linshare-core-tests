@@ -64,18 +64,24 @@ class AbstractTestCase(unittest.TestCase):
     base_admin_v5_url = host + '/linshare/webservice/rest/admin/v5'
     email = CONFIG['DEFAULT']['email']
     password = CONFIG['DEFAULT']['password']
+    admin_email = CONFIG_USER['ADMIN']['email']
+    admin_password = CONFIG_USER['ADMIN']['password']
     verify = not NO_VERIFY
     headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
     }
 
-    def request_get(self, query_url):
+    def request_get(self, query_url, email=None, password=None):
         """GET request"""
+        if not email:
+            email = self.email
+        if not password:
+            password = self.password
         req = requests.get(
             query_url,
             headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
+            auth=HTTPBasicAuth(email, password),
             verify=self.verify
         )
         self.assertEqual(req.status_code, 200)
@@ -152,13 +158,18 @@ class AbstractTestCase(unittest.TestCase):
         LOGGER.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
         return data
 
-    def request_put(self, query_url, payload=None, expected_status=200, busines_err_code=None):
+    def request_put(
+            self, query_url, payload=None, expected_status=200, busines_err_code=None, email=None, password=None):
         """Do PUT request"""
+        if not email:
+            email = self.email
+        if not password:
+            password = self.password
         req = requests.put(
             query_url,
             data=json.dumps(payload),
             headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
+            auth=HTTPBasicAuth(email, password),
             verify=self.verify)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
@@ -236,6 +247,20 @@ class AdminTestCase(AbstractTestCase):
             LOGGER.debug("result : %s", req.text)
             self.assertEqual(req.status_code, 200)
             return req.json()
+
+    def enable_work_group_creation(self):
+        """ Enable work group creation """
+        admin_query_url = '{baseUrl}/domains/{domain}/functionalities/{identifier}'
+        admin_query_url = admin_query_url.format_map({
+            'domain': "LinShareRootDomain",
+            'baseUrl': self.base_admin_v5_url,
+            'identifier': 'WORK_GROUP__CREATION_RIGHT'
+        })
+        functionality = self.request_get(
+            admin_query_url, email=self.admin_email, password=self.admin_password)
+        functionality['activationPolicy']['enable']['value'] = True
+        self. request_put(
+            admin_query_url, functionality, email=self.admin_email, password=self.admin_password)
 
 
 class UserTestCase(AbstractTestCase):
@@ -427,6 +452,21 @@ class UserTestCase(AbstractTestCase):
         self.assertEqual(req.status_code, 200)
         LOGGER.debug("status_code : %s", req.status_code)
         LOGGER.debug("result : %s", req.text)
+
+    def enable_work_group_creation(self):
+        """ Enable work group creation """
+        admin_query_url = '{baseUrl}/domains/{domain}/functionalities/{identifier}'
+        admin_query_url = admin_query_url.format_map({
+            'domain': "LinShareRootDomain",
+            'baseUrl': self.base_admin_v5_url,
+            'identifier': 'WORK_GROUP__CREATION_RIGHT'
+        })
+        functionality = self.request_get(
+            admin_query_url, email=self.admin_email, password=self.admin_password)
+        functionality['activationPolicy']['enable']['value'] = True
+        self. request_put(
+            admin_query_url, functionality, email=self.admin_email, password=self.admin_password)
+
 @unittest.skip
 class TestAdminApiJwt(AdminTestCase):
     """Test admin api"""
@@ -1135,6 +1175,7 @@ class TestUserApiDocumentRevision(UserTestCase):
 # Helpers
     def create_ss_node(self):
         """create a shared space node."""
+        self.enable_work_group_creation()
         query_url = '{baseUrl}/shared_spaces'.format_map({
             'baseUrl' : self.base_url})
         payload = {
@@ -1433,6 +1474,7 @@ class TestUserApiSharedSpaceNode(UserTestCase):
 
     def create_shared_space(self):
         """Test user API create a shared space."""
+        self.enable_work_group_creation()
         query_url = self.base_url + '/shared_spaces'
         payload = {
             "name": "workgroup_test",
