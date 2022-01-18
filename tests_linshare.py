@@ -1893,7 +1893,7 @@ class TestUserApiSharedSpace(UserTestCase):
             'base_url': self.base_url,
             'workgroupUuid': workgroup['uuid']
             })
-        role = self.getRole('DRIVE_READER')
+        role = self.getRole('WORK_SPACE_READER')
         payload = {
             "account" : {
                 "uuid" : user1['uuid'],
@@ -1937,7 +1937,7 @@ class TestUserApiSharedSpace(UserTestCase):
     def test_create_shared_space_member_drive(self):
         """Test user API add a shared space member into a DRIVE """
         nested_role = self.getRole('ADMIN')
-        role = self.getRole('DRIVE_ADMIN')
+        role = self.getRole('WORK_SPACE_ADMIN')
         drive = self.create_drive_by_peter()
         user1 = self.get_user("amy")
         query_url = self.base_url + '/shared_spaces/{driveUuid}/members'.format(driveUuid=drive['uuid'])
@@ -1969,7 +1969,7 @@ class TestUserApiSharedSpace(UserTestCase):
         """Test user API add a shared space member FORBIDDEN into a DRIVE
         by give Work_GROUP role type to DRIVE member"""
         nestedRole = self.getRole('ADMIN')
-        role = self.getRole('DRIVE_ADMIN')
+        role = self.getRole('WORK_SPACE_ADMIN')
         drive = self.create_drive_by_peter()
         user1 = self.get_user("amy")
         query_url = '{baseUrl}/shared_spaces/{driveUuid}/members'.format_map({
@@ -2004,7 +2004,7 @@ class TestUserApiSharedSpace(UserTestCase):
         into a DRIVE and its nested workgroups
         """
         nestedRole = self.getRole('ADMIN')
-        role = self.getRole('DRIVE_ADMIN')
+        role = self.getRole('WORK_SPACE_ADMIN')
 
         # Create the Shared space DRIVE (parent)
         drive = self.create_drive_by_peter()
@@ -2165,7 +2165,7 @@ class TestUserApiSharedSpace(UserTestCase):
         drive = self.create_drive_by_peter()
         nestedRole = self.getRole('ADMIN')
         nestedRoleContributor = self.getRole('CONTRIBUTOR')
-        role = self.getRole('DRIVE_ADMIN')
+        role = self.getRole('WORK_SPACE_ADMIN')
 
         # Create a workGroup into the drive.
 
@@ -2257,7 +2257,7 @@ class TestUserApiSharedSpace(UserTestCase):
         drive = self.create_drive_by_peter()
         nestedRole = self.getRole('ADMIN')
         nestedRoleContributor = self.getRole('CONTRIBUTOR')
-        role = self.getRole('DRIVE_ADMIN')
+        role = self.getRole('WORK_SPACE_ADMIN')
         # Create a workGroup into the drive.
         query_url = self.base_url + '/shared_spaces/'
         payload = {
@@ -2337,7 +2337,7 @@ class TestUserApiSharedSpace(UserTestCase):
         """Test user API propagate the creation of member in nested nodes."""
         drive = self.create_drive_by_peter()
         nestedRole = self.getRole('ADMIN')
-        role = self.getRole('DRIVE_ADMIN')
+        role = self.getRole('WORK_SPACE_ADMIN')
 
         # Add Amy as a new member into the created drive.by principal
         user1 = self.get_user("amy")
@@ -2582,7 +2582,7 @@ class TestUserApiSharedSpace(UserTestCase):
     def test_update_shared_space_member_drive(self):
         """Test user API update shared space member drive"""
         shared_space_member = self.test_create_shared_space_member_drive()
-        role = self.getRole('DRIVE_READER')
+        role = self.getRole('WORK_SPACE_READER')
         nestedRole = self.getRole('READER')
         query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
             'base_url': self.base_url,
@@ -2605,7 +2605,7 @@ class TestUserApiSharedSpace(UserTestCase):
     def test_update_shared_space_member_work_group_wrong_role(self):
         """Test user API update shared space member work group with wrong role."""
         shared_space_member = self.create_shared_space_member()
-        role = self.getRole('DRIVE_ADMIN')
+        role = self.getRole('WORK_SPACE_ADMIN')
         query_url = '{base_url}/shared_spaces/{nodeUuid}/members/{memberUuid}'.format_map({
             'base_url': self.base_url,
             'nodeUuid' : shared_space_member['node']['uuid'],
@@ -2641,7 +2641,7 @@ class TestUserApiSharedSpace(UserTestCase):
     def test_delete_drive_by_invited_shared_space_member(self):
         # Test user API delete a DRIVE by an invited member
         nested_role = self.getRole('READER')
-        role = self.getRole('DRIVE_ADMIN')
+        role = self.getRole('WORK_SPACE_ADMIN')
         drive = self.create_drive_by_peter()
         user1 = self.get_user("amy")
         # Add a member to the Drive
@@ -5145,7 +5145,7 @@ class TestUserApiEnums(UserTestCase):
 class TestSharedSpaceAdminV5Api(AdminTestCase):
     def test_find_all_shared_spaces(self):
         """Test admin find all sharedSpaces."""
-        nodeTypes = ['WORK_GROUP', 'DRIVE']
+        nodeTypes = ['WORK_GROUP', 'WORK_SPACE']
         query_url = '{baseUrl}/shared_spaces'.format_map({
             'baseUrl' : self.base_admin_v5_url
         })
@@ -5204,7 +5204,7 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
         nestedRole = self.request_get(url)
         parameters = {
             'base_url': self.user_base_url,
-            'name':'DRIVE_WRITER'
+            'name':'WORK_SPACE_WRITER'
             }
         url = '{base_url}/shared_space_roles/role/{name}'.format_map(parameters)
         role = self.request_get(url)
@@ -5235,7 +5235,7 @@ class TestSharedSpaceAdminV5Api(AdminTestCase):
         members = self.request_get(query_url)
         self.assertEqual(2, len(members))
         # Test admin find all sharedSpaces by role DRIVE_WRITER
-        encoded_url = urllib.parse.urlencode({'role': "DRIVE_WRITER"})
+        encoded_url = urllib.parse.urlencode({'role': "WORK_SPACE_WRITER"})
         query_url = '{baseUrl}/shared_spaces?{encode}'.format_map({
             'baseUrl' : self.base_admin_v5_url,
             'encode': encoded_url})
