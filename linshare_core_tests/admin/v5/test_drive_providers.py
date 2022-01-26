@@ -89,7 +89,7 @@ def create_drive_provider(request_helper, base_url):
             "uuid": ldap_server['uuid'],
             "name": ldap_server['name']
         },
-        "driveFilter": {
+        "workSpaceFilter": {
             "uuid": drive_filter['uuid'],
             "name": drive_filter['name']
         },
@@ -198,7 +198,7 @@ def test_update(request_helper, base_url):
     data = request_helper.put(query_url, entity)
     log.debug("drive provider update: %s", data)
     assert data
-    assert data['driveFilter']['name'] == entity['driveFilter']['name']
+    assert data['workSpaceFilter']['name'] == entity['workSpaceFilter']['name']
 
 
 def test_find_domains_using_drive_filter(request_helper, base_url):
@@ -207,7 +207,7 @@ def test_find_domains_using_drive_filter(request_helper, base_url):
     query_url = '{baseUrl}/workspace_filters/{filter_uuid}/domains'
     query_url = query_url.format_map({
         'baseUrl': base_url,
-        'filter_uuid': entity['driveFilter']['uuid'],
+        'filter_uuid': entity['workSpaceFilter']['uuid'],
     })
     data = request_helper.get(query_url)
     assert data
