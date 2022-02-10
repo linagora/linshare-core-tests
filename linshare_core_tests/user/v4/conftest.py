@@ -16,14 +16,6 @@ def fixture_base_url(user_cfg):
     return base_url
 
 
-@pytest.fixture(scope="module", name="admin_v5_base_url")
-def fixture_admin_v5_base_url(user_cfg):
-    """Return Admin v5 base URL for all tests"""
-    host = user_cfg['DEFAULT']['host']
-    base_url = host + '/linshare/webservice/rest/admin/v5'
-    return base_url
-
-
 @pytest.fixture(scope="function", name="random_name")
 def fixture_random_name():
     """Create a new root workgroup (shared space) for test."""

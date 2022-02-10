@@ -39,6 +39,14 @@ def fixture_user_cfg():
     return config
 
 
+@pytest.fixture(scope="module", name="admin_v5_base_url")
+def fixture_admin_v5_base_url(user_cfg):
+    """Return Admin v5 base URL for all tests"""
+    host = user_cfg['DEFAULT']['host']
+    base_url = host + '/linshare/webservice/rest/admin/v5'
+    return base_url
+
+
 class RequestHelper:
     """A tiny helper to call the API"""
 
