@@ -5274,7 +5274,7 @@ class TestDomainUserFilterAdminv5Api(AdminTestCase):
             'baseUrl' : self.base_admin_v5_url,
             'encode': encoded_url})
         user_filters = self.request_get(query_url)
-        self.assertEqual(len(user_filters),4)
+        self.assertEqual(len(user_filters),5)
 
     def test_find_all_created_domain_user_filters(self):
         #Test admin find all domain user filters
