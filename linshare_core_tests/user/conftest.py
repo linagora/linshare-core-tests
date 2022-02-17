@@ -93,9 +93,13 @@ class RequestHelper:
         self.log.debug("status_code : %s", req.status_code)
 
     def post(self, query_url, payload, headers=None, expected_status=200,
-             busines_err_code=None):
+             busines_err_code=None, email=None, password=None):
         """POST HTTP method"""
         # pylint: disable=too-many-arguments
+        if not email:
+            email = self.email
+        if not password:
+            password = self.password
         if not headers:
             headers = self.headers
         if headers['Content-Type'] != 'application/json':
@@ -106,7 +110,7 @@ class RequestHelper:
             query_url,
             headers=headers,
             data=body,
-            auth=HTTPBasicAuth(self.email, self.password),
+            auth=HTTPBasicAuth(email, password),
             verify=self.verify)
         self.log.debug("status_code : %s", req.status_code)
         self.log.debug("result : %s", req.text)
@@ -117,17 +121,22 @@ class RequestHelper:
             assert data['errCode'] == busines_err_code
         return data
 
+    # pylint: disable=too-many-arguments
     def delete(self, query_url, payload=None, expected_status=200,
-               busines_err_code=None):
+               busines_err_code=None, email=None, password=None):
         """DELETE HTTP method"""
         data = None
+        if not email:
+            email = self.email
+        if not password:
+            password = self.password
         if payload:
             data = json.dumps(payload)
         req = requests.delete(
             query_url,
             data=data,
             headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
+            auth=HTTPBasicAuth(email, password),
             verify=self.verify)
         self.log.debug("status_code : %s", req.status_code)
         self.log.debug("result : %s", req.text)
@@ -137,6 +146,7 @@ class RequestHelper:
         if busines_err_code:
             assert data['errCode'] == busines_err_code
         return data
+    # pylint: enable=too-many-arguments
 
     # pylint: disable=too-many-arguments
     def put(self, query_url, payload=None, expected_status=200,

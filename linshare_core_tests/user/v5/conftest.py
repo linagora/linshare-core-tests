@@ -82,3 +82,39 @@ def fixture_create_guest(
         'uuid': guest['uuid']
     })
     request_helper.delete(query_url, guest)
+
+
+@pytest.fixture(scope="function", name="new_restricted_contact")
+def fixture_create_restricted_contact(
+        request_helper, user_cfg, new_guest, admin_v5_base_url):
+    """Create a restricted contact."""
+    query_url = '{baseUrl}/users/{uuid}/restricted_contacts'.format_map({
+        'baseUrl': admin_v5_base_url,
+        'uuid': new_guest['uuid']
+    })
+    payload = {
+        "firstName": "Guest",
+        "lastName": "My",
+        "mail": "guest1@linshare.org",
+        "domain": {
+            "uuid": new_guest['domain'],
+            "name": new_guest['domain']
+        }
+    }
+    email = user_cfg['ADMIN']['email']
+    password = user_cfg['ADMIN']['password']
+    restricted_contact = request_helper.post(query_url, payload,
+                                             email=email, password=password)
+    assert restricted_contact
+    assert restricted_contact['uuid']
+
+    yield restricted_contact
+
+    query_url = '{baseUrl}/users/{uuid}/restricted_contacts/{ruuid}'
+    query_url = query_url.format_map({
+        'baseUrl': admin_v5_base_url,
+        'uuid': new_guest['uuid'],
+        'ruuid': restricted_contact['uuid']
+    })
+    request_helper.delete(query_url, restricted_contact,
+                          email=email, password=password)

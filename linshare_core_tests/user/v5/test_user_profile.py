@@ -200,3 +200,31 @@ def test_update_user_profile_locale_guest(
     })
     user = request_helper.get(query_url)
     assert user['locale'] == 'RUSSIAN'
+
+
+def test_restricted_contacts_fail(
+        request_helper, base_url):
+    """Test loading restricted contacts should fail for internal users"""
+    query_url = '{baseUrl}/me/restricted_contacts'
+    query_url = query_url.format_map({
+        'baseUrl': base_url
+    })
+    request_helper.get(query_url, expected_status=400, busines_err_code=67000)
+
+
+def test_restricted_contacts_guest(
+        request_helper, base_url, new_guest, new_restricted_contact):
+    """Test loading restricted contacts for guest users"""
+    query_url = '{baseUrl}/me/restricted_contacts'
+    query_url = query_url.format_map({
+        'baseUrl': base_url
+    })
+    contacts = request_helper.get(
+        query_url, email=new_guest['mail'], password='MyGuest@Password123')
+
+    assert contacts
+    assert len(contacts) == 1
+    assert contacts[0]['uuid'] == new_restricted_contact['uuid']
+    assert contacts[0]['firstName'] == new_restricted_contact['firstName']
+    assert contacts[0]['lastName'] == new_restricted_contact['lastName']
+    assert contacts[0]['mail'] == new_restricted_contact['mail']
