@@ -3,6 +3,9 @@
 """Testing user profile endpoints of userv5 API."""
 
 
+import urllib
+
+
 def test_config(display_user_cfg):
     """Just display current config."""
     display_user_cfg()
@@ -228,3 +231,66 @@ def test_restricted_contacts_guest(
     assert contacts[0]['firstName'] == new_restricted_contact['firstName']
     assert contacts[0]['lastName'] == new_restricted_contact['lastName']
     assert contacts[0]['mail'] == new_restricted_contact['mail']
+
+
+def test_favourite_recipients_internal(
+        request_helper, base_url, new_upload_request):
+    """Test loading favourite recipients - internal"""
+    assert new_upload_request
+    query_url = '{baseUrl}/me/favourite_recipients'
+    query_url = query_url.format_map({
+        'baseUrl': base_url
+    })
+    recipients = request_helper.get(query_url)
+
+    assert recipients
+    assert len(recipients) == 2
+
+
+def test_favourite_recipients_guest(
+        request_helper, base_url, new_guest, new_guest_upload_request):
+    """Test loading favourite recipients - guest"""
+    assert new_guest_upload_request
+    query_url = '{baseUrl}/me/favourite_recipients'
+    query_url = query_url.format_map({
+        'baseUrl': base_url
+    })
+    recipients = request_helper.get(
+        query_url, email=new_guest['mail'], password='MyGuest@Password123')
+
+    assert recipients
+    assert len(recipients) == 3
+
+
+def test_favourite_recipients_filter_internal(
+        request_helper, base_url, new_upload_request):
+    """Test loading favourite recipients filtered - internal"""
+    assert new_upload_request
+    encoded_url = urllib.parse.urlencode({'mail': "xt1@li"})
+    query_url = '{baseUrl}/me/favourite_recipients?{encode}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'encode': encoded_url
+    })
+    recipients = request_helper.get(query_url)
+
+    assert recipients
+    assert len(recipients) == 1
+    assert recipients[0]['recipient'] == 'ext1@linshare.org'
+
+
+def test_favourite_recipients_filter_guest(
+        request_helper, base_url, new_guest, new_guest_upload_request):
+    """Test loading favourite recipients - guest"""
+    assert new_guest_upload_request
+    encoded_url = urllib.parse.urlencode({'mail': "xtguest"})
+    query_url = '{baseUrl}/me/favourite_recipients?{encode}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'encode': encoded_url
+    })
+    recipients = request_helper.get(
+        query_url, email=new_guest['mail'], password='MyGuest@Password123')
+
+    assert recipients
+    assert len(recipients) == 2

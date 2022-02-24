@@ -118,3 +118,44 @@ def fixture_create_restricted_contact(
     })
     request_helper.delete(query_url, restricted_contact,
                           email=email, password=password)
+
+
+@pytest.fixture(scope="function", name="new_upload_request")
+def fixture_create_upload_request(request_helper, base_url):
+    """Create an upload request."""
+    query_url = '{base_url}/upload_request_groups'.format_map({
+        'base_url': base_url
+    })
+    payload = {
+        "label": "upload request group",
+        "canDelete": True,
+        "canClose": True,
+        "contactList": ["ext1@linshare.org", "ext2@linshare.org"],
+        "body": "test body",
+        "enableNotification": True
+    }
+    upload_request = request_helper.post(query_url, payload)
+    assert upload_request
+
+    yield upload_request
+
+
+@pytest.fixture(scope="function", name="new_guest_upload_request")
+def fixture_create_guest_upload_request(request_helper, base_url, new_guest):
+    """Create a guest upload request."""
+    query_url = '{base_url}/upload_request_groups'.format_map({
+        'base_url': base_url
+    })
+    payload = {
+        "label": "upload request group",
+        "canDelete": True,
+        "canClose": True,
+        "contactList": ["extguest1@linshare.org", "extguest2@linshare.org", "extother@linshare.org"],
+        "body": "test body",
+        "enableNotification": True
+    }
+    upload_request = request_helper.post(query_url, payload,
+                     email=new_guest['mail'], password='MyGuest@Password123')
+    assert upload_request
+
+    yield upload_request
