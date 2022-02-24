@@ -294,3 +294,61 @@ def test_favourite_recipients_filter_guest(
 
     assert recipients
     assert len(recipients) == 2
+
+
+def test_favourite_recipients_delete_should_fail(
+        request_helper, base_url):
+    """Test deleting favourite recipients
+    fail when recipient don't exists - internal"""
+    query_url = '{baseUrl}/me/favourite_recipients/{recipient}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'recipient': 'wrong'
+    })
+    request_helper.delete(query_url,
+                          expected_status=400, busines_err_code=68000)
+
+
+def test_favourite_recipients_delete_internal(
+        request_helper, base_url, new_upload_request):
+    """Test deleting favourite recipients - internal"""
+    assert new_upload_request
+    query_url = '{baseUrl}/me/favourite_recipients/{recipient}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'recipient': 'ext1@linshare.org'
+    })
+    recipient = request_helper.delete(query_url)
+    assert recipient
+
+    query_url = '{baseUrl}/me/favourite_recipients'
+    query_url = query_url.format_map({
+        'baseUrl': base_url
+    })
+    recipients = request_helper.get(query_url)
+    assert recipients
+    assert len(recipients) == 1
+    assert recipients[0]['recipient'] == 'ext2@linshare.org'
+
+
+def test_favourite_recipients_delete_guest(
+        request_helper, base_url, new_guest, new_guest_upload_request):
+    """Test deleting favourite recipients - guest"""
+    assert new_guest_upload_request
+    query_url = '{baseUrl}/me/favourite_recipients/{recipient}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'recipient': 'extother@linshare.org'
+    })
+    recipient = request_helper.delete(
+        query_url, email=new_guest['mail'], password='MyGuest@Password123')
+    assert recipient
+
+    query_url = '{baseUrl}/me/favourite_recipients'
+    query_url = query_url.format_map({
+        'baseUrl': base_url
+    })
+    recipients = request_helper.get(
+        query_url, email=new_guest['mail'], password='MyGuest@Password123')
+    assert recipients
+    assert len(recipients) == 2

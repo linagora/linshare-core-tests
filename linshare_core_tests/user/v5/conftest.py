@@ -150,12 +150,15 @@ def fixture_create_guest_upload_request(request_helper, base_url, new_guest):
         "label": "upload request group",
         "canDelete": True,
         "canClose": True,
-        "contactList": ["extguest1@linshare.org", "extguest2@linshare.org", "extother@linshare.org"],
+        "contactList": ["extguest1@linshare.org",
+                        "extguest2@linshare.org",
+                        "extother@linshare.org"],
         "body": "test body",
         "enableNotification": True
     }
-    upload_request = request_helper.post(query_url, payload,
-                     email=new_guest['mail'], password='MyGuest@Password123')
-    assert upload_request
+    request = request_helper.post(
+        query_url, payload,
+        email=new_guest['mail'], password='MyGuest@Password123')
+    assert request
 
-    yield upload_request
+    yield request
