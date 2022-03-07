@@ -3485,7 +3485,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -3531,7 +3531,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
        }
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -3563,7 +3563,7 @@ class TestUserApiUploadRequestGroup(UserTestCase):
     def test_return_used_space_nbr_uploaded_files_urg(self):
         """"Test user API return the number of uploaded files and used space on an URG """
         upload_request_group = self.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -3596,7 +3596,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
     def test_create_upload_request_entry(self):
         """"Test user API create an upload request entry """
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -3649,7 +3649,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
     def test_find_upload_request_entry(self):
         """"Test user API find an upload request entry """
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -3727,7 +3727,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
     def test_delete_upload_request_entry(self):
         # Test user API delete an upload request entry
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -3802,7 +3802,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
     def test_download_upload_request_entry(self):
         """"Test user API delete an upload request entry """
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -3884,7 +3884,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
     def test_copy_upload_request_entry(self):
         # Test user API copy an upload request entry
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -3985,7 +3985,7 @@ class TestUserApiUploadRequestEntry(UserTestCase):
     def test_find_all_audits_of_URE(self):
         """"Test user API create an upload request entry """
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -4042,7 +4042,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
     def test_close_upload_request_by_external(self):
         """"Test close an upload request by an external user"""
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -4059,7 +4059,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         data = self.request_put(query_url)
         # Check the updated status to CLOSED after the update by the external
         # user
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -4073,7 +4073,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         self.assertEqual(upload_request_group['status'], 'ENABLED')
         self.assertEqual(upload_request_group['label'], 'upload request group')
         self.assertEqual(upload_request_group['enableNotification'], True)
-        query_url_get_ur = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url_get_ur = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -4114,7 +4114,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
     def test_delete_upload_request_entry_by_external_no_payload(self):
         """"Test delete an upload request entry by an external user"""
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -4197,7 +4197,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
     def test_delete_upload_request_entry_by_external_no_payload_no_content_type(self):
         """"Test delete an upload request entry by an external user"""
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -4279,7 +4279,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
     def test_delete_upload_request_entry_by_external_payload(self):
         """"Test delete an upload request entry by an external user"""
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -4380,7 +4380,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
         # Test get all uploadRequests of an individual uploadRequest group
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -4498,7 +4498,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
         upload_request_group = self.request_post(query_url, payload)
         self.assertEqual (upload_request_group['label'],"upload request group")
         # Test get all uploadRequests of a collective uploadRequest
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -4528,7 +4528,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
     def test_download_upload_request_entry_by_external(self):
         """"Test download an upload request entry by an external"""
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -4594,7 +4594,7 @@ class TestUserApiUploadRequestExternal(UserTestCase):
     def test_thumbnail_upload_request_entry_by_external(self):
         """"Test thumbnail an upload request entry by an external"""
         upload_request_group = self.upload_request_group_class.test_create_upload_request_group()
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
@@ -4736,7 +4736,7 @@ class TestUserApiUploadRequest(UserTestCase):
         upload_request_group = req.json()
         self.assertEqual (upload_request_group['label'],"upload request group")
         # find upoadRequest all uploadRequests of an URG
-        query_url = '{base_url}/upload_requests_groups/{upload_req_group_uuid}/upload_requests'.format_map({
+        query_url = '{base_url}/upload_request_groups/{upload_req_group_uuid}/upload_requests'.format_map({
             'base_url': self.base_test_url,
             'upload_req_group_uuid' : upload_request_group['uuid']
             })
