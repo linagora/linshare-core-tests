@@ -67,12 +67,12 @@ def test_find_all_should_work(request_helper, base_url, domain):
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_find_all_should_return_parent_in_read_only(
+def test_find_all_should_return_all_rights_when_root(
         request_helper, base_url, domain):
     """Finding all WelcomeMessages should return
-    the parent welcome messages in read only"""
+    the all welcome messages not in read only when requested by root"""
     log = logging.getLogger(
-        'tests.funcs.test_find_all_should_return_parent_in_read_only')
+        'tests.funcs.test_find_all_should_return_not_read_only_when_root')
     # Given
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
         'baseUrl': base_url,
@@ -98,8 +98,77 @@ def test_find_all_should_return_parent_in_read_only(
             assert not welcome_message['readOnly']
         else:
             log.debug("Parent welcome message: %s", welcome_message)
+            assert not welcome_message['readOnly']
+            assert welcome_message['domain']['name'] == 'LinShareRootDomain'
+
+
+def test_find_all_should_return_parent_in_read_only(
+        admin_cfg, request_helper, base_url, new_admin):
+    """Finding all WelcomeMessages should return
+    the parent welcome messages in read only"""
+    # Given
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': "MyDomain"
+    })
+    payload = {
+        "uuid": find_default_welcome_message(request_helper, base_url),
+        "name": "MyWelcomeMessage",
+        "description": "Its description"
+    }
+    request_helper.post(query_url, payload)
+
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': "MyDomain"
+    })
+    response = request_helper.get(
+        query_url,
+        email=new_admin['mail'],
+        password=admin_cfg['DEFAULT']['user1_password'])
+    assert response
+    assert len(response) == 2
+    for welcome_message in response:
+        if welcome_message['domain']['name'] == "MyDomain":
+            assert not welcome_message['readOnly']
+        else:
             assert welcome_message['readOnly']
             assert welcome_message['domain']['name'] == 'LinShareRootDomain'
+
+
+def test_find_all_should_return_subdomains_all_rights(
+        admin_cfg, request_helper, base_url, new_admin, new_subdomain):
+    """Finding all WelcomeMessages should return
+    the subdomain welcome messages in wll rights"""
+    # Given
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': new_subdomain['uuid']
+    })
+    payload = {
+        "uuid": find_default_welcome_message(request_helper, base_url),
+        "name": "MyWelcomeMessage",
+        "description": "Its description"
+    }
+    request_helper.post(query_url, payload)
+
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': new_subdomain['uuid']
+    })
+    response = request_helper.get(
+        query_url,
+        email=new_admin['mail'],
+        password=admin_cfg['DEFAULT']['user1_password'])
+    assert response
+    assert len(response) == 3
+    for welcome_message in response:
+        if welcome_message['domain']['name'] == 'MyDomain' or \
+                welcome_message['domain']['name'] == new_subdomain['name']:
+            assert not welcome_message['readOnly']
+        else:
+            assert welcome_message['domain']['name'] == 'LinShareRootDomain'
+            assert welcome_message['readOnly']
 
 
 @pytest.mark.domain_data("MyDomain")
@@ -119,7 +188,7 @@ def test_find_should_fail_when_welcome_message_does_not_exists(
 
 @pytest.mark.domain_data("MyDomain")
 def test_find_should_fail_when_welcome_message_does_not_belong_to_the_domain(
-        request_helper, base_url, domain):
+        request_helper, base_url, domain, admin_cfg, new_admin):
     """Finding a WelcomeMessage should fail when domain doesn't match"""
     # Given
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
@@ -153,7 +222,11 @@ def test_find_should_fail_when_welcome_message_does_not_belong_to_the_domain(
         })
 
     # Then
-    request_helper.get(query_url, expected_status=404, busines_err_code=36004)
+    request_helper.get(
+        query_url,
+        email=new_admin['mail'],
+        password=admin_cfg['DEFAULT']['user1_password'],
+        expected_status=404, busines_err_code=36004)
 
 
 @pytest.mark.domain_data("MyDomain")
@@ -311,7 +384,7 @@ def test_update_should_fail_when_welcome_message_does_not_exists(
 
 @pytest.mark.domain_data("MyDomain")
 def test_update_should_fail_when_welcome_message_does_not_belong_to_domain(
-        request_helper, base_url, domain):
+        request_helper, base_url, domain, admin_cfg, new_admin):
     """Updating a WelcomeMessage should fail when domain doesn't match"""
     # Given
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
@@ -356,7 +429,10 @@ def test_update_should_fail_when_welcome_message_does_not_belong_to_domain(
 
     # Then
     request_helper.put(
-        query_url, payload, expected_status=404, busines_err_code=36004)
+        query_url, payload,
+        email=new_admin['mail'],
+        password=admin_cfg['DEFAULT']['user1_password'],
+        expected_status=404, busines_err_code=36004)
 
 
 @pytest.mark.domain_data("MyDomain")
@@ -457,7 +533,7 @@ def test_delete_should_fail_when_welcome_message_does_not_exists(
 
 @pytest.mark.domain_data("MyDomain")
 def test_delete_should_fail_when_welcome_message_does_not_belong_to_domain(
-        request_helper, base_url, domain):
+        request_helper, base_url, domain, admin_cfg, new_admin):
     """Deleting a WelcomeMessage should fail when domain doesn't match"""
     # Given
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
@@ -502,7 +578,10 @@ def test_delete_should_fail_when_welcome_message_does_not_belong_to_domain(
 
     # Then
     request_helper.delete(
-        query_url, payload, expected_status=404, busines_err_code=36004)
+        query_url, payload,
+        email=new_admin['mail'],
+        password=admin_cfg['DEFAULT']['user1_password'],
+        expected_status=404, busines_err_code=36004)
 
 
 @pytest.mark.domain_data("MyDomain")

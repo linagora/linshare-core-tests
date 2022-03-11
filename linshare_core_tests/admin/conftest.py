@@ -7,6 +7,7 @@ import os
 import configparser
 import logging
 import json
+import urllib
 import pytest
 import requests
 
@@ -39,6 +40,14 @@ def fixture_admin_cfg():
     return config
 
 
+@pytest.fixture(scope="module", name="usersv5_base_url")
+def fixture_usersv5_base_url(admin_cfg):
+    """Return base URL for all tests"""
+    host = admin_cfg['DEFAULT']['host']
+    base_url = host + '/linshare/webservice/rest/user/v5'
+    return base_url
+
+
 @pytest.fixture(scope="session", name="admin_debug_flag")
 def fixture_admin_debug_flag(admin_cfg):
     """Return true if debug mode is eanbled."""
@@ -61,12 +70,17 @@ class RequestHelper:
         self.log = logging.getLogger('tests.funcs.requesthelper')
 
     def get(self, query_url, expected_status=200,
-            busines_err_code=None):
+            busines_err_code=None, email=None, password=None):
         """GET HTTP method"""
+        # pylint: disable=too-many-arguments
+        if not email:
+            email = self.email
+        if not password:
+            password = self.password
         req = requests.get(
             query_url,
             headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
+            auth=HTTPBasicAuth(email, password),
             verify=self.verify
         )
         self.log.debug("status_code : %s", req.status_code)
@@ -115,8 +129,13 @@ class RequestHelper:
         return data
 
     def delete(self, query_url, payload=None, expected_status=200,
-               busines_err_code=None):
+               busines_err_code=None, email=None, password=None):
         """DELETE HTTP method"""
+        # pylint: disable=too-many-arguments
+        if not email:
+            email = self.email
+        if not password:
+            password = self.password
         data = None
         if payload:
             data = json.dumps(payload)
@@ -124,7 +143,7 @@ class RequestHelper:
             query_url,
             data=data,
             headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
+            auth=HTTPBasicAuth(email, password),
             verify=self.verify)
         self.log.debug("status_code : %s", req.status_code)
         self.log.debug("result : %s", req.text)
@@ -136,13 +155,18 @@ class RequestHelper:
         return data
 
     def put(self, query_url, payload=None, expected_status=200,
-            busines_err_code=None):
+            busines_err_code=None, email=None, password=None):
         """PUT HTTP method"""
+        # pylint: disable=too-many-arguments
+        if not email:
+            email = self.email
+        if not password:
+            password = self.password
         req = requests.put(
             query_url,
             data=json.dumps(payload),
             headers=self.headers,
-            auth=HTTPBasicAuth(self.email, self.password),
+            auth=HTTPBasicAuth(email, password),
             verify=self.verify)
         self.log.debug("status_code : %s", req.status_code)
         self.log.debug("result : %s", req.text)
@@ -220,6 +244,76 @@ def fixture_create_domain(request, request_helper, base_url):
         'uuid': domain['uuid']
     })
     request_helper.delete(query_url)
+
+
+@pytest.fixture(scope="class", name="new_subdomain")
+def fixture_create_subdomain(request_helper, base_url):
+    """
+    This fixture is design to create a subdomain of 'MyDomain'
+    """
+    query_url = '{baseUrl}/domains'.format_map({
+        'baseUrl': base_url,
+    })
+    payload = {
+        "parent": {"uuid": "MyDomain"},
+        "type": "SUBDOMAIN",
+        "name": "SubMyDomain",
+        "description": "Description of sub domain"
+    }
+    domain = request_helper.post(query_url, payload)
+    assert domain
+    assert domain['uuid']
+
+    yield domain
+
+    query_url = '{baseUrl}/domains/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid']
+    })
+    request_helper.delete(query_url)
+
+
+@pytest.fixture(scope="class", name="new_admin")
+def fixture_promote_admin(request_helper, admin_cfg, base_url,
+                          usersv5_base_url):
+    """Promote to admin."""
+    # Create user (automatic provisioning)
+    query_url = '{baseUrl}/authentication/authorized'.format_map({
+        'baseUrl': usersv5_base_url
+    })
+    request_helper.get(query_url,
+                       email=admin_cfg['DEFAULT']['user1_email'],
+                       password=admin_cfg['DEFAULT']['user1_password'])
+
+    # Load the user DTO
+    encoded_url = urllib.parse.urlencode({
+        "mail": admin_cfg['DEFAULT']['user1_email']
+    })
+    query_url = '{baseUrl}/users?{encode}'.format_map({
+        'baseUrl': base_url,
+        'encode': encoded_url
+    })
+    admins = request_helper.get(query_url)
+    assert admins
+
+    # Promote to ADMIN
+    admin = admins[0]
+    admin['role'] = "ADMIN"
+    query_url = '{baseUrl}/users/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': admin['uuid']
+    })
+    admin = request_helper.put(query_url, admin)
+    assert admin
+
+    yield admin
+
+    admin['role'] = "SIMPLE"
+    query_url = '{baseUrl}/users/{uuid}'.format_map({
+        'baseUrl': base_url,
+        'uuid': admin['uuid']
+    })
+    request_helper.put(query_url, admin)
 
 
 @pytest.fixture(scope="module", name="guest_domain")
