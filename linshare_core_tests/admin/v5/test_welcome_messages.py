@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Testing WelcomeMessages endpoints of adminv5 API."""
+# pylint: disable=too-many-lines
 
 
 import logging
@@ -985,3 +986,45 @@ def test_put_assign_should_fail_when_welcome_message_from_another_domain(
     }
     request_helper.put(
         query_url, payload, expected_status=404, busines_err_code=36004)
+
+
+def test_associated_domains_should_fail_when_unknown(
+        request_helper, base_url):
+    """Associated domains should fail
+    when welcome message doesn't exist"""
+    query_url = '{baseUrl}/welcome_messages/{uuid}/domains'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': '60784788-6860-4984-a928-7aed8599d775'
+    })
+    request_helper.get(
+        query_url, expected_status=404, busines_err_code=36004)
+
+
+def test_associated_domains_should_return_domains(
+        request_helper, base_url, domain):
+    """Associated domains should return domains"""
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid']
+    })
+    message_uuid = find_default_welcome_message(request_helper, base_url)
+    payload = {
+        "uuid": message_uuid,
+        "name": "MyWelcomeMessage",
+        "description": "Its description"
+    }
+    request_helper.post(query_url, payload)
+
+    query_url = '{baseUrl}/welcome_messages/{uuid}/domains'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': message_uuid
+    })
+    light_domains = request_helper.get(query_url)
+    assert light_domains
+    assert len(light_domains) >= 2
+    for light_domain in light_domains:
+        assert light_domain['uuid']
+        assert light_domain['name']
+        assert light_domain['type']
