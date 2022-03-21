@@ -92,7 +92,7 @@ def test_find_all_should_return_all_rights_when_root(
     })
     response = request_helper.get(query_url)
     assert response
-    assert len(response) == 2
+    assert len(response) >= 2
     for welcome_message in response:
         if welcome_message['domain']['name'] == domain['name']:
             log.debug("Own welcome message: %s", welcome_message)
@@ -101,6 +101,136 @@ def test_find_all_should_return_all_rights_when_root(
             log.debug("Parent welcome message: %s", welcome_message)
             assert not welcome_message['readOnly']
             assert welcome_message['domain']['name'] == 'LinShareRootDomain'
+
+
+def test_find_all_should_return_top_in_read_only(
+        admin_cfg, request_helper, base_url, new_admin):
+    """Finding all WelcomeMessages should return
+    the welcome messages from parent domain in read only"""
+    # Create WM in root domain
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': 'LinShareRootDomain'
+    })
+    payload = {
+        "uuid": find_default_welcome_message(request_helper, base_url),
+        "name": "MyRootWelcomeMessage",
+        "description": "Its description"
+    }
+    request_helper.post(query_url, payload)
+
+    # Get the WM from TOP domain as admin
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': "MyDomain"
+    })
+    response = request_helper.get(
+        query_url,
+        email=new_admin['mail'],
+        password=admin_cfg['DEFAULT']['user1_password'])
+    found_root_domain_welcome_message = False
+    assert response
+    for welcome_message in response:
+        if welcome_message['name'] == 'MyRootWelcomeMessage':
+            found_root_domain_welcome_message = True
+            assert welcome_message['readOnly']
+            assert welcome_message['domain']['name'] == 'LinShareRootDomain'
+
+    assert found_root_domain_welcome_message
+
+
+def test_find_should_return_top_in_read_only(
+        admin_cfg, request_helper, base_url, new_admin):
+    """Finding a WelcomeMessage should return
+    the welcome message from parent domain in read only"""
+    # Create WM in root domain
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': 'LinShareRootDomain'
+    })
+    payload = {
+        "uuid": find_default_welcome_message(request_helper, base_url),
+        "name": "MyRootWelcomeMessage",
+        "description": "Its description"
+    }
+    wm = request_helper.post(query_url, payload)
+
+    # Get the WM from TOP domain as admin
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': "LinShareRootDomain",
+        'wmUuid': wm['uuid']
+    })
+    welcome_message = request_helper.get(
+        query_url,
+        email=new_admin['mail'],
+        password=admin_cfg['DEFAULT']['user1_password'])
+    assert welcome_message
+    assert welcome_message['name'] == 'MyRootWelcomeMessage'
+    assert welcome_message['readOnly']
+    assert welcome_message['domain']['name'] == 'LinShareRootDomain'
+
+
+def test_find_all_should_return_top_in_all_rights(request_helper, base_url):
+    """Finding all WelcomeMessages should return
+    the welcome messages from parent domain in all rights when root"""
+    # Create WM in root domain
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': 'LinShareRootDomain'
+    })
+    payload = {
+        "uuid": find_default_welcome_message(request_helper, base_url),
+        "name": "MySecondRootWelcomeMessage",
+        "description": "Its description"
+    }
+    request_helper.post(query_url, payload)
+
+    # Get the WM from TOP domain as root
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': "MyDomain"
+    })
+    response = request_helper.get(query_url)
+    found_root_domain_welcome_message = False
+    assert response
+    for welcome_message in response:
+        if welcome_message['name'] == 'MySecondRootWelcomeMessage':
+            found_root_domain_welcome_message = True
+            assert not welcome_message['readOnly']
+            assert welcome_message['domain']['name'] == 'LinShareRootDomain'
+
+    assert found_root_domain_welcome_message
+
+
+def test_find_should_return_top_in_all_rights(request_helper, base_url):
+    """Finding a WelcomeMessage should return
+    the welcome message from parent domain in all rights when root"""
+    # Create WM in root domain
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': 'LinShareRootDomain'
+    })
+    payload = {
+        "uuid": find_default_welcome_message(request_helper, base_url),
+        "name": "MySecondRootWelcomeMessage",
+        "description": "Its description"
+    }
+    wm = request_helper.post(query_url, payload)
+
+    # Get the WM from TOP domain as root
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': "MyDomain",
+        'wmUuid': wm['uuid']
+    })
+    welcome_message = request_helper.get(query_url)
+    assert welcome_message
+    assert welcome_message['name'] == 'MySecondRootWelcomeMessage'
+    assert not welcome_message['readOnly']
+    assert welcome_message['domain']['name'] == 'LinShareRootDomain'
 
 
 def test_find_all_should_return_parent_in_read_only(
@@ -128,7 +258,7 @@ def test_find_all_should_return_parent_in_read_only(
         email=new_admin['mail'],
         password=admin_cfg['DEFAULT']['user1_password'])
     assert response
-    assert len(response) == 2
+    assert len(response) >= 2
     for welcome_message in response:
         if welcome_message['domain']['name'] == "MyDomain":
             assert not welcome_message['readOnly']
@@ -162,7 +292,7 @@ def test_find_all_should_return_subdomains_all_rights(
         email=new_admin['mail'],
         password=admin_cfg['DEFAULT']['user1_password'])
     assert response
-    assert len(response) == 3
+    assert len(response) >= 3
     for welcome_message in response:
         if welcome_message['domain']['name'] == 'MyDomain' or \
                 welcome_message['domain']['name'] == new_subdomain['name']:
@@ -185,49 +315,6 @@ def test_find_should_fail_when_welcome_message_does_not_exists(
             'wmUuid': "123-456-789"
         })
     request_helper.get(query_url, expected_status=404, busines_err_code=36004)
-
-
-@pytest.mark.domain_data("MyDomain")
-def test_find_should_fail_when_welcome_message_does_not_belong_to_the_domain(
-        request_helper, base_url, domain, admin_cfg, new_admin):
-    """Finding a WelcomeMessage should fail when domain doesn't match"""
-    # Given
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid']
-    })
-    payload = {
-        "uuid": find_default_welcome_message(request_helper, base_url),
-        "name": "MyWelcomeMessage",
-        "description": "Its description"
-    }
-    welcome_message = request_helper.post(query_url, payload)
-
-    query_url = '{baseUrl}/domains'.format_map({
-        'baseUrl': base_url,
-    })
-    payload = {
-        "parent": {"uuid": "LinShareRootDomain"},
-        "type": "TOPDOMAIN",
-        "name": "OtherDomain",
-        "description": "Description of top domain 'test user provider'"
-    }
-    other_domain = request_helper.post(query_url, payload)
-
-    # When
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
-        .format_map({
-            'baseUrl': base_url,
-            'uuid': other_domain['uuid'],
-            'wmUuid': welcome_message['uuid']
-        })
-
-    # Then
-    request_helper.get(
-        query_url,
-        email=new_admin['mail'],
-        password=admin_cfg['DEFAULT']['user1_password'],
-        expected_status=404, busines_err_code=36004)
 
 
 @pytest.mark.domain_data("MyDomain")
