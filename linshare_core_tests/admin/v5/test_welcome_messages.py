@@ -153,14 +153,14 @@ def test_find_should_return_top_in_read_only(
         "name": "MyRootWelcomeMessage",
         "description": "Its description"
     }
-    wm = request_helper.post(query_url, payload)
+    message = request_helper.post(query_url, payload)
 
     # Get the WM from TOP domain as admin
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'
     query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': "LinShareRootDomain",
-        'wmUuid': wm['uuid']
+        'wmUuid': message['uuid']
     })
     welcome_message = request_helper.get(
         query_url,
@@ -217,14 +217,14 @@ def test_find_should_return_top_in_all_rights(request_helper, base_url):
         "name": "MySecondRootWelcomeMessage",
         "description": "Its description"
     }
-    wm = request_helper.post(query_url, payload)
+    message = request_helper.post(query_url, payload)
 
     # Get the WM from TOP domain as root
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'
     query_url = query_url.format_map({
         'baseUrl': base_url,
         'uuid': "MyDomain",
-        'wmUuid': wm['uuid']
+        'wmUuid': message['uuid']
     })
     welcome_message = request_helper.get(query_url)
     assert welcome_message
