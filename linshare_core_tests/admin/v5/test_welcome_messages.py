@@ -364,22 +364,6 @@ def test_create_should_fail_when_domain_does_not_exists(
 
 
 @pytest.mark.domain_data("MyDomain")
-def test_create_should_fail_when_uuid_is_not_given(
-        request_helper, base_url, domain):
-    """Creating a WelcomeMessage should fail when uuid is not in the payload"""
-    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
-        'baseUrl': base_url,
-        'uuid': domain['uuid']
-    })
-    payload = {
-        "name": "MyWelcomeMessage",
-        "description": "Its description",
-        "entries": {}
-    }
-    request_helper.post(query_url, payload, expected_status=400)
-
-
-@pytest.mark.domain_data("MyDomain")
 def test_create_should_works(request_helper, base_url, domain):
     """Creating a WelcomeMessage should work and return all data"""
     # Given
@@ -405,6 +389,48 @@ def test_create_should_works(request_helper, base_url, domain):
 
     # Then
     query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}'\
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
+    response = request_helper.get(query_url)
+    assert response['uuid']
+    assert response['name'] == "MyWelcomeMessage"
+    assert response['description'] == "Its description"
+    assert not response['assignedToCurrentDomain']
+    assert not response['readOnly']
+    assert response['creationDate']
+    assert response['modificationDate']
+    assert len(response['entries']) == 4
+
+
+@pytest.mark.domain_data("MyDomain")
+def test_create_without_uuid_should_works(request_helper, base_url, domain):
+    """Creating a WelcomeMessage without Uuid
+    should work and return all data"""
+    # Given
+    log = logging.getLogger('tests.funcs.test_create_should_works')
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid']
+    })
+    payload = {
+        "name": "MyWelcomeMessage",
+        "description": "Its description",
+        "entries": {
+            "ENGLISH": "WelcomeMessagesEntry",
+            "FRENCH": "WelcomeMessagesEntry"
+        }
+    }
+
+    # When
+    welcome_message = request_helper.post(query_url, payload)
+    log.debug("welcome_message: %s", welcome_message)
+    assert welcome_message
+
+    # Then
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}' \
         .format_map({
             'baseUrl': base_url,
             'uuid': domain['uuid'],
