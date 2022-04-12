@@ -2312,6 +2312,11 @@
     "identifier": "UPLOAD_REQUEST__NOTIFICATION_LANGUAGE",
     "parameter": {
       "defaut": {
+        "languages": [
+          "ENGLISH",
+          "FRENCH",
+          "RUSSIAN"
+        ],
         "overriden": false,
         "parentValue": "ENGLISH",
         "type": "LANGUAGE",
