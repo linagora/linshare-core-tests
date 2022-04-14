@@ -26,7 +26,8 @@ def test_find_user_profile_internal(request_helper, base_url):
     assert data['mail'] == 'peter.wilson@linshare.org'
     assert data['creationDate']
     assert data['modificationDate']
-    assert data['locale'] == 'ENGLISH'
+    assert data['mailLocale'] == 'ENGLISH'
+    assert data['externalMailLocale'] == 'ENGLISH'
     assert data['personalSpaceEnabled']
     assert data['accountType'] == 'INTERNAL'
 
@@ -53,7 +54,8 @@ def test_find_user_profile_guest(request_helper, base_url, new_guest):
     assert data['mail'] == 'guest1@linshare.org'
     assert data['creationDate']
     assert data['modificationDate']
-    assert data['locale'] == 'ENGLISH'
+    assert data['mailLocale'] == 'ENGLISH'
+    assert data['externalMailLocale'] == 'ENGLISH'
     assert not data['personalSpaceEnabled']
     assert data['accountType'] == 'GUEST'
 
@@ -167,7 +169,7 @@ def test_update_user_profile_locale_internal(
         'baseUrl': base_url,
         'uuid': user['uuid']
     })
-    user['locale'] = 'RUSSIAN'
+    user['mailLocale'] = 'RUSSIAN'
     request_helper.put(query_url, payload=user)
 
     query_url = '{baseUrl}/me/profile'
@@ -175,7 +177,32 @@ def test_update_user_profile_locale_internal(
         'baseUrl': base_url
     })
     user = request_helper.get(query_url)
-    assert user['locale'] == 'RUSSIAN'
+    assert user['mailLocale'] == 'RUSSIAN'
+
+
+def test_update_user_profile_external_mail_locale_internal(
+        request_helper, base_url):
+    """Test updating a user profile external users mai locale - internal"""
+    query_url = '{baseUrl}/me/profile'
+    query_url = query_url.format_map({
+        'baseUrl': base_url
+    })
+    user = request_helper.get(query_url)
+
+    query_url = '{baseUrl}/me/profile/{uuid}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': user['uuid']
+    })
+    user['externalMailLocale'] = 'RUSSIAN'
+    request_helper.put(query_url, payload=user)
+
+    query_url = '{baseUrl}/me/profile'
+    query_url = query_url.format_map({
+        'baseUrl': base_url
+    })
+    user = request_helper.get(query_url)
+    assert user['externalMailLocale'] == 'RUSSIAN'
 
 
 def test_update_user_profile_locale_guest(
@@ -193,7 +220,7 @@ def test_update_user_profile_locale_guest(
         'baseUrl': base_url,
         'uuid': user['uuid']
     })
-    user['locale'] = 'RUSSIAN'
+    user['mailLocale'] = 'RUSSIAN'
     request_helper.put(query_url, payload=user,
                        email=new_guest['mail'], password='MyGuest@Password123')
 
@@ -202,7 +229,34 @@ def test_update_user_profile_locale_guest(
         'baseUrl': base_url
     })
     user = request_helper.get(query_url)
-    assert user['locale'] == 'RUSSIAN'
+    assert user['mailLocale'] == 'RUSSIAN'
+
+
+def test_update_user_profile_external_mail_locale_guest(
+        request_helper, base_url, new_guest):
+    """Test updating a user profile external users mai locale - guest"""
+    query_url = '{baseUrl}/me/profile'
+    query_url = query_url.format_map({
+        'baseUrl': base_url
+    })
+    user = request_helper.get(
+        query_url, email=new_guest['mail'], password='MyGuest@Password123')
+
+    query_url = '{baseUrl}/me/profile/{uuid}'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': user['uuid']
+    })
+    user['externalMailLocale'] = 'RUSSIAN'
+    request_helper.put(query_url, payload=user,
+                       email=new_guest['mail'], password='MyGuest@Password123')
+
+    query_url = '{baseUrl}/me/profile'
+    query_url = query_url.format_map({
+        'baseUrl': base_url
+    })
+    user = request_helper.get(query_url)
+    assert user['externalMailLocale'] == 'RUSSIAN'
 
 
 def test_restricted_contacts_fail(
