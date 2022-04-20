@@ -316,27 +316,27 @@ def fixture_promote_admin(request_helper, admin_cfg, base_url,
     request_helper.put(query_url, admin)
 
 
-@pytest.fixture(scope="module", name="guest_domain")
-def fixture_create_guest_domain(request_helper, base_url):
+@pytest.fixture(scope="class", name="guest_domain")
+def fixture_create_guest_domain(request_helper, base_url, domain):
     """This fixture is design to create a guest domain"""
     query_url = '{baseUrl}/domains'.format_map({
         'baseUrl': base_url,
     })
     payload = {
-        "parent": {"uuid": "LinShareRootDomain"},
+        "parent": {"uuid": domain['uuid']},
         "type": "GUESTDOMAIN",
         "name": "MyGuestDomain",
         "description": "Description of guest domain"
     }
-    domain = request_helper.post(query_url, payload)
-    assert domain
-    assert domain['uuid']
+    guest_domain = request_helper.post(query_url, payload)
+    assert guest_domain
+    assert guest_domain['uuid']
 
-    yield domain
+    yield guest_domain
 
     query_url = '{baseUrl}/domains/{uuid}'.format_map({
         'baseUrl': base_url,
-        'uuid': domain['uuid']
+        'uuid': guest_domain['uuid']
     })
     request_helper.delete(query_url)
 

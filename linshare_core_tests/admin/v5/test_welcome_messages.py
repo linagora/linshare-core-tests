@@ -788,6 +788,48 @@ def test_delete_should_fail_when_welcome_message_does_not_belong_to_domain(
 
 
 @pytest.mark.domain_data("MyDomain")
+def test_delete_should_fail_when_welcome_message_is_associated_to_a_domain(
+        request_helper, base_url, domain, guest_domain):
+    """Deleting a WelcomeMessage should fail
+    when welcome message is associated"""
+    # Given
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages'.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid']
+    })
+    payload = {
+        "uuid": find_default_welcome_message(request_helper, base_url),
+        "name": "MyWelcomeMessage",
+        "description": "Its description"
+    }
+    welcome_message = request_helper.post(query_url, payload)
+
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}/assign'
+    query_url = query_url.format_map({
+        'baseUrl': base_url,
+        'uuid': domain['uuid'],
+        'wmUuid': welcome_message['uuid']
+    })
+    payload = {
+        "assign": True
+    }
+    request_helper.put(query_url, payload)
+
+    # When
+    query_url = '{baseUrl}/domains/{uuid}/welcome_messages/{wmUuid}' \
+        .format_map({
+            'baseUrl': base_url,
+            'uuid': guest_domain['uuid'],
+            'wmUuid': welcome_message['uuid']
+        })
+
+    # Then
+    request_helper.delete(
+        query_url, welcome_message,
+        expected_status=400, busines_err_code=36006)
+
+
+@pytest.mark.domain_data("MyDomain")
 def test_delete_should_fail_when_welcome_message_uuid_param_and_dto_are_null(
         request_helper, base_url, domain):
     """Deleting a welcome message should fail when
