@@ -6,6 +6,7 @@
 no_verify=1
 host=https://user.linshare.local
 email=peter.wilson@linshare.org
+amy_email=amy.wolsh@linshare.org
 password=secret
 # For some tests of upload request we will use an external users to test the external api
 email_external1=external1@linshare.org

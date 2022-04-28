@@ -162,3 +162,17 @@ def fixture_create_guest_upload_request(request_helper, base_url, new_guest):
     assert request
 
     yield request
+
+
+@pytest.fixture(scope="function", name="new_user")
+def fixture_get_or_create_user(request_helper, test_base_url, user_cfg):
+    """Create a user if not exists."""
+    query_url = '{base_url}/users'.format_map({
+        'base_url': test_base_url
+    })
+    payload = {
+        "mail": user_cfg['DEFAULT']['amy_email'],
+    }
+    amy = request_helper.post(query_url, payload)
+
+    yield amy
