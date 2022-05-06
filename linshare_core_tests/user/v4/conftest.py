@@ -16,6 +16,14 @@ def fixture_base_url(user_cfg):
     return base_url
 
 
+@pytest.fixture(scope="module", name="test_base_url")
+def fixture_test_base_url(user_cfg):
+    """Return base URL for all tests"""
+    host = user_cfg['DEFAULT']['host']
+    base_url = host + '/linshare/webservice/rest/test/user/v4'
+    return base_url
+
+
 @pytest.fixture(scope="function", name="random_name")
 def fixture_random_name():
     """Create a new root workgroup (shared space) for test."""
@@ -72,3 +80,43 @@ def fixture_new_root_workgroup(
         'uuid': data['uuid']
         })
     data = request_helper.delete(query_url)
+
+
+@pytest.fixture(scope="function", name="enable_guest_creation")
+def fixture_enable_guest_creation(
+        request_helper, user_cfg, admin_v5_base_url):
+    """Enable GUESTS functionality."""
+    # Enable guests creation
+    admin_query_url = '{baseUrl}/domains/{domain}/functionalities/{identifier}'
+    admin_query_url = admin_query_url.format_map({
+        'domain': "MyDomain",
+        'baseUrl': admin_v5_base_url,
+        'identifier': 'GUESTS'
+    })
+    email = user_cfg['ADMIN']['email']
+    password = user_cfg['ADMIN']['password']
+    functionality = request_helper.get(
+        admin_query_url, email=email, password=password)
+    functionality['activationPolicy']['enable']['value'] = True
+    request_helper.put(
+        admin_query_url, functionality, email=email, password=password)
+
+    yield True
+
+    functionality['activationPolicy']['enable']['value'] = False
+    request_helper.put(
+        admin_query_url, functionality, email=email, password=password)
+
+
+@pytest.fixture(scope="function", name="new_user")
+def fixture_get_or_create_user(request_helper, test_base_url, user_cfg):
+    """Create a user if not exists."""
+    query_url = '{base_url}/users'.format_map({
+        'base_url': test_base_url
+    })
+    payload = {
+        "mail": user_cfg['DEFAULT']['amy_email'],
+    }
+    amy = request_helper.post(query_url, payload)
+
+    yield amy
