@@ -4,7 +4,9 @@
 
 [DEFAULT]
 no_verify=1
-host=https://user.linshare.local
+# targetting docker-compose instance.
+host=http://127.0.0.1:8080
+# host=https://user.linshare.local
 email=peter.wilson@linshare.org
 amy_email=amy.wolsh@linshare.org
 password=secret

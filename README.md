@@ -7,7 +7,7 @@
 
 * https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core-tests/-/jobs/artifacts/master/browse?job=pylint_badge
 
-# Install 
+# Install
 
 $ apt update
 $ apt install bash-completion virtualenvwrapper python-pip
@@ -49,17 +49,23 @@ $ mkvirtualenv -p /usr/bin/python3 -a $(pwd) $(basename $(pwd))
 ## enter in a virtual env
 
 $ workon linshare-core-tests
+Depreacted. old tests.
 
 ## Install required dependencies
 
-$ pip install requests requests_toolbelt clint
+$ pip install requests requests_toolbelt clint docker-compose
 
 # Configuration
 
-$ cp linshare.admin.ini.sample linshare.admin.ini 
-$ vim linshare.admin.ini
+$ cp linshare.admin.ini.sample linshare.admin.ini
+$ cp linshare.user.ini.sample linshare.user.ini
+$ vim linshare.admin.ini linshare.user.ini
 
 # Launch tests
+
+$ docker-compose pull; docker-compose down; docker-compose up -d
+
+
 
 $ ./tests_linshare.py
 

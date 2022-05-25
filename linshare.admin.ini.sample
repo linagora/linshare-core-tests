@@ -1,7 +1,9 @@
 [DEFAULT]
 email=root@localhost.localdomain
 password=adminlinshare
-host=https://admin.linshare.local
+# targetting docker-compose instance.
+host=http://127.0.0.1:8080
+# host=https://admin.linshare.local
 user1_email=peter.wilson@linshare.org
 # 0: verify ssl certificate, 1: do not verify ssl certificate
 no_verify=0
