@@ -10,6 +10,10 @@ $ pip install -e .
 
 $ pip install -e ".[DEV]"
 
+# Run LinShare tests instance
+
+$ docker-compose pull; docker-compose down; docker-compose up -d
+
 # display all collected tests:
 
 $ pytest linshare_core_tests/  --collect-only

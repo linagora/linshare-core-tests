@@ -18,3 +18,7 @@ password_external2=password2
 email_external3=external3@linshare.org
 email_external4=external4@linshare.org
 email_external5=external5@linshare.org
+
+[ADMIN]
+email=root@localhost.localdomain
+password=adminlinshare
