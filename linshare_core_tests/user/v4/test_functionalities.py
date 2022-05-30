@@ -12,7 +12,7 @@ def test_config(display_user_cfg):
     display_user_cfg()
 
 
-def test_find_all_functionalites(request_helper, base_url):
+def test_find_all_functionalites(request_helper, base_url, user_cfg):
     """Test find all functionalities for user API v4"""
     query_url = '{baseUrl}/functionalities'
     query_url = query_url.format_map({
@@ -22,7 +22,8 @@ def test_find_all_functionalites(request_helper, base_url):
     log = logging.getLogger('tests.funcs.test_find_all_functionalites')
     log.debug("functionalities: %s", data)
     assert data
-    assert len([a['identifier'] for a in data]) == 45
+    funct_count = int(user_cfg['FUNCTIONALITIES']['count'])
+    assert funct_count == len([a['identifier'] for a in data])
 
 
 @pytest.mark.xfail(reason="Bad server configuration")

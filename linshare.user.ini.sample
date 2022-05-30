@@ -22,3 +22,6 @@ email_external5=external5@linshare.org
 [ADMIN]
 email=root@localhost.localdomain
 password=adminlinshare
+
+[FUNCTIONALITIES]
+count=48

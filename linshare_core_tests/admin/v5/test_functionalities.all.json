@@ -1245,6 +1245,112 @@
       },
       "enable": {
         "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "SHARED_SPACE__NESTED_WORKGROUPS_LIMIT",
+    "parameter": {
+      "hidden": false,
+      "maximum": {
+        "overriden": false,
+        "parentValue": 5,
+        "type": "INTEGER",
+        "value": 5
+      },
+      "readonly": false,
+      "type": "INTEGER_MAX",
+      "unlimited": {
+        "supported": false
+      }
+    },
+    "parentIdentifier": "SHARED_SPACE",
+    "readonly": false,
+    "type": "INTEGER"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": false,
+        "value": false
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "SHARED_SPACE__WORKSPACE_LIMIT",
+    "parameter": {
+      "hidden": false,
+      "maximum": {
+        "overriden": false,
+        "parentValue": 5,
+        "type": "INTEGER",
+        "value": 5
+      },
+      "readonly": false,
+      "type": "INTEGER_MAX",
+      "unlimited": {
+        "supported": false
+      }
+    },
+    "parentIdentifier": "SHARED_SPACE",
+    "readonly": false,
+    "type": "INTEGER"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
         "parentValue": true,
         "value": true
       },
@@ -2007,6 +2113,59 @@
     "parentIdentifier": "UPLOAD_REQUEST",
     "readonly": false,
     "type": "UNIT"
+  },
+  {
+    "activationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": true,
+        "parentValue": false,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "configurationPolicy": {
+      "allowOverride": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "enable": {
+        "overriden": false,
+        "parentValue": true,
+        "value": true
+      },
+      "hidden": false,
+      "readonly": false
+    },
+    "domain": {
+      "name": "LinShareRootDomain",
+      "uuid": "LinShareRootDomain"
+    },
+    "hidden": false,
+    "identifier": "UPLOAD_REQUEST__LIMIT",
+    "parameter": {
+      "hidden": false,
+      "maximum": {
+        "overriden": false,
+        "parentValue": 5,
+        "type": "INTEGER",
+        "value": 5
+      },
+      "readonly": false,
+      "type": "INTEGER_MAX",
+      "unlimited": {
+        "supported": false
+      }
+    },
+    "parentIdentifier": "UPLOAD_REQUEST",
+    "readonly": false,
+    "type": "INTEGER"
   },
   {
     "activationPolicy": {
