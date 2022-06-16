@@ -44,9 +44,9 @@ def test_find_user_profile_guest(request_helper, base_url, new_guest):
     assert data['expirationDate']
     assert not data['restricted']
     assert data['author']
-    assert data['author']['firstName'] == 'Peter'
-    assert data['author']['lastName'] == 'WILSON'
-    assert data['author']['mail'] == 'peter.wilson@linshare.org'
+    assert data['author']['firstName'] == 'Guest'
+    assert data['author']['lastName'] == 'My'
+    assert data['author']['mail'] == 'guest1@linshare.org'
     assert data['author']['uuid']
     assert data['uuid']
     assert data['firstName'] == 'Guest'
