@@ -84,6 +84,7 @@ class RequestHelper:
             verify=self.verify
         )
         self.log.debug("status_code : %s", req.status_code)
+        self.log.debug("payload : %s", req.text)
         assert req.status_code == expected_status
         data = req.json()
         if busines_err_code:
@@ -100,8 +101,9 @@ class RequestHelper:
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify
         )
-        assert req.status_code == 200
         self.log.debug("status_code : %s", req.status_code)
+        self.log.debug("payload : %s", req.text)
+        assert req.status_code == 200
 
     def post(self, query_url, payload, headers=None, expected_status=200,
              busines_err_code=None):
@@ -120,7 +122,7 @@ class RequestHelper:
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         self.log.debug("status_code : %s", req.status_code)
-        self.log.debug("result : %s", req.text)
+        self.log.debug("payload : %s", req.text)
         assert req.status_code == expected_status
         data = req.json()
         self.log.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
@@ -146,7 +148,7 @@ class RequestHelper:
             auth=HTTPBasicAuth(email, password),
             verify=self.verify)
         self.log.debug("status_code : %s", req.status_code)
-        self.log.debug("result : %s", req.text)
+        self.log.debug("payload : %s", req.text)
         assert req.status_code == expected_status
         data = req.json()
         self.log.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
@@ -169,7 +171,7 @@ class RequestHelper:
             auth=HTTPBasicAuth(email, password),
             verify=self.verify)
         self.log.debug("status_code : %s", req.status_code)
-        self.log.debug("result : %s", req.text)
+        self.log.debug("payload : %s", req.text)
         assert req.status_code == expected_status
         data = req.json()
         self.log.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
@@ -187,7 +189,7 @@ class RequestHelper:
             auth=HTTPBasicAuth(self.email, self.password),
             verify=self.verify)
         self.log.debug("status_code : %s", req.status_code)
-        self.log.debug("result : %s", req.text)
+        self.log.debug("payload : %s", req.text)
         assert req.status_code == expected_status
         data = req.json()
         self.log.debug("data : %s", json.dumps(data, sort_keys=True, indent=2))
