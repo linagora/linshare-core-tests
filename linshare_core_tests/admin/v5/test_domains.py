@@ -23,6 +23,32 @@ def test_find_all(request_helper, base_url):
     assert data
 
 
+def test_find_by_name(request_helper, base_url):
+    """Getting all domains with name like 'root' """
+    query_url = '{baseUrl}/domains/r2?name=root'.format_map({
+        'baseUrl': base_url
+    })
+    data = request_helper.get(query_url)
+    log = logging.getLogger('tests.domains.test_find_by_name')
+    log.debug("domains: %s", data)
+    assert data
+    assert len(data) == 1
+    assert data[0]['name'].lower().find("root") > 0
+
+
+def test_find_by_description(request_helper, base_url):
+    """Getting all domains with name like 'root' """
+    query_url = '{baseUrl}/domains/r2?description=root'.format_map({
+        'baseUrl': base_url
+    })
+    data = request_helper.get(query_url)
+    log = logging.getLogger('tests.domains.test_find_by_description')
+    log.debug("domains: %s", data)
+    assert data
+    assert len(data) == 1
+    assert data[0]['name'].lower().find("root") > 0
+
+
 def test_create(request_helper, base_url):
     """Trying to create a top domain"""
     log = logging.getLogger('tests.domains.test_find_all')
