@@ -10,6 +10,7 @@ variables:
     GIT_DEPTH: "1"
     FF_NETWORK_PER_BUILD: "true"
 
+
 .build-docker-tpl: &build-docker-tpl
   image: docker-registry.linagora.com:5000/linshare-snapshots/linshare-dind:latest
   tags:
@@ -306,7 +307,9 @@ build:
   tags:
     - docker
   variables:
-    DOCKER_HOST: "tcp://docker-dind"
+    DOCKER_HOST: "tcp://docker-dind:2375"
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
   script:
     - docker login -u "${REGISTRY_USER}" -p "${REGISTRY_TOKEN}" docker-registry.linagora.com:5000
     - docker login -u "${HUB_DOCKER_USER}" -p "${HUB_DOCKER_TOKEN}"
